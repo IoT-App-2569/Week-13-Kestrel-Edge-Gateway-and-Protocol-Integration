@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kestrel Converged Edge Command Center</title>
+    <script src="/lib/signalr.min.js"></script>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card-bg: rgba(22, 30, 49, 0.75);
+            --primary: #00E5FF;
+            --accent: #00E676;
+            --danger: #FF5252;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+        body {
+            margin: 0; padding: 24px;
+            background: var(--bg);
+            color: #f1f5f9;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
+        }
+        .title { font-size: 24px; font-weight: 700; color: var(--primary); }
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;
+        }
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 20px; padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .gauge-val {
+            font-size: 52px; font-weight: 800; font-family: monospace; color: white;
+            text-align: center; margin-top: 10px;
+        }
+        .metric-badge {
+            display: flex; justify-content: space-between; padding: 12px;
+            background: rgba(0,0,0,0.3); border-radius: 12px; margin-bottom: 8px;
+        }
+        .btn-toggle {
+            width: 100%; padding: 16px; font-size: 16px; font-weight: bold;
+            border: none; border-radius: 14px; cursor: pointer; transition: 0.2s;
+            background: #334155; color: white; margin-top: 16px;
+        }
+        .btn-active {
+            background: var(--accent); color: black; box-shadow: 0 0 20px rgba(0,230,118,0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div>
+            <div class="title">⚡ Kestrel Converged Edge Command Center</div>
+            <div style="color: #94a3b8; font-size: 14px;">All-in-One Multi-Protocol Bridge (.NET 8)</div>
+        </div>
+        <div id="connStatus" style="color: var(--accent); font-weight: bold;">● SignalR Online</div>
+    </div>
+
+    <div class="grid">
+        <!-- การ์ด 1: มาตรวัดเซนเซอร์ -->
+        <div class="card" style="text-align: center;">
+            <h3 style="margin-top:0; color:#94a3b8;">Real-time Potentiometer Voltage</h3>
+            <div class="gauge-val" id="voltageText">0.00 <span style="font-size:24px; color:var(--primary);">V</span></div>
+            <div style="color: #94a3b8;" id="rawText">Raw ADC: 0 / 4095</div>
+        </div>
+
+        <!-- การ์ด 2: สวิตช์ควบคุมฮาร์ดแวร์ -->
+        <div class="card">
+            <h3 style="margin-top:0; color:#94a3b8;">Hardware Actuator Control</h3>
+            <div style="color: #cbd5e1; font-size: 14px;">ควบคุม LED Status ขา GPIO2 ข้ามทุกโปรโตคอล</div>
+            <button id="ledBtn" class="btn-toggle" onclick="toggleLed()">💡 สั่งเปิดไฟ LED (OFF)</button>
+        </div>
+
+        <!-- การ์ด 3: ตัวนับทราฟฟิก 4 โปรโตคอล -->
+        <div class="card">
+            <h3 style="margin-top:0; color:#94a3b8;">Protocol Convergence Metrics</h3>
+            <div class="metric-badge"><span>🔌 Serial Packets (UART)</span><b id="mSerial" style="color:var(--primary);">0</b></div>
+            <div class="metric-badge"><span>📬 MQTT Messages (Broker)</span><b id="mMqtt" style="color:var(--accent);">0</b></div>
+            <div class="metric-badge"><span>🌐 WebSockets (SignalR)</span><b id="mSignalR" style="color:#e040fb;">0</b></div>
+        </div>
+    </div>
+
+    <script>
+        let isLedOn = false;
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/gateway")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("ReceiveTelemetry", function (data) {
+            document.getElementById("voltageText").innerHTML = data.voltage.toFixed(2) + ' <span style="font-size:24px; color:var(--primary);">V</span>';
+            document.getElementById("rawText").innerText = "Raw ADC: " + data.raw + " / 4095";
+            if (data.metrics) {
+                document.getElementById("mSerial").innerText = data.metrics.serialPackets;
+                document.getElementById("mMqtt").innerText = data.metrics.mqttMessages;
+                document.getElementById("mSignalR").innerText = data.metrics.signalRPushes;
+            }
+        });
+
+        connection.on("LedStateUpdated", function (state) {
+            isLedOn = state;
+            updateLedButton();
+        });
+
+        function toggleLed() {
+            isLedOn = !isLedOn;
+            connection.invoke("ToggleLed", isLedOn);
+            updateLedButton();
+        }
+
+        function updateLedButton() {
+            const btn = document.getElementById("ledBtn");
+            if (isLedOn) {
+                btn.className = "btn-toggle btn-active";
+                btn.innerText = "💡 หลอดไฟกำลังสว่าง (ON)";
+            } else {
+                btn.className = "btn-toggle";
+                btn.innerText = "🌑 หลอดไฟปิดอยู่ (OFF)";
+            }
+        }
+
+        connection.start().catch(err => {
+            document.getElementById("connStatus").innerText = "○ Disconnected";
+            document.getElementById("connStatus").style.color = "var(--danger)";
+        });
+    </script>
+</body>
+</html>
