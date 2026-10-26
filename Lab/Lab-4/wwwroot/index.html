@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Grand Finale Edge Command Center</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+  <style>
+    body{margin:0;padding:24px;background:#08111f;color:#eef6ff;font:16px "Segoe UI",sans-serif}
+    main{max-width:900px;margin:auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+    header{max-width:900px;margin:auto auto 24px;border-bottom:1px solid #ffffff22;padding-bottom:16px}
+    h1{color:#00e5ff}.card{padding:22px;border:1px solid #ffffff22;border-radius:20px;background:#142339bb;backdrop-filter:blur(14px)}
+    .value{font-size:52px;font-weight:800;text-align:center}.metric{display:flex;justify-content:space-between;padding:10px;margin:6px 0;background:#0004;border-radius:10px}
+    button{width:100%;padding:14px;border:0;border-radius:12px;background:#334155;color:#fff;font-weight:700;font-size:16px}button.on{background:#00e676;color:#001b0d}
+  </style>
+</head>
+<body>
+  <header><h1>⚡ Grand Finale Edge Command Center</h1><div id="status">กำลังเชื่อมต่อ SignalR...</div></header>
+  <main>
+    <section class="card"><h2>Universal Telemetry</h2><div id="voltage" class="value">0.00 V</div><div id="raw">Raw ADC: 0</div></section>
+    <section class="card"><h2>LED GPIO2</h2><button id="led" onclick="toggleLed()">LED OFF</button></section>
+    <section class="card"><h2>Protocol Metrics</h2><div class="metric">Serial <b id="serial">0</b></div><div class="metric">MQTT <b id="mqtt">0</b></div><div class="metric">REST <b id="rest">0</b></div><div class="metric">SignalR <b id="signalr">0</b></div></section>
+  </main>
+  <script>
+    let ledOn=false;const byId=id=>document.getElementById(id);
+    function renderLed(){byId("led").textContent=ledOn?"LED ON":"LED OFF";byId("led").classList.toggle("on",ledOn)}
+    const connection=new signalR.HubConnectionBuilder().withUrl("/hubs/gateway").withAutomaticReconnect().build();
+    connection.on("ReceiveTelemetry",d=>{byId("voltage").textContent=Number(d.voltage).toFixed(2)+" V";byId("raw").textContent="Raw ADC: "+d.raw;let m=d.metrics;byId("serial").textContent=m.serialPackets;byId("mqtt").textContent=m.mqttMessages;byId("rest").textContent=m.restRequests;byId("signalr").textContent=m.signalRPushes});
+    connection.on("LedStateUpdated",s=>{ledOn=s;renderLed()});
+    async function toggleLed(){ledOn=!ledOn;renderLed();await connection.invoke("ToggleLed",ledOn)}
+    connection.start().then(()=>byId("status").textContent="● SignalR Online").catch(()=>byId("status").textContent="○ Disconnected");
+  </script>
+</body>
+</html>
