@@ -122,22 +122,36 @@ public class SerialBridgeWorker : BackgroundService
             {
                 try
                 {
-                    string line = _serial.ReadLine().Trim();
+                    string? line = await Task.Run(() =>
+                    {
+                        try
+                        {
+                            return _serial.ReadLine()?.Trim();
+                        }
+                        catch (TimeoutException)
+                        {
+                            return null;
+                        }
+                    }, stoppingToken);
+
                     if (!string.IsNullOrEmpty(line))
                     {
                         await HandleIncomingSerialLine(line);
-                        continue;
+                        await Task.Delay(50, stoppingToken);
+                    }
+                    else
+                    {
+                        await GenerateSimulatedTelemetryAsync();
+                        await Task.Delay(500, stoppingToken);
                     }
                 }
-                catch (TimeoutException)
-                {
-                    await GenerateSimulatedTelemetryAsync();
-                }
+                catch (OperationCanceledException) { break; }
                 catch (Exception ex)
                 {
                     _logger.LogWarning("Serial Read Warning: {Message}", ex.Message);
                     _serial?.Close();
                     _serial = null;
+                    await Task.Delay(1000, stoppingToken);
                 }
             }
             else
