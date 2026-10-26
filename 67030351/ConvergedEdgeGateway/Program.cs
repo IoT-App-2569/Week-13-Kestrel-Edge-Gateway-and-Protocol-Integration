@@ -18,7 +18,15 @@ builder.Services.AddHostedService<SerialBridgeWorker>();
 builder.Services.AddSingleton(sp => 
     sp.GetServices<IHostedService>().OfType<SerialBridgeWorker>().First());
 
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<ProtocolMetrics>();
+
 var app = builder.Build();
+
+app.UseDefaultFiles();
+app.UseStaticFiles(); // ให้บริการไฟล์ใน wwwroot
+
+app.MapHub<GatewayHub>("/hubs/gateway");
 
 app.UseMqttServer(server => { /* callbacks */ });
 
