@@ -7,23 +7,23 @@
 
 ### 1. การทดสอบที่ 1: Universal Telemetry Sync (ซิงโครไนซ์ข้อมูลเซนเซอร์ข้ามทุกแพลตฟอร์ม)
 <!-- แคปรูปหน้าจอที่แสดงค่าแรงดันวิ่งตรงกันบน Kestrel Console, หน้าเว็บแดชบอร์ด (SignalR) และแอปมือถือ Flutter (MQTT Radial Gauge) -->
-![ผลการทดสอบ Universal Telemetry Sync](image-13-4-1.png)
+![ผลการทดสอบ Universal Telemetry Sync](Image/image-13-4-1.png)
 
 ### 2. การทดสอบที่ 2: Mobile-to-Web Actuation (สั่งเปิดไฟจากแอป Flutter ซิงก์สู่บอร์ดและหน้าเว็บ)
 <!-- แคปรูปขณะแตะสวิตช์เปิดไฟบนแอป Flutter แล้วปุ่มบนหน้าเว็บแดชบอร์ดเปลี่ยนเป็นสีเขียว ON อัตโนมัติ -->
-![ผลการทดสอบ Mobile-to-Web Actuation](image-13-4-2.png)
+![ผลการทดสอบ Mobile-to-Web Actuation](Image/image-13-4-2.png)
 
 ### 3. การทดสอบที่ 3: Web-to-Mobile Actuation (คลิกปุ่มปิดไฟบนหน้าเว็บ ซิงก์สู่บอร์ดและแอป Flutter)
 <!-- แคปรูปขณะคลิกปุ่มปิดไฟบนหน้าเว็บแดชบอร์ด แล้วสวิตช์บนแอป Flutter สลับเป็น OFF ทันที -->
-![ผลการทดสอบ Web-to-Mobile Actuation](image-13-4-3.png)
+![ผลการทดสอบ Web-to-Mobile Actuation](Image/image-13-4-3.png)
 
 ### 4. การทดสอบที่ 4: Third-Party REST Override (`curl -X POST http://localhost:5000/api/led/on`)
 <!-- แคปรูปการยิงคำสั่ง curl POST /api/led/on แล้วทั้งหน้าเว็บแดชบอร์ดและแอป Flutter อัปเดตสถานะเป็น ON พร้อมกัน -->
-![ผลการทดสอบ Third-Party REST Override](image-13-4-4.png)
+![ผลการทดสอบ Third-Party REST Override](Image/image-13-4-4.png)
 
 ### 5. การทดสอบความทนทานในสภาวะตัดเน็ต (Local Survivability Challenge)
 <!-- แคปรูปขณะทดสอบใช้งานระบบในวงแลนท้องถิ่นโดยตัดการเชื่อมต่ออินเทอร์เน็ตภายนอก -->
-![ผลการทดสอบ Local Survivability Challenge](image-13-4-5.png)
+![ผลการทดสอบ Local Survivability Challenge](Image/image-13-4-5.png)
 
 ---
 

@@ -7,11 +7,11 @@
 
 ### 1. หน้าเว็บแดชบอร์ด Kestrel Converged Edge Command Center (`http://localhost:5000`) แสดงค่าแรงดันและสถิติทราฟฟิกสด
 <!-- แคปรูปหน้าเว็บเบราว์เซอร์ http://localhost:5000 แสดงสถานะ SignalR Online, ค่าแรงดัน Voltage/Raw ADC และตัวนับ Protocol Convergence Metrics -->
-![หน้าเว็บแดชบอร์ด Kestrel Converged Edge Command Center](image-13-3-1.png)
+![หน้าเว็บแดชบอร์ด Kestrel Converged Edge Command Center](Image/image-13-3-1.png)
 
 ### 2. การทดสอบกดปุ่มควบคุมหลอดไฟ LED บนหน้าเว็บแดชบอร์ดผ่าน SignalR Hub (`ToggleLed`)
 <!-- แคปรูปหน้าเว็บขณะปุ่มสวิตช์เปลี่ยนเป็นสีเขียว "หลอดไฟกำลังสว่าง (ON)" คู่กับหน้าต่าง Console ของ Kestrel ที่ขึ้น Log สั่งการผ่าน SignalR -->
-![ผลการควบคุมหลอดไฟ LED ผ่าน SignalR บนเว็บแดชบอร์ด](image-13-3-2.png)
+![ผลการควบคุมหลอดไฟ LED ผ่าน SignalR บนเว็บแดชบอร์ด](Image/image-13-3-2.png)
 
 ---
 

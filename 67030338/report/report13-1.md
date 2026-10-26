@@ -7,15 +7,15 @@
 
 ### 1. การรัน Kestrel Edge Gateway พร้อม Embedded MQTTnet Broker (พอร์ต 5000 และ 1883)
 <!-- แคปรูปหน้าต่าง Terminal ขณะรัน dotnet run แสดงพอร์ต 5000/1883 และ Log เมื่อมี Client เชื่อมต่อ/รับข้อความ -->
-![ผลการรัน Kestrel Embedded MQTT Broker](image-13-1-1.png)
+![ผลการรัน Kestrel Embedded MQTT Broker](Image/image-13-1-1.png)
 
 ### 2. การทดสอบ Subscribe และ Publish ข้อความด้วย `mosquitto_sub` และ `mosquitto_pub`
 <!-- แคปรูปหน้าต่าง Terminal ของ mosquitto_sub และ mosquitto_pub ที่รับ-ส่งข้อความผ่านหัวข้อ test/edge/topic -->
-![ผลการทดสอบ mosquitto_sub และ mosquitto_pub](image-13-1-2.png)
+![ผลการทดสอบ mosquitto_sub และ mosquitto_pub](Image/image-13-1-2.png)
 
 ### 3. การทดสอบเข้าถึง REST Endpoint เบื้องต้น (`http://localhost:5000`)
 <!-- แคปรูปหน้าเว็บเบราว์เซอร์หรือคำสั่ง curl ที่เปิด http://localhost:5000 -->
-![ผลการทดสอบ REST Endpoint เบื้องต้น](image-13-1-3.png)
+![ผลการทดสอบ REST Endpoint เบื้องต้น](Image/image-13-1-3.png)
 
 ---
 

@@ -7,19 +7,19 @@
 
 ### 1. การรัน Kestrel Edge Gateway เชื่อมต่อ Serial Bridge (`SerialBridgeWorker`)
 <!-- แคปรูปหน้าต่าง Terminal ขณะรัน dotnet run แสดงการทำงานของ SerialBridgeWorker -->
-![ผลการรัน SerialBridgeWorker บน Kestrel](image-13-2-1.png)
+![ผลการรัน SerialBridgeWorker บน Kestrel](Image/image-13-2-1.png)
 
 ### 2. การทดสอบเรียกดูค่าเซนเซอร์ล่าสุดผ่าน REST API (`GET /api/telemetry/latest`)
 <!-- แคปรูปผลลัพธ์จากการรัน curl http://localhost:5000/api/telemetry/latest หรือเปิดผ่านเบราว์เซอร์ -->
-![ผลการเรียกดูข้อมูลเซนเซอร์ผ่าน REST API](image-13-2-2.png)
+![ผลการเรียกดูข้อมูลเซนเซอร์ผ่าน REST API](Image/image-13-2-2.png)
 
 ### 3. การตรวจสอบข้อมูลที่ถูกแปลงจาก Serial เข้าสู่หัวข้อ MQTT (`iot/esp32/telemetry`)
 <!-- แคปรูปหน้าต่าง mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v -->
-![ผลการรับข้อมูล Telemetry ผ่าน MQTT Subscriber](image-13-2-3.png)
+![ผลการรับข้อมูล Telemetry ผ่าน MQTT Subscriber](Image/image-13-2-3.png)
 
 ### 4. การทดสอบส่งคำสั่งเปิด-ปิดไฟ LED ผ่าน REST API (`POST /api/led/on` และ `POST /api/led/off`)
 <!-- แคปรูปผลลัพธ์คำสั่ง curl -X POST http://localhost:5000/api/led/on และ off -->
-![ผลการสั่งเปิด-ปิดไฟ LED ผ่าน REST API](image-13-2-4.png)
+![ผลการสั่งเปิด-ปิดไฟ LED ผ่าน REST API](Image/image-13-2-4.png)
 
 ---
 
