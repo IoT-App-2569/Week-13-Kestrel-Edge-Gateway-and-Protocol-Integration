@@ -1,12 +1,9 @@
 using System.IO.Ports;
 public class SerialBridgeWorker : BackgroundService {
-    private SerialPort _serial;
     protected override async Task ExecuteAsync(CancellationToken token) {
-        _serial = new SerialPort("COM24", 115200) { NewLine = "\n" };
-        _serial.Open();
-        while (!token.IsCancellationRequested) {
-            string line = _serial.ReadLine();
-            // Process and bridge to MQTT
-        }
+        using var p = new SerialPort("COM24", 115200);
+        p.Open();
+        while (!token.IsCancellationRequested) { string line = p.ReadLine(); }
     }
 }
+public class GatewayStateStore { public object Get(string k) => new { voltage = 1.65, raw = 2048 }; }
