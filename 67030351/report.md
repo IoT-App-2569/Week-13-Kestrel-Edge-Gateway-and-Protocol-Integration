@@ -7,9 +7,11 @@ mosquitto_pub -h 127.0.0.1 -p 1883 -t "test/edge/topic" -m "Hello from CLI via K
 ```
 #### ผลการทดลอง
 1. สังเกตข้อความบนคอนโซลว่าเซิร์ฟเวอร์กำลังฟังที่พอร์ต 5000 (HTTP) และ 1883 (MQTT)
+
 ![สังเกตข้อความบนคอนโซลว่าเซิร์ฟเวอร์กำลังฟังที่พอร์ต 5000 (HTTP) และ 1883 (MQTT)](image/image.png)
 
 2. สังเกตหน้าต่างคอนโซลของ Kestrel จะขึ้นข้อความสีเขียวว่ามี Client เชื่อมต่อเข้ามา!
+
 ![สังเกตหน้าต่างคอนโซลของ Kestrel จะขึ้นข้อความสีเขียวว่ามี Client เชื่อมต่อเข้ามา!](image/image%20copy.png)
 
 ## คำถามท้ายการทดลอง (Review Questions)
@@ -35,7 +37,8 @@ mosquitto_pub -h 127.0.0.1 -p 1883 -t "test/edge/topic" -m "Hello from CLI via K
 curl http://localhost:5050/api/telemetry/latest
 ```
 #### ผลการทดลอง
-สังเกตว่าได้รับข้อมูล JSON แสดงค่าแรงดันไฟฟ้า (`voltage`), ค่าดิบ ADC (`raw`), และเวลา `timestamp` ทันที โดยเป็นค่าที่ Worker อ่านจากพอร์ต Serial ของ ESP32 แล้วนำไปบันทึกไว้ใน In-Memory State Store (`GatewayStateStore`):
+สังเกตว่าได้รับข้อมูล JSON แสดงค่าแรงดันไฟฟ้า (`voltage`), ค่าดิบ ADC (`raw`), และเวลา `timestamp` ทันที โดยเป็นค่าที่ Worker อ่านจากพอร์ต Serial ของ ESP32 แล้วนำไปบันทึกไว้ใน In-Memory State Store (`GatewayStateStore`)
+
 ![ผลการเรียกดูค่าเซนเซอร์ล่าสุดผ่าน REST API](image/image%20copy%202.png)
 
 ---
@@ -46,7 +49,8 @@ curl http://localhost:5050/api/telemetry/latest
 mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v
 ```
 #### ผลการทดลอง
-สังเกตว่าข้อมูลแรงดันไฟฟ้าที่อ่านจากสาย USB Serial ถูกแปลงและส่งต่อไปยัง Embedded MQTT Broker ภายใต้หัวข้อ `iot/esp32/telemetry` โดยอัตโนมัติแบบ Real-time:
+สังเกตว่าข้อมูลแรงดันไฟฟ้าที่อ่านจากสาย USB Serial ถูกแปลงและส่งต่อไปยัง Embedded MQTT Broker ภายใต้หัวข้อ `iot/esp32/telemetry` โดยอัตโนมัติแบบ Real-time
+
 ![ผลการดักฟังข้อมูลผ่าน MQTT Topic](image/image%20copy%203.png)
 
 ---
@@ -57,10 +61,12 @@ mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v
 curl -X POST http://localhost:5050/api/led/on
 ```
 #### ผลการทดลอง
-1. ฝั่ง Terminal ได้รับ Response ยืนยันการส่งคำสั่งสำเร็จ (`"dispatchedCommand":"LED:ON"`, `"sentToSerial":true`):
+1. ฝั่ง Terminal ได้รับ Response ยืนยันการส่งคำสั่งสำเร็จ (`"dispatchedCommand":"LED:ON"`, `"sentToSerial":true`)
+
 ![ผลการส่งคำสั่งเปิดไฟ LED ผ่าน REST API](image/image%20copy%204.png)
 
-2. สังเกตว่าคำสั่ง `LED:ON` ถูกส่งผ่านสาย USB Serial ไปควบคุมหลอดไฟ LED บนบอร์ด ESP32 ให้สว่างขึ้นทันที:
+2. สังเกตว่าคำสั่ง `LED:ON` ถูกส่งผ่านสาย USB Serial ไปควบคุมหลอดไฟ LED บนบอร์ด ESP32 ให้สว่างขึ้นทันที
+
 ![การทำงานของหลอดไฟ LED บนบอร์ด ESP32](image/IMG_4534.gif)
 
 ## คำถามท้ายการทดลอง (Review Questions)
@@ -81,15 +87,17 @@ curl -X POST http://localhost:5050/api/led/on
 เปิดเว็บเบราว์เซอร์ไปที่ `http://localhost:5050`:
 #### ผลการทดลอง
 1. หน้าเว็บแสดงผลสถานะ `🟢 SignalR Online` พร้อมแสดงค่าแรงดันไฟฟ้า (`2.24 V`) และค่าดิบ ADC (`2775 / 4095`) แบบ Real-time ตามการหมุนตัวต้านทานปรับค่าได้ (Potentiometer) บนบอร์ด ESP32
-2. ตัวเลขนับสถิติทราฟฟิก (Protocol Convergence Metrics) ของ Serial Packets (87), MQTT Messages (87) และ WebSockets/SignalR (87) เพิ่มขึ้นพร้อมกันอย่างต่อเนื่องในเสี้ยววินาที:
+2. ตัวเลขนับสถิติทราฟฟิก (Protocol Convergence Metrics) ของ Serial Packets (87), MQTT Messages (87) และ WebSockets/SignalR (87) เพิ่มขึ้นพร้อมกันอย่างต่อเนื่องในเสี้ยววินาที
+
 ![หน้าเว็บศูนย์บัญชาการ Kestrel Converged Edge Command Center](image/image%20copy%205.png)
 
 ---
 
 ### 2. ทดสอบสั่งการควบคุมฮาร์ดแวร์สองทาง (Bidirectional Control)
-ทดสอบคลิกปุ่มสลับสถานะ "💡 หลอดไฟกำลังสว่าง (ON)" บนหน้าเว็บแดชบอร์ด เพื่อส่งคำสั่งเปิด-ปิดไฟ LED ผ่าน SignalR:
+ทดสอบคลิกปุ่มสลับสถานะ "💡 หลอดไฟกำลังสว่าง (ON)" บนหน้าเว็บแดชบอร์ด เพื่อส่งคำสั่งเปิด-ปิดไฟ LED ผ่าน SignalR
 #### ผลการทดลอง
-เมื่อคลิกปุ่มบนหน้าเว็บ สัญญาณคำสั่งจะถูกส่งผ่าน WebSocket ไปยัง `GatewayHub` บน Kestrel และส่งตรงผ่านพอร์ต Serial ไปควบคุมบอร์ด ESP32 ทันที ส่งผลให้หลอดไฟ LED บนบอร์ดจริงติดสว่างและดับตามคำสั่งบนหน้าเว็บแบบ Real-time:
+เมื่อคลิกปุ่มบนหน้าเว็บ สัญญาณคำสั่งจะถูกส่งผ่าน WebSocket ไปยัง `GatewayHub` บน Kestrel และส่งตรงผ่านพอร์ต Serial ไปควบคุมบอร์ด ESP32 ทันที ส่งผลให้หลอดไฟ LED บนบอร์ดจริงติดสว่างและดับตามคำสั่งบนหน้าเว็บแบบ Real-time
+
 ![การทดสอบหมุน Potentiometer และการสั่งงานไฟ LED ผ่านหน้าเว็บ Real-time](image/IMG_4541.gif)
 
 ## คำถามท้ายการทดลอง (Review Questions)
@@ -114,10 +122,12 @@ curl -X POST http://localhost:5050/api/led/on
 เปิดระบบพร้อมกันทั้ง 4 ส่วน: บอร์ดฮาร์ดแวร์ ESP32, Kestrel Edge Gateway (พอร์ต 5050 และ 1883), Web Command Center บนเบราว์เซอร์ และแอปพลิเคชัน Flutter บนเครื่องจำลอง
 
 #### ผลการทดลอง
-1. **Universal Telemetry Sync**: เมื่อทำการหมุนตัวต้านทานปรับค่าได้ (Potentiometer) บนบอร์ด ESP32 ข้อมูลแรงดันไฟฟ้าจะถูกส่งผ่านสาย USB Serial เข้าสู่ Kestrel Gateway และกระจายต่อไปยังหน้าเว็บผ่าน SignalR และแอป Flutter ผ่าน MQTT พร้อมกันทันที โดยทั้งสองหน้าจอแสดงค่าตรงกันอย่างแม่นยำ (เช่น แรงดัน 1.58 V, Raw ADC: 1958 / 4095):
+1. **Universal Telemetry Sync**: เมื่อทำการหมุนตัวต้านทานปรับค่าได้ (Potentiometer) บนบอร์ด ESP32 ข้อมูลแรงดันไฟฟ้าจะถูกส่งผ่านสาย USB Serial เข้าสู่ Kestrel Gateway และกระจายต่อไปยังหน้าเว็บผ่าน SignalR และแอป Flutter ผ่าน MQTT พร้อมกันทันที โดยทั้งสองหน้าจอแสดงค่าตรงกันอย่างแม่นยำ (เช่น แรงดัน 1.58 V, Raw ADC: 1958 / 4095)
+
 ![การซิงค์ข้อมูล Telemetry ระหว่าง Web Command Center และ Flutter App](image/image%20copy%206.png)
 
-2. **Mobile & Web Actuator Synchronization**: เมื่อแตะสวิตช์เปิด-ปิดไฟบนแอป Flutter (ส่งผ่าน MQTT) หรือคลิกบนหน้าเว็บแดชบอร์ด (ส่งผ่าน SignalR) หลอดไฟ LED บนบอร์ดจริงจะสว่างหรือดับลงทันที พร้อมทั้งทั้งสองหน้าจอจะสลับสถานะเป็น "ON" สีเขียว หรือ "OFF" สอดคล้องกันอย่างสมบูรณ์:
+2. **Mobile & Web Actuator Synchronization**: เมื่อแตะสวิตช์เปิด-ปิดไฟบนแอป Flutter (ส่งผ่าน MQTT) หรือคลิกบนหน้าเว็บแดชบอร์ด (ส่งผ่าน SignalR) หลอดไฟ LED บนบอร์ดจริงจะสว่างหรือดับลงทันที พร้อมทั้งทั้งสองหน้าจอจะสลับสถานะเป็น "ON" สีเขียว หรือ "OFF" สอดคล้องกันอย่างสมบูรณ์
+
 ![การซิงค์สถานะสวิตช์เปิด-ปิดไฟ LED ระหว่าง Web Dashboard และ Flutter App](image/image%20copy%207.png)
 
 ---
@@ -135,10 +145,12 @@ curl -X POST http://localhost:5050/api/led/on
 
 ### 3. ภาพเคลื่อนไหวบันทึกการทำงานของระบบสามประสานร่วมกับฮาร์ดแวร์จริง
 
-1. **การทดสอบการสั่งงานสลับสวิตช์ไฟ LED (Mobile / Web ⟷ ESP32 Hardware)**:
+1. **การทดสอบการสั่งงานสลับสวิตช์ไฟ LED (Mobile / Web ⟷ ESP32 Hardware)**
+
 ![การทดสอบสั่งงานสวิตช์ไฟ LED สอดประสานระหว่างแอป หน้าเว็บ และบอร์ดจริง](image/IMG_4544.gif)
 
-2. **การทดสอบการหมุน Potentiometer แบบเรียลไทม์ พร้อมการสั่งงานสวิตช์ไฟ LED**:
+2. **การทดสอบการหมุน Potentiometer แบบเรียลไทม์ พร้อมการสั่งงานสวิตช์ไฟ LED**
+
 ![การทดสอบหมุน Potentiometer แสดงผลสดพร้อมการสั่งงานไฟ LED](image/IMG_4545.gif)
 
 ---
