@@ -67,7 +67,7 @@ curl -X POST http://localhost:5050/api/led/on
 
 2. สังเกตว่าคำสั่ง `LED:ON` ถูกส่งผ่านสาย USB Serial ไปควบคุมหลอดไฟ LED บนบอร์ด ESP32 ให้สว่างขึ้นทันที
 
-<img src="image/IMG_4534.gif" alt="การทำงานของหลอดไฟ LED บนบอร์ด ESP32" width="100%" />
+![การทำงานของหลอดไฟ LED บนบอร์ด ESP32](image/IMG_4534.gif)
 
 ## คำถามท้ายการทดลอง (Review Questions)
 **ข้อ 1: สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?**
@@ -98,7 +98,7 @@ curl -X POST http://localhost:5050/api/led/on
 #### ผลการทดลอง
 เมื่อคลิกปุ่มบนหน้าเว็บ สัญญาณคำสั่งจะถูกส่งผ่าน WebSocket ไปยัง `GatewayHub` บน Kestrel และส่งตรงผ่านพอร์ต Serial ไปควบคุมบอร์ด ESP32 ทันที ส่งผลให้หลอดไฟ LED บนบอร์ดจริงติดสว่างและดับตามคำสั่งบนหน้าเว็บแบบ Real-time
 
-<img src="image/IMG_4541.gif" alt="การทดสอบหมุน Potentiometer และการสั่งงานไฟ LED ผ่านหน้าเว็บ Real-time" width="100%" />
+![การทดสอบหมุน Potentiometer และการสั่งงานไฟ LED ผ่านหน้าเว็บ Real-time](image/IMG_4541.gif)
 
 ## คำถามท้ายการทดลอง (Review Questions)
 **ข้อ 1: เพราะเหตุใด SignalR จึงให้ประสบการณ์การใช้งาน (UX) บนหน้าเว็บที่ดีกว่าการใช้คำสั่ง JavaScript `setInterval()` เพื่อทำ HTTP GET Polling ซ้ำๆ ทุก 500 ms?**
@@ -147,11 +147,11 @@ curl -X POST http://localhost:5050/api/led/on
 
 1. **การทดสอบการสั่งงานสลับสวิตช์ไฟ LED (Mobile / Web ⟷ ESP32 Hardware)**
 
-<img src="image/IMG_4544.gif" alt="การทดสอบสั่งงานสวิตช์ไฟ LED สอดประสานระหว่างแอป หน้าเว็บ และบอร์ดจริง" width="100%" />
+![การทดสอบสั่งงานสวิตช์ไฟ LED สอดประสานระหว่างแอป หน้าเว็บ และบอร์ดจริง](image/IMG_4544.gif)
 
 2. **การทดสอบการหมุน Potentiometer แบบเรียลไทม์ พร้อมการสั่งงานสวิตช์ไฟ LED**
 
-<img src="image/IMG_4545.gif" alt="การทดสอบหมุน Potentiometer แสดงผลสดพร้อมการสั่งงานไฟ LED" width="100%" />
+![การทดสอบหมุน Potentiometer แสดงผลสดพร้อมการสั่งงานไฟ LED](image/IMG_4545.gif)
 
 ---
 
