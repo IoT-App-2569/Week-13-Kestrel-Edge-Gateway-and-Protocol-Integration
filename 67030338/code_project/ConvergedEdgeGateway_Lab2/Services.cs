@@ -47,6 +47,9 @@ public class SerialBridgeWorker : BackgroundService
     {
         _logger.LogInformation("🔌 เริ่มต้นบริการ SerialBridgeWorker (รองรับทั้ง Hardware Serial และ Virtual Potentiometer)...");
 
+        // หน่วงเวลาสั้นๆ เพื่อให้ Kestrel และ MQTT Server เริ่มต้นฟังพอร์ต (5000 / 1883) ให้เสร็จสมบูรณ์ก่อน
+        await Task.Delay(1000, stoppingToken);
+
         while (!stoppingToken.IsCancellationRequested)
         {
             if (_serial == null || !_serial.IsOpen)
@@ -86,23 +89,37 @@ public class SerialBridgeWorker : BackgroundService
             {
                 try
                 {
-                    string line = _serial.ReadLine().Trim();
+                    string? line = await Task.Run(() =>
+                    {
+                        try
+                        {
+                            return _serial.ReadLine()?.Trim();
+                        }
+                        catch (TimeoutException)
+                        {
+                            return null;
+                        }
+                    }, stoppingToken);
+
                     if (!string.IsNullOrEmpty(line))
                     {
                         await HandleIncomingSerialLine(line);
-                        continue;
+                        await Task.Delay(50, stoppingToken);
+                    }
+                    else
+                    {
+                        // หากเปิดพอร์ตได้แต่ไม่มีข้อมูลส่งมา ให้จำลองค่า
+                        await GenerateSimulatedTelemetryAsync();
+                        await Task.Delay(500, stoppingToken);
                     }
                 }
-                catch (TimeoutException)
-                {
-                    // หากพอร์ตเปิดอยู่แต่ไม่มีข้อมูลเข้ามาภายใน 1 วินาที ให้จำลองค่า Virtual Potentiometer แทน
-                    await GenerateSimulatedTelemetryAsync();
-                }
+                catch (OperationCanceledException) { break; }
                 catch (Exception ex)
                 {
                     _logger.LogWarning("Serial Read Warning: {Message}", ex.Message);
                     _serial?.Close();
                     _serial = null;
+                    await Task.Delay(1000, stoppingToken);
                 }
             }
             else
