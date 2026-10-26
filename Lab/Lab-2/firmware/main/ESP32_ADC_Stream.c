@@ -27,6 +27,16 @@ void app_main(void)
         .atten = ADC_ATTEN_DB_12
     };
     ESP_ERROR_CHECK(adc_oneshot_config_channel(adc1_handle, POT_ADC_CHANNEL, &chan_config));
+
+    uart_config_t uart_config = {
+        .baud_rate = 115200,
+        .data_bits = UART_DATA_8_BITS,
+        .parity = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
+        .source_clk = UART_SCLK_DEFAULT
+    };
+    ESP_ERROR_CHECK(uart_param_config(UART_NUM_0, &uart_config));
     uart_driver_install(UART_NUM_0, 256, 0, 0, NULL, 0);
 
     uint8_t rx_buf[64];

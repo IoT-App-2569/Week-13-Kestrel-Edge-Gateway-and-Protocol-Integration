@@ -25,6 +25,7 @@ public sealed class SerialBridgeWorker : BackgroundService
     private readonly GatewayStateStore _store;
     private readonly MqttServer _mqttServer;
     private readonly ILogger<SerialBridgeWorker> _logger;
+    private readonly object _serialLock = new();
     private SerialPort? _serial;
 
     public SerialBridgeWorker(
@@ -69,7 +70,12 @@ public sealed class SerialBridgeWorker : BackgroundService
 
             try
             {
-                var line = _serial.ReadLine().Trim();
+                string line;
+                lock (_serialLock)
+                {
+                    line = _serial.ReadLine().Trim();
+                }
+
                 if (!string.IsNullOrWhiteSpace(line))
                 {
                     await HandleIncomingSerialLineAsync(line, stoppingToken);
@@ -81,12 +87,12 @@ public sealed class SerialBridgeWorker : BackgroundService
             catch (InvalidOperationException ex)
             {
                 _logger.LogWarning("Serial Read Warning: {Message}", ex.Message);
-                _serial.Close();
+                CloseSerial();
             }
             catch (IOException ex)
             {
                 _logger.LogWarning("Serial Read Warning: {Message}", ex.Message);
-                _serial.Close();
+                CloseSerial();
             }
         }
     }
@@ -130,18 +136,37 @@ public sealed class SerialBridgeWorker : BackgroundService
 
     public bool SendSerialCommand(string command)
     {
-        if (_serial?.IsOpen != true)
+        lock (_serialLock)
         {
-            return false;
-        }
+            if (_serial?.IsOpen != true)
+            {
+                return false;
+            }
 
-        _serial.WriteLine(command);
-        return true;
+            _serial.WriteLine(command);
+            _logger.LogInformation("ส่งคำสั่ง {Command} ไปยัง Serial Port {Port}", command, _portName);
+            return true;
+        }
+    }
+
+    private void CloseSerial()
+    {
+        lock (_serialLock)
+        {
+            if (_serial?.IsOpen == true)
+            {
+                _serial.Close();
+            }
+        }
     }
 
     public override void Dispose()
     {
-        _serial?.Dispose();
+        lock (_serialLock)
+        {
+            _serial?.Dispose();
+            _serial = null;
+        }
         base.Dispose();
     }
 }

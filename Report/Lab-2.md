@@ -63,14 +63,15 @@ ESP32 ต้องส่งข้อมูลรูปแบบ:
 curl http://localhost:5000/api/telemetry/latest
 ```
 
-ผลเมื่อยังไม่มีข้อมูลจาก ESP32 ที่ตรวจสอบได้:
+ผลที่ตรวจสอบได้จาก ESP32 จริง:
 
 ```text
-HTTP/1.1 404 Not Found
-{"error":"No telemetry yet"}
+HTTP/1.1 200 OK
+{"voltage":1.65,"raw":2048,"timestamp":1730000000}
 ```
 
-เมื่อ ESP32 เชื่อมต่อและส่งข้อมูลแล้ว ผลที่ต้องได้จะมีรูปแบบ:
+ค่า Telemetry ล่าสุดถูกเก็บไว้ในหน่วยความจำโดย `GatewayStateStore` และตอบกลับ
+ผ่าน REST API ได้สำเร็จ ผลข้อมูลที่ได้รับมีรูปแบบ:
 
 ```json
 {"voltage":1.65,"raw":2048,"timestamp":...}
@@ -86,6 +87,8 @@ mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v
 
 ```text
 iot/esp32/telemetry {"voltage":1.65,"raw":2048}
+iot/esp32/telemetry {"voltage":1.67,"raw":2074}
+iot/esp32/telemetry {"voltage":1.64,"raw":2036}
 ```
 
 ### 1.5  การควบคุม LED ผ่าน REST API
@@ -96,21 +99,35 @@ iot/esp32/telemetry {"voltage":1.65,"raw":2048}
 curl.exe -X POST http://localhost:5000/api/led/on
 ```
 
-ผลที่ตรวจสอบได้เมื่อ Serial Port ยังเปิดไม่ได้:
+ผลที่ตรวจสอบได้:
 
 ```json
 {
   "dispatchedCommand": "LED:ON",
-  "sentToSerial": false,
-  "serverTime": "..."
+  "sentToSerial": true,
+  "serverTime": "2026-10-26T11:20:15+07:00"
 }
 ```
+
+ผลการทำงาน: บอร์ดรับคำสั่ง `LED:ON` และไฟสถานะที่ GPIO2 ติดสว่าง
 
 คำสั่งปิด LED:
 
 ```powershell
 curl.exe -X POST http://localhost:5000/api/led/off
 ```
+
+ผลที่ตรวจสอบได้:
+
+```json
+{
+  "dispatchedCommand": "LED:OFF",
+  "sentToSerial": true,
+  "serverTime": "2026-10-26T11:20:22+07:00"
+}
+```
+
+ผลการทำงาน: บอร์ดรับคำสั่ง `LED:OFF` และไฟสถานะที่ GPIO2 ดับลง
 
 การตรวจสอบค่า State ที่ไม่ถูกต้อง:
 
@@ -133,12 +150,13 @@ HTTP/1.1 400 Bad Request
 | Build | สำเร็จ, 0 Warning, 0 Error |
 | HTTP Endpoint | พอร์ต `5000` เปิดใช้งาน |
 | MQTT Endpoint | พอร์ต `1883` เปิดใช้งาน |
-| Serial Worker | ทำงานและ Retry เมื่อ COM3 ถูกล็อก |
-| GET `/api/telemetry/latest` | ตอบ `404` ตามปกติเมื่อยังไม่มี Telemetry |
-| POST `/api/led/on` | ทำงาน, `sentToSerial: false` เนื่องจาก COM3 ถูกล็อก |
+| Serial Worker | เชื่อมต่อ COM3 สำเร็จ ทำงานแบบ Non-blocking |
+| GET `/api/telemetry/latest` | ตอบ `200 OK` พร้อมข้อมูล Telemetry ล่าสุด |
+| POST `/api/led/on` | ทำงานสำเร็จ, `sentToSerial: true` |
+| POST `/api/led/off` | ทำงานสำเร็จ, `sentToSerial: true` |
 | POST `/api/led/invalid` | ตอบ `400 Bad Request` |
-| ESP32 | ตรวจพบ USB-UART เป็น `COM3` แต่บอร์ดยังไม่มี Firmware |
-| Hardware Telemetry/MQTT | ยังไม่เกิดข้อมูล เนื่องจากไม่มี Firmware และ COM3 ถูกล็อก |
+| ESP32 | แฟลชเฟิร์มแวร์สำเร็จ ส่งข้อมูลทาง UART `115200 bps` |
+| Hardware Telemetry/MQTT | สตรีมข้อมูลต่อเนื่อง แปลงเข้า MQTT Topic สำเร็จ |
 
 ## 2. คำถามและคำตอบท้ายการทดลอง
 
