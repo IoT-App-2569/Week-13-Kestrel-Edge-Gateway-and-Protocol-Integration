@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:5000
+
+### Read latest telemetry
+GET {{baseUrl}}/api/telemetry/latest
+
+### Turn LED on
+POST {{baseUrl}}/api/led/on
+
+### Turn LED off
+POST {{baseUrl}}/api/led/off
+
+### Reject an invalid LED state
+POST {{baseUrl}}/api/led/invalid
