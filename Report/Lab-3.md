@@ -145,7 +145,7 @@ Log:
 | Glassmorphism Dashboard | โหลดและแสดงผลเรียลไทม์สำเร็จ |
 | Protocol Metrics | นับ Serial/MQTT/REST/SignalR สำเร็จ |
 
-![alt text](image.png)
+![alt text](/Report/img/image.png)
 
 ## 2. คำถามและคำตอบท้ายการทดลอง
 
