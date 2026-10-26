@@ -1,3 +1,17 @@
+# รายงานผลการทดลอง Week 13: Kestrel Edge Gateway and Protocol Integration
+**รหัสนักศึกษา:** 67030351  
+**ลิงก์วิดีโอบันทึกผลการทดลอง (Google Drive):** [https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
+
+### 📹 รายละเอียดคลิปวิดีโอประกอบการทดลอง
+| ชื่อคลิปวิดีโอ | ใบงานที่เกี่ยวข้อง | กิจกรรมที่ทดสอบ | รายละเอียดการทำงานในคลิป |
+| :---: | :---: | :--- | :--- |
+| **`IMG_4534`** | **ใบงานที่ 13.2** | กิจกรรมที่ 13-2.5: การทดสอบสะพานเชื่อมต่อ Hardware Serial Bridge | **การทดสอบสั่งเปิด-ปิดไฟ LED ผ่าน REST API:**<br/>แสดงการส่งคำสั่ง HTTP POST (`/api/led/on`) จาก Kestrel Gateway ผ่านสาย USB-UART สั่งงานให้หลอดไฟ LED บนบอร์ดจริงติดสว่างขึ้นทันที |
+| **`IMG_4541`** | **ใบงานที่ 13.3** | กิจกรรมที่ 13-3.4: การทดสอบเว็บแดชบอร์ดและการสื่อสารสองทางผ่าน SignalR | **การทดสอบหมุน Potentiometer และควบคุม LED ผ่านหน้าเว็บ Real-time:**<br/>แสดงหน้าเว็บ Glassmorphism Command Center รับข้อมูลแรงดันสดผ่าน WebSocket (SignalR) พร้อมคลิกสวิตช์ไฟบนหน้าเว็บเพื่อสั่งเปิด-ปิดหลอดไฟ LED จริงบนบอร์ด ESP32 แบบสองทาง (Bidirectional Control) |
+| **`IMG_4544`** | **ใบงานที่ 13.4** | กิจกรรมที่ 13-4.2: การทดสอบ Mobile & Web Actuator Synchronization | **การทดสอบสั่งงานสวิตช์ไฟ LED สอดประสาน (Flutter + Web + ESP32):**<br/>แสดงการกดปุ่มสวิตช์ไฟบนแอปพลิเคชัน Flutter (ผ่าน MQTT Broker 1883) และหน้าเว็บแดชบอร์ด (ผ่าน SignalR) สอดประสานร่วมกับหลอดไฟ LED บนบอร์ดฮาร์ดแวร์จริง |
+| **`IMG_4545`** | **ใบงานที่ 13.4** | กิจกรรมที่ 13-4.2: การทดสอบ Universal Telemetry Sync และหมุน Potentiometer สด | **การทดสอบหมุน Potentiometer แบบเรียลไทม์ครบวงจร (The Grand Finale):**<br/>แสดงการใช้มือหมุนตัวต้านทานปรับค่าได้ (Potentiometer) บนบอร์ดจริง แล้วเข็มหน้าปัด Radial Gauge บนแอปมือถือ Flutter และตัวเลขบน Web Command Center วิ่งตามการหมุนสดๆ พร้อมสาธิตการสั่งงานสวิตช์ไฟ LED ควบคู่กัน |
+
+---
+
 # 13.1 การสร้าง Embedded MQTT Broker และ Client ภายใน Kestrel .NET 8 ด้วยไลบรารี MQTTnet
 ## กิจกรรมที่ 13-1.3: การสั่งรันและทดสอบด้วยเครื่องมือ CLI
 ### 3. เปิดหน้าต่าง PowerShell ที่สาม: ทดสอบ Publish ข้อความ
@@ -69,6 +83,8 @@ curl -X POST http://localhost:5050/api/led/on
 
 ![การทำงานของหลอดไฟ LED บนบอร์ด ESP32](image/IMG_4534.gif)
 
+> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4534`):** [Google Drive](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
+
 ## คำถามท้ายการทดลอง (Review Questions)
 **ข้อ 1: สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?**
 **คำตอบ:** อุปกรณ์รุ่นเก่าหรือเซนเซอร์ในโรงงานอุตสาหกรรมส่วนใหญ่ไม่มีโมดูลเชื่อมต่อเครือข่ายไร้สาย (ไม่มี Wi-Fi/Ethernet) แต่มีพอร์ตสื่อสารแบบอนุกรม เช่น RS-232, RS-485 หรือ USB-UART การใช้สถาปัตยกรรม Serial-to-MQTT Bridge จะทำหน้าที่เป็น "สะพานแปลงโปรโตคอล (Protocol Gateway)" โดยการดึงข้อมูลดิบจากสาย Serial เข้ามา แล้วนำมาห่อหุ้มให้อยู่ในรูปของข้อความ MQTT (MQTT Topics/Payloads) ส่งขึ้นสู่ระบบเครือข่าย ทำให้อุปกรณ์เดิมสามารถคุยกับ Dashboard, คลาวด์ หรือระบบ IoT สมัยใหม่ได้ทันที โดยไม่ต้องเปลี่ยนหรือซื้อฮาร์ดแวร์ใหม่ทั้งหมด
@@ -99,6 +115,8 @@ curl -X POST http://localhost:5050/api/led/on
 เมื่อคลิกปุ่มบนหน้าเว็บ สัญญาณคำสั่งจะถูกส่งผ่าน WebSocket ไปยัง `GatewayHub` บน Kestrel และส่งตรงผ่านพอร์ต Serial ไปควบคุมบอร์ด ESP32 ทันที ส่งผลให้หลอดไฟ LED บนบอร์ดจริงติดสว่างและดับตามคำสั่งบนหน้าเว็บแบบ Real-time
 
 ![การทดสอบหมุน Potentiometer และการสั่งงานไฟ LED ผ่านหน้าเว็บ Real-time](image/IMG_4541.gif)
+
+> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4541`):** [Google Drive](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
 
 ## คำถามท้ายการทดลอง (Review Questions)
 **ข้อ 1: เพราะเหตุใด SignalR จึงให้ประสบการณ์การใช้งาน (UX) บนหน้าเว็บที่ดีกว่าการใช้คำสั่ง JavaScript `setInterval()` เพื่อทำ HTTP GET Polling ซ้ำๆ ทุก 500 ms?**
@@ -149,9 +167,13 @@ curl -X POST http://localhost:5050/api/led/on
 
 ![การทดสอบสั่งงานสวิตช์ไฟ LED สอดประสานระหว่างแอป หน้าเว็บ และบอร์ดจริง](image/IMG_4544.gif)
 
+> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4544`):** [Google Drive](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
+
 2. **การทดสอบการหมุน Potentiometer แบบเรียลไทม์ พร้อมการสั่งงานสวิตช์ไฟ LED**
 
 ![การทดสอบหมุน Potentiometer แสดงผลสดพร้อมการสั่งงานไฟ LED](image/IMG_4545.gif)
+
+> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4545`):** [Google Drive](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
 
 ---
 
