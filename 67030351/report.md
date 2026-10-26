@@ -1,14 +1,14 @@
 # รายงานผลการทดลอง Week 13: Kestrel Edge Gateway and Protocol Integration
 **รหัสนักศึกษา:** 67030351  
-**ลิงก์วิดีโอบันทึกผลการทดลอง (Google Drive):** [https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
+**โฟลเดอร์วิดีโอรวม (Google Drive):** [https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
 
-### 📹 รายละเอียดคลิปวิดีโอประกอบการทดลอง
-| ชื่อคลิปวิดีโอ | ใบงานที่เกี่ยวข้อง | กิจกรรมที่ทดสอบ | รายละเอียดการทำงานในคลิป |
-| :---: | :---: | :--- | :--- |
-| **`IMG_4534`** | **ใบงานที่ 13.2** | กิจกรรมที่ 13-2.5: การทดสอบสะพานเชื่อมต่อ Hardware Serial Bridge | **การทดสอบสั่งเปิด-ปิดไฟ LED ผ่าน REST API:**<br/>แสดงการส่งคำสั่ง HTTP POST (`/api/led/on`) จาก Kestrel Gateway ผ่านสาย USB-UART สั่งงานให้หลอดไฟ LED บนบอร์ดจริงติดสว่างขึ้นทันที |
-| **`IMG_4541`** | **ใบงานที่ 13.3** | กิจกรรมที่ 13-3.4: การทดสอบเว็บแดชบอร์ดและการสื่อสารสองทางผ่าน SignalR | **การทดสอบหมุน Potentiometer และควบคุม LED ผ่านหน้าเว็บ Real-time:**<br/>แสดงหน้าเว็บ Glassmorphism Command Center รับข้อมูลแรงดันสดผ่าน WebSocket (SignalR) พร้อมคลิกสวิตช์ไฟบนหน้าเว็บเพื่อสั่งเปิด-ปิดหลอดไฟ LED จริงบนบอร์ด ESP32 แบบสองทาง (Bidirectional Control) |
-| **`IMG_4544`** | **ใบงานที่ 13.4** | กิจกรรมที่ 13-4.2: การทดสอบ Mobile & Web Actuator Synchronization | **การทดสอบสั่งงานสวิตช์ไฟ LED สอดประสาน (Flutter + Web + ESP32):**<br/>แสดงการกดปุ่มสวิตช์ไฟบนแอปพลิเคชัน Flutter (ผ่าน MQTT Broker 1883) และหน้าเว็บแดชบอร์ด (ผ่าน SignalR) สอดประสานร่วมกับหลอดไฟ LED บนบอร์ดฮาร์ดแวร์จริง |
-| **`IMG_4545`** | **ใบงานที่ 13.4** | กิจกรรมที่ 13-4.2: การทดสอบ Universal Telemetry Sync และหมุน Potentiometer สด | **การทดสอบหมุน Potentiometer แบบเรียลไทม์ครบวงจร (The Grand Finale):**<br/>แสดงการใช้มือหมุนตัวต้านทานปรับค่าได้ (Potentiometer) บนบอร์ดจริง แล้วเข็มหน้าปัด Radial Gauge บนแอปมือถือ Flutter และตัวเลขบน Web Command Center วิ่งตามการหมุนสดๆ พร้อมสาธิตการสั่งงานสวิตช์ไฟ LED ควบคู่กัน |
+### 📹 รายละเอียดคลิปวิดีโอประกอบการทดลอง (แยกรายคลิป)
+| ชื่อคลิปวิดีโอ | ใบงานที่เกี่ยวข้อง | กิจกรรมที่ทดสอบ | รายละเอียดการทำงานในคลิป | ลิงก์ตรงดูวิดีโอ |
+| :---: | :---: | :--- | :--- | :---: |
+| **`IMG_4534.mov`** | **ใบงานที่ 13.2** | กิจกรรมที่ 13-2.5: การทดสอบสะพานเชื่อมต่อ Hardware Serial Bridge | **การทดสอบสั่งเปิด-ปิดไฟ LED ผ่าน REST API:**<br/>แสดงการส่งคำสั่ง HTTP POST (`/api/led/on`) จาก Kestrel Gateway ผ่านสาย USB-UART สั่งงานให้หลอดไฟ LED บนบอร์ดจริงติดสว่างขึ้นทันที | [🎬 ดูคลิป IMG_4534](https://drive.google.com/file/d/1CDkV_oaVfw33kteOsmS2F47qFXaGg_tw/view?usp=drive_link) |
+| **`IMG_4541.mov`** | **ใบงานที่ 13.3** | กิจกรรมที่ 13-3.4: การทดสอบเว็บแดชบอร์ดและการสื่อสารสองทางผ่าน SignalR | **การทดสอบหมุน Potentiometer และควบคุม LED ผ่านหน้าเว็บ Real-time:**<br/>แสดงหน้าเว็บ Glassmorphism Command Center รับข้อมูลแรงดันสดผ่าน WebSocket (SignalR) พร้อมคลิกสวิตช์ไฟบนหน้าเว็บเพื่อสั่งเปิด-ปิดหลอดไฟ LED จริงบนบอร์ด ESP32 แบบสองทาง (Bidirectional Control) | [🎬 ดูคลิป IMG_4541](https://drive.google.com/file/d/1Hw4BE0leZBKNJQDue8AKADp77QhR8YBQ/view?usp=sharing) |
+| **`IMG_4544.mov`** | **ใบงานที่ 13.4** | กิจกรรมที่ 13-4.2: การทดสอบ Mobile & Web Actuator Synchronization | **การทดสอบสั่งงานสวิตช์ไฟ LED สอดประสาน (Flutter + Web + ESP32):**<br/>แสดงการกดปุ่มสวิตช์ไฟบนแอปพลิเคชัน Flutter (ผ่าน MQTT Broker 1883) และหน้าเว็บแดชบอร์ด (ผ่าน SignalR) สอดประสานร่วมกับหลอดไฟ LED บนบอร์ดฮาร์ดแวร์จริง | [🎬 ดูคลิป IMG_4544](https://drive.google.com/file/d/15n7HglXIQh4iCPVfUjhTsG49-ftTMrUX/view?usp=sharing) |
+| **`IMG_4545.mov`** | **ใบงานที่ 13.4** | กิจกรรมที่ 13-4.2: การทดสอบ Universal Telemetry Sync และหมุน Potentiometer สด | **การทดสอบหมุน Potentiometer แบบเรียลไทม์ครบวงจร (The Grand Finale):**<br/>แสดงการใช้มือหมุนตัวต้านทานปรับค่าได้ (Potentiometer) บนบอร์ดจริง แล้วเข็มหน้าปัด Radial Gauge บนแอปมือถือ Flutter และตัวเลขบน Web Command Center วิ่งตามการหมุนสดๆ พร้อมสาธิตการสั่งงานสวิตช์ไฟ LED ควบคู่กัน | [🎬 ดูคลิป IMG_4545](https://drive.google.com/file/d/1Kxnx1abyCg04YXceybViPZbsa_dIhiz5/view?usp=sharing) |
 
 ---
 
@@ -83,7 +83,7 @@ curl -X POST http://localhost:5050/api/led/on
 
 ![การทำงานของหลอดไฟ LED บนบอร์ด ESP32](image/IMG_4534.gif)
 
-> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4534`):** [Google Drive](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
+> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4534.mov`):** [เปิดดูคลิปบน Google Drive](https://drive.google.com/file/d/1CDkV_oaVfw33kteOsmS2F47qFXaGg_tw/view?usp=drive_link)
 
 ## คำถามท้ายการทดลอง (Review Questions)
 **ข้อ 1: สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?**
@@ -116,7 +116,7 @@ curl -X POST http://localhost:5050/api/led/on
 
 ![การทดสอบหมุน Potentiometer และการสั่งงานไฟ LED ผ่านหน้าเว็บ Real-time](image/IMG_4541.gif)
 
-> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4541`):** [Google Drive](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
+> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4541.mov`):** [เปิดดูคลิปบน Google Drive](https://drive.google.com/file/d/1Hw4BE0leZBKNJQDue8AKADp77QhR8YBQ/view?usp=sharing)
 
 ## คำถามท้ายการทดลอง (Review Questions)
 **ข้อ 1: เพราะเหตุใด SignalR จึงให้ประสบการณ์การใช้งาน (UX) บนหน้าเว็บที่ดีกว่าการใช้คำสั่ง JavaScript `setInterval()` เพื่อทำ HTTP GET Polling ซ้ำๆ ทุก 500 ms?**
@@ -167,13 +167,13 @@ curl -X POST http://localhost:5050/api/led/on
 
 ![การทดสอบสั่งงานสวิตช์ไฟ LED สอดประสานระหว่างแอป หน้าเว็บ และบอร์ดจริง](image/IMG_4544.gif)
 
-> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4544`):** [Google Drive](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
+> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4544.mov`):** [เปิดดูคลิปบน Google Drive](https://drive.google.com/file/d/15n7HglXIQh4iCPVfUjhTsG49-ftTMrUX/view?usp=sharing)
 
 2. **การทดสอบการหมุน Potentiometer แบบเรียลไทม์ พร้อมการสั่งงานสวิตช์ไฟ LED**
 
 ![การทดสอบหมุน Potentiometer แสดงผลสดพร้อมการสั่งงานไฟ LED](image/IMG_4545.gif)
 
-> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4545`):** [Google Drive](https://drive.google.com/drive/folders/19cNRJgQ5SsHgu9nlOEMk7COyEWwcyatz?usp=drive_link)
+> 🔗 **ดูคลิปวิดีโอต้นฉบับ (`IMG_4545.mov`):** [เปิดดูคลิปบน Google Drive](https://drive.google.com/file/d/1Kxnx1abyCg04YXceybViPZbsa_dIhiz5/view?usp=sharing)
 
 ---
 
