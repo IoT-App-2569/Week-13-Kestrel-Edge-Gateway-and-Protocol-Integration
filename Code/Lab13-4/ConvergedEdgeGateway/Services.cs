@@ -235,7 +235,9 @@ public class SerialBridgeWorker : BackgroundService
                 }
             }
             catch (TimeoutException) { /* ปกติเมื่อไม่มีข้อมูลส่งมาใน 1 วินาที */ }
-            catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException)
+            // Windows อาจยกเลิกการอ่านกลางคัน (OperationCanceledException) เมื่อไดรเวอร์ USB-UART สะดุด: ถือว่าหลุดชั่วคราว ไม่ใช่การปิดโปรแกรม
+            catch (Exception ex) when (ex is IOException or InvalidOperationException or UnauthorizedAccessException ||
+                                       (ex is OperationCanceledException && !stoppingToken.IsCancellationRequested))
             {
                 _logger.LogWarning("⚠️ Serial หลุดการเชื่อมต่อ: {Message}", ex.Message);
                 _serial?.Close();

@@ -5,5 +5,5 @@ CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
 # Smaller boot log so the gateway sees JSON quickly
 CONFIG_BOOTLOADER_LOG_LEVEL_WARN=y
 CONFIG_LOG_DEFAULT_LEVEL_WARN=y
-# No potentiometer wired: send random ADC values (set to n when the potentiometer is connected to GPIO34)
-CONFIG_LAB_SIMULATE_ADC=y
+# Set to y only when no potentiometer is wired: sends random ADC values instead of reading GPIO34
+CONFIG_LAB_SIMULATE_ADC=n
