@@ -29,12 +29,12 @@
    * ตรวจสอบว่า `Program.cs` รวมบริการทั้ง Embedded MQTT Broker, Serial Bridge, REST APIs, และ SignalR ไว้ครบถ้วน
    * รันคำสั่ง `dotnet run` ในโฟลเดอร์โปรเจกต์
 
-![alt text](image-16.png)
+![alt text](images/image-16.png)
 
 
 3. **เว็บเบราว์เซอร์**: เปิดหน้าต่างเว็บไปที่ `http://localhost:5000` (ตรวจสอบว่าขึ้น SignalR Online สีเขียว)
 
-![alt text](image-15.png)
+![alt text](images/image-15.png)
 
 
 4. **แอปมือถือ Flutter**:
@@ -42,8 +42,8 @@
    * ตั้งค่า Broker IP ให้ชี้มาที่หมายเลข IP ของคอมพิวเตอร์ (พอร์ต 1883)
    * สั่งรันแอปบนมือถือจริง หรือรันบนเครื่องคอมพิวเตอร์ผ่าน `flutter run`
 
-![alt text](image-18.png)
-![alt text](image-19.png)
+![alt text](images/image-18.png)
+![alt text](images/image-19.png)
 
 
 ---
