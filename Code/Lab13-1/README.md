@@ -26,11 +26,11 @@ If the secrets are missing, the program stops and prints how to set them.
 ## Test (two more PowerShell windows)
 
 ```powershell
-mosquitto_sub -h 127.0.0.1 -p 1883 -u student -P "<password>" -i sub_client -t "test/edge/topic" -v
+mosquitto_sub -h 127.0.0.1 -p 1883 -u student -P $env:MQTT_PASS -i sub_client -t "test/edge/topic" -v
 ```
 
 ```powershell
-mosquitto_pub -h 127.0.0.1 -p 1883 -u student -P "<password>" -i pub_client -t "test/edge/topic" -m "Hello from CLI via Kestrel Embedded MQTT!"
+mosquitto_pub -h 127.0.0.1 -p 1883 -u student -P $env:MQTT_PASS -i pub_client -t "test/edge/topic" -m "Hello from CLI via Kestrel Embedded MQTT!"
 ```
 
 | Check | Expected |

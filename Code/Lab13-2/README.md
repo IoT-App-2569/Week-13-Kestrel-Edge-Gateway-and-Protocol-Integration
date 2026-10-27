@@ -50,7 +50,7 @@ $key = (dotnet user-secrets list | Select-String "Gateway:ApiKey").ToString().Sp
 curl.exe http://localhost:5000/api/telemetry/latest
 curl.exe -X POST -H "X-Api-Key: $key" http://localhost:5000/api/led/on
 curl.exe -X POST -H "X-Api-Key: $key" http://localhost:5000/api/led/off
-mosquitto_sub -h 127.0.0.1 -p 1883 -u student -P "<password>" -t "iot/esp32/telemetry" -v
+mosquitto_sub -h 127.0.0.1 -p 1883 -u student -P $env:MQTT_PASS -t "iot/esp32/telemetry" -v
 ```
 
 | Check | Expected |
