@@ -15,3 +15,4 @@
 | :--- | :--- | :--- |
 | 13.1 | [06-Labsheet-13-1-Embedded-MQTT-Broker-and-Client-with-MQTTnet.md](06-Labsheet-13-1-Embedded-MQTT-Broker-and-Client-with-MQTTnet.md) | [Lab13-1/ConvergedEdgeGateway/](Lab13-1/ConvergedEdgeGateway/) |
 | 13.2 | [07-Labsheet-13-2-Hardware-Serial-to-MQTT-and-REST-Bridge.md](07-Labsheet-13-2-Hardware-Serial-to-MQTT-and-REST-Bridge.md) | [Lab13-2/ConvergedEdgeGateway/](Lab13-2/ConvergedEdgeGateway/), [Lab13-2/ESP32_ADC_Stream/](Lab13-2/ESP32_ADC_Stream/) |
+| 13.3 | [08-Labsheet-13-3-Realtime-SignalR-Hub-and-Converged-Web-Dashboard.md](08-Labsheet-13-3-Realtime-SignalR-Hub-and-Converged-Web-Dashboard.md) | [Lab13-3/ConvergedEdgeGateway/](Lab13-3/ConvergedEdgeGateway/) |

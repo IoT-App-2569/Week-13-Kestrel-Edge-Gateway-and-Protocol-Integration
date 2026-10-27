@@ -1,0 +1,9 @@
+HTTP/1.1 200 OK
+[1mContent-Length[0m: 5974
+[1mContent-Type[0m: text/html
+[1mDate[0m: Tue, 27 Oct 2026 02:44:00 GMT
+[1mServer[0m: Kestrel
+[1mAccept-Ranges[0m: bytes
+[1mETag[0m: "1dd65bbfaae59d6"
+[1mLast-Modified[0m: Tue, 27 Oct 2026 02:36:33 GMT
+
