@@ -1,0 +1,9 @@
+# Reproducible defaults (sdkconfig itself is generated and not committed)
+CONFIG_IDF_TARGET="esp32"
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=115200
+# Smaller boot log so the gateway sees JSON quickly
+CONFIG_BOOTLOADER_LOG_LEVEL_WARN=y
+CONFIG_LOG_DEFAULT_LEVEL_WARN=y
+# Set to y only when no potentiometer is wired: sends random ADC values instead of reading GPIO34
+CONFIG_LAB_SIMULATE_ADC=n

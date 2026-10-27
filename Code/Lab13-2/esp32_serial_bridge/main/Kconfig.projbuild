@@ -1,0 +1,10 @@
+menu "Lab 13.2 Serial Bridge"
+
+    config LAB_SIMULATE_ADC
+        bool "Simulate potentiometer with random values"
+        default n
+        help
+            y = send a random-walk ADC value (0-4095) instead of reading GPIO34.
+            Use this when no potentiometer is wired. Serial, JSON and LED control stay real.
+
+endmenu

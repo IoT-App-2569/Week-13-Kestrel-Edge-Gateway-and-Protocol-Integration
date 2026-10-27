@@ -1,0 +1,18 @@
+<Project>
+  <!-- Shared settings for every Lab13-x gateway project under Code/ -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- No unsigned ConvergedEdgeGateway.exe: `dotnet run` starts the .dll via dotnet.exe
+         (Windows Smart App Control blocks freshly built unsigned .exe files) -->
+    <UseAppHost>false</UseAppHost>
+    <!-- Version pinning: restore writes packages.lock.json, CI/locked restore fails if it drifts -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <!-- Fail the restore when a referenced package has a known vulnerability -->
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
+    <WarningsAsErrors>$(WarningsAsErrors);NU1901;NU1902;NU1903;NU1904</WarningsAsErrors>
+  </PropertyGroup>
+</Project>

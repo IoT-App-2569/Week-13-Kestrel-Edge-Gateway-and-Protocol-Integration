@@ -1,0 +1,13 @@
+<Project>
+  <!-- Central Package Management: every NuGet version used by the labs is pinned here, exactly once. -->
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- MQTTnet 4.x: the labsheets use the 4.x server API (MQTTnet 5 renamed/removed parts of it) -->
+    <PackageVersion Include="MQTTnet" Version="4.3.7.1207" />
+    <PackageVersion Include="MQTTnet.AspNetCore" Version="4.3.7.1207" />
+    <PackageVersion Include="System.IO.Ports" Version="10.0.12" />
+  </ItemGroup>
+</Project>

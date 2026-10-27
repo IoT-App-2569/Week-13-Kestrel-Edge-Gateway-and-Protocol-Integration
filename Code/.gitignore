@@ -1,0 +1,21 @@
+# ---- Secrets: never commit ----
+.env
+**/.env
+!**/.env.example
+**/gateway.env.json
+secrets.json
+appsettings.*.local.json
+
+# ---- .NET ----
+**/bin/
+**/obj/
+
+# ---- ESP-IDF (sdkconfig is regenerated from sdkconfig.defaults) ----
+**/build/
+**/sdkconfig
+**/sdkconfig.old
+**/managed_components/
+
+# ---- Flutter ----
+**/.dart_tool/
+**/.flutter-plugins-dependencies

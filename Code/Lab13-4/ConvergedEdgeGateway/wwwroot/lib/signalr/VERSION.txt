@@ -1,0 +1,5 @@
+@microsoft/signalr 10.0.11 (MIT License, Microsoft)
+File: dist/browser/signalr.min.js from the npm package
+npm integrity (tarball): verified by `npm pack @microsoft/signalr@10.0.11`
+Served locally (not from a CDN) so the dashboard keeps working when the Internet is down.
+To update: npm pack @microsoft/signalr@<version>, copy package/dist/browser/signalr.min.js here.
