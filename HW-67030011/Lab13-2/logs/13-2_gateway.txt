@@ -1,0 +1,69 @@
+[?1h=Using launch settings from /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-2/ConvergedEdgeGateway/Properties/launchSettings.json...
+Building...
+[?25l[1F
+[?25h[?25l[1F
+[?25h[?25l[1F
+[?25h[?25l[1F
+[?25h[?25l[1F
+[?25h[?25l[1F
+csproj
+[?25h[?25l[2F
+[120G[6D(0.0s)
+[?25h[?25l[2F
+[120G[6D(0.1s)
+[?25h[?25l[2F
+[120G[6D(0.1s)
+[?25h[?25l[2F
+[120G[6D(0.2s)
+[?25h[?25l[2F
+[120G[6D(0.2s)
+[?25h[?25l[2F
+[120G[6D(0.2s)
+[?25h[?25l[2F
+[120G[6D(0.3s)
+[?25h[?25l[2F
+[120G[6D(0.3s)
+[?25h[?25l[2F
+[120G[6D(0.3s)
+[?25h[?25l[2F
+[120G[6D(0.4s)
+[?25h[?25l[2F
+[120G[6D(0.4s)
+[?25h[?25l[2F
+[120G[6D(0.4s)
+[?25h[?25l[2F
+[120G[6D(0.5s)
+[?25h[?25l[2F
+[120G[6D(0.5s)
+[?25h[?25l[2F
+[120G[6D(0.5s)
+[?25h[?25l[2F
+[120G[6D(0.6s)
+[?25h[?25l[2F
+[120G[6D(0.6s)
+[?25h[?1h=[?25l[2F
+[120G[6D(0.6s)
+[?25h[2F
+[J[?1h=[40m[32minfo[39m[22m[49m: SerialBridgeWorker[0]
+      🔌 พยายามเปิด Serial Port /dev/cu.usbserial-0001...
+[40m[1m[33mwarn[39m[22m[49m: Microsoft.AspNetCore.Server.Kestrel[0]
+      Overriding address(es) 'http://localhost:5080'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://[::]:5080
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://[::]:1883
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-2/ConvergedEdgeGateway
+[40m[32minfo[39m[22m[49m: SerialBridgeWorker[0]
+      ✅ เชื่อมต่อฮาร์ดแวร์ Serial Port /dev/cu.usbserial-0001 สำเร็จ!
+[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: sub_client (จาก Endpoint: [::ffff:127.0.0.1]:64789)
+[39;49m[39;49m[33m[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: sub_client
+[39;49m[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: sub_client (จาก Endpoint: [::ffff:127.0.0.1]:64800)
+[39;49m[39;49m[33m[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: sub_client
+[39;49m[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+[?1h=

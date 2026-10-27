@@ -1,0 +1,83 @@
+Executing action: monitor
+Running idf_monitor in directory /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-2/ESP32_ADC_Stream
+Executing "/Users/kbbk/.espressif/tools/python/v6.0.2/venv/bin/python /Users/kbbk/.espressif/v6.0.2/esp-idf/tools/idf_monitor.py -p /dev/cu.usbserial-0001 -b 115200 --toolchain-prefix xtensa-esp32-elf- --target esp32 --revision 0 /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-2/ESP32_ADC_Stream/build/ESP32_ADC_Stream.elf /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-2/ESP32_ADC_Stream/build/bootloader/bootloader.elf -m '/Users/kbbk/.espressif/tools/python/v6.0.2/venv/bin/python' '/Users/kbbk/.espressif/v6.0.2/esp-idf/tools/idf.py' '-p' '/dev/cu.usbserial-0001'"...
+[0;33m--- esp-idf-monitor 1.9.0 on /dev/cu.usbserial-0001 115200[0m
+[0;33m--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H[0m
+
+[0;32mI (32) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (35) boot.esp32: SPI Mode�b�����           Usage          Type ST Offset   Length[0m
+[0;32mI (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (62) boot:  1 phy_init         RF data          01 01 0000f000 00001�ets Jul 29 2019 12:21:46[0m
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0040,len:6272
+load:0x40078000,len:15820
+load:0x40080400,len:3920
+[0m--- 0x40080400: [0;33m_invalid_pc_placeholder[0m[0m at [0;32m/Users/kbbk/.espressif/v6.0.2/esp-idf/components/xtensa/xtensa_vectors.S[0m[0m:[1;31m2259[0m
+entry 0x40080644
+[0m--- 0x40080644: [0;33mcall_start_cpu0[0m[0m at [0;32m/Users/kbbk/.espressif/v6.0.2/esp-idf/components/bootloader/subproject/main/bootloader_start.c[0m[0m:[1;31m27[0m
+[0;32mI (27) boot: ESP-IDF v6.0.2 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Oct 27 2026 09:23:51[0m
+[0;32mI (28) boot: Multicore bootloader[0m
+[0;32mI (29) boot: chip revision: v3.1[0m
+[0;32mI (32) boot.esp32: SPI Speed      : 40MHz[0m
+[0;32mI (35) boot.esp32: SPI Mode       : DIO[0m
+[0;32mI (39) boot.esp32: SPI Flash Size : 2MB[0m
+[0;32mI (42) boot: Enabling RNG early entropy source...[0m
+[0;32mI (47) boot: Partition Table:[0m
+[0;32mI (49) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (69) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (75) boot: End of partition table[0m
+[0;32mI (79) esp_image: segment 0: paddr=00010020 vaddr=3f400020 size=0a138h ( 41272) map[0m
+[0;32mI (101) esp_image: segment 1: paddr=0001a160 vaddr=3ffb0000 size=02a68h ( 10856) load[0m
+[0;32mI (105) esp_image: segment 2: paddr=0001cbd0 vaddr=40080000 size=03448h ( 13384) load[0m
+[0;32mI (111) esp_image: segment 3: paddr=00020020 vaddr=400d0020 size=10964h ( 67940) map[0m
+[0;32mI (137) esp_image: segment 4: paddr=0003098c vaddr=40083448 size=087dch ( 34780) load[0m
+[0;32mI (151) esp_image: segment 5: paddr=00039170 vaddr=50000000 size=00028h (    40) load[0m
+[0;32mI (157) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (158) boot: Disabling RNG early entropy source...[0m
+[0;32mI (169) cpu_start: Multicore app[0m
+[0;32mI (177) cpu_start: GPIO 3 and 1 are used as console UART I/O pins[0m
+[0;32mI (178) cpu_start: Pro cpu start user code[0m
+[0;32mI (178) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (180) app_init: Application information:[0m
+[0;32mI (183) app_init: Project name:     ESP32_ADC_Stream[0m
+[0;32mI (188) app_init: App version:      1bb880d[0m
+[0;32mI (192) app_init: Compile time:     Oct 27 2026 09:24:29[0m
+[0;32mI (197) app_init: ELF file SHA256:  1b7f336f3...[0m
+[0;32mI (201) app_init: ESP-IDF:          v6.0.2[0m
+[0;32mI (205) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (209) efuse_init: Max chip rev:     v3.99 [0m
+[0;32mI (213) efuse_init: Chip rev:         v3.1[0m
+[0;32mI (217) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (223) heap_init: At 3FFAE6E0 len 00001920 (6 KiB): DRAM[0m
+[0;32mI (228) heap_init: At 3FFB3470 len 0002CB90 (178 KiB): DRAM[0m
+[0;32mI (234) heap_init: At 3FFE0440 len 00003AE0 (14 KiB): D/IRAM[0m
+[0;32mI (239) heap_init: At 3FFE4350 len 0001BCB0 (111 KiB): D/IRAM[0m
+[0;32mI (244) heap_init: At 4008BC24 len 000143DC (80 KiB): IRAM[0m
+[0;32mI (251) spi_flash: detected chip: generic[0m
+[0;32mI (253) spi_flash: flash io: dio[0m
+[0;33mW (256) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (270) main_task: Started on CPU0[0m
+[0;32mI (270) main_task: Calling app_main()[0m
+{"voltage":0.81,"raw":999}
+{"voltage":0.79,"raw":986}
+{"voltage":0.78,"raw":971}
+{"voltage":0.80,"raw":994}
+{"voltage":0.77,"raw":961}
+{"voltage":0.79,"raw":978}
+{"voltage":0.80,"raw":997}
+{"voltage":0.81,"raw":999}
+{"voltage":0.81,"raw":1003}
+{"voltage":0.80,"raw":987}
+{"voltage":0.78,"raw":974}
+{"voltage":0.80,"raw":994}
+{"voltage":0.80,"raw":991}
+{"voltage":0.79,"raw":986}
+{"voltage":0.79,"raw":985}
+{"voltage":0.80,"raw":991}
