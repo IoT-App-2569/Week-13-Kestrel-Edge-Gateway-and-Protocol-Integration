@@ -213,6 +213,7 @@ PS C:\Users\tulbp\Desktop\Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration>
 
 ## 2. สรุปผลการทดลอง (Conclusion)
 
+จากการทดลองที่ 13.1 สามารถนำไลบรารี `MQTTnet.AspNetCore` มาติดตั้งและรันเป็น Embedded MQTT Broker บนเซิร์ฟเวอร์ Kestrel (.NET 8) ได้สำเร็จ ทำให้โปรเจกต์ตัวเดียวสามารถเปิดให้บริการได้ทั้งพอร์ต 5000 (HTTP) และพอร์ต 1883 (MQTT) พร้อมกัน จากการทดสอบด้วย `mosquitto_sub` และ `mosquitto_pub` พบว่า Client สามารถเชื่อมต่อและรับส่งข้อความผ่าน Broker ได้ปกติ และตัวฟังก์ชัน `InterceptingPublishAsync` สามารถดักจับข้อความในระบบเพื่อนำมาแสดงผล Log ได้ถูกต้อง โดยไม่ต้องติดตั้งหรือเปิดโปรแกรม Mosquitto แยกต่างหาก
 
 ---
 
