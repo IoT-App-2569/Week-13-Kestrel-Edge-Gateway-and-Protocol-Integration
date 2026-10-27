@@ -154,8 +154,93 @@ mosquitto_pub -h 127.0.0.1 -p 1883 -t "test/edge/topic" -m "Hello from CLI via K
 * หน้าต่าง Kestrel จะพิมพ์ Log สีฟ้าว่าดักจับข้อความได้ถูกต้อง
 * หน้าต่าง `mosquitto_sub` จะได้รับข้อความที่ถูกส่งต่อผ่าน Broker สำเร็จทันที
 
+## ผลการทดลอง
+
+| รายการ | ผล |
+|:---|:---|
+| .NET SDK | 10.0.400 (`net10.0`) |
+| MQTTnet / MQTTnet.AspNetCore | 4.3.7.1207 |
+| ผล `dotnet build` | Build succeeded |
+| พอร์ตที่เปิด | HTTP 5000 และ MQTT 1883 |
+
+### กิจกรรม 13-1.3 การรันและทดสอบ
+
+**1. รัน Kestrel Edge Gateway**
+
+<img width="763" height="230" alt="image" src="https://github.com/user-attachments/assets/5f715527-0d01-4c46-b1ba-377d1d5b4884" />
+
+
+<img width="755" height="192" alt="image" src="https://github.com/user-attachments/assets/53b6e35a-89fa-4059-9bf8-f7ebb806d614" />
+
+
+**2–4. ทดสอบ Subscribe และ Publish**
+
+| ขั้น | คำสั่ง | ผลบน Kestrel Console | ผลบน mosquitto_sub |
+|:---|:---|:---|:---|
+| Subscribe | `mosquitto_sub -t "test/edge/topic" -i "sub_client"` | 🟢 `Client เชื่อมต่อ: sub_client` | รอรับข้อความ |
+| Publish | `mosquitto_pub -t "test/edge/topic" -m "Hello from CLI..." -i "pub_client"` | 🟢 `pub_client` เชื่อมต่อ → 📩 ดักจับข้อความ `QoS: AtMostOnce` → 🔴 `pub_client` ตัดการเชื่อมต่อ | ได้รับ `test/edge/topic Hello from CLI via Kestrel Embedded MQTT!` |
+
+<img width="1013" height="317" alt="image" src="https://github.com/user-attachments/assets/6ad629ad-63a3-4b88-87ea-dcf38101936c" />
+
+
+<img width="1203" height="293" alt="image" src="https://github.com/user-attachments/assets/570e1820-ad1e-41bb-934e-74f4a9f97df6" />
+
+
+### ปัญหาที่พบและการแก้ไข
+
+| ปัญหา | สาเหตุ | วิธีแก้ |
+|:---|:---|:---|
+| `New-NetFirewallRule : Access is denied` | เปิด PowerShell แบบธรรมดา | เปิด PowerShell แบบ Run as administrator |
+| เปิดลิงก์ `http://[::]:5000` แล้วขึ้น `ERR_ADDRESS_INVALID` | `[::]` คือที่อยู่ฝั่งเซิร์ฟเวอร์ที่แปลว่ารับทุก IP เบราว์เซอร์ใช้ไม่ได้ | เปิด `http://localhost:5000` แทน |
+| `warn: Overriding address(es) 'http://localhost:5027'` | `launchSettings.json` กำหนดพอร์ต 5027 ไว้ แต่โค้ดกำหนดพอร์ตเองใน `ConfigureKestrel` | ไม่ต้องแก้ โปรแกรมใช้พอร์ต 5000 ตามโค้ด |
+| ต้องตรวจว่าพอร์ต 1883 ว่าง | Mosquitto จากสัปดาห์ 11 อาจยังจองพอร์ตไว้ | ตรวจด้วย `Get-NetTCPConnection -LocalPort 1883` ก่อนรัน |
 ---
 
 ## 4. คำถามท้ายการทดลอง (Review Questions)
 1. การรัน Embedded MQTT Broker ภายใน Kestrel มีข้อได้เปรียบกว่าการติดตั้งซอฟต์แวร์ Mosquitto แยกต่างหากอย่างไรในแง่ของการกระจายงาน (Deployment) และการประมวลผลข้อมูลในหน่วยความจำ?
+```
+ข้อได้เปรียบด้านการติดตั้ง (Deployment)
+- Gateway ทั้งระบบเป็นโปรแกรมเดียว ใช้คำสั่ง dotnet run หรือ dotnet publish แล้วนำไปรันได้เลย ไม่ต้องติดตั้ง Mosquitto, ตั้ง PATH, เขียนไฟล์ mosquitto.conf หรือจัดการ Windows Service แยก ในการทดลองนี้ต้องหยุด Mosquitto Service ก่อน เพราะสองโปรแกรมแย่งพอร์ต 1883 กัน ถ้า Broker อยู่ในโปรแกรมเดียวกันจะไม่มีปัญหานี้
+- การตั้งค่าทั้งหมด เช่น พอร์ต การตรวจ ClientId อยู่ในโค้ด C# ใช้ Git ควบคุมเวอร์ชันได้ และเริ่ม/หยุดพร้อมกับ Gateway เสมอ ไม่มีกรณีที่ Gateway ทำงานแต่ Broker ดับ
+- ใช้ได้ทุกระบบที่รัน .NET ได้ ทั้ง Windows, Linux และ Raspberry Pi
+
+ข้อได้เปรียบด้านการประมวลผลในหน่วยความจำ
+- ถ้าใช้ Mosquitto แยก Gateway ต้องเชื่อมต่อเป็น Client อีกตัวผ่าน TCP เพื่ออ่านข้อมูล ข้อความต้องเดินทาง Client → Mosquitto → TCP → Gateway และแปลงไปมาหลายรอบ
+- แบบ Embedded ข้อความอยู่ในหน่วยความจำของโปรแกรมเดียวกัน Gateway อ่านได้ทันทีผ่าน InterceptingPublishAsync (ตามบรรทัดสีฟ้าในการทดลอง) และส่งข้อความเข้า Broker ได้โดยตรงด้วย InjectApplicationMessage โดยไม่ผ่านเครือข่าย ความหน่วงต่ำกว่าและไม่เปลือง Socket
+- นำข้อมูลไปใช้ร่วมกับส่วนอื่นในโปรแกรมได้ทันที เช่น เก็บสถานะล่าสุดให้ REST API หรือส่งต่อไปหน้าเว็บผ่าน SignalR
+
+ข้อแลกเปลี่ยน
+Mosquitto เป็นซอฟต์แวร์ที่ผ่านการใช้งานจริงมานาน รองรับ Client จำนวนมาก มี Bridge, ACL และ Persistence ครบ ถ้า Gateway ล่ม Broker แบบ Embedded ก็ล่มไปด้วย จึงเหมาะกับ Edge Gateway ขนาดเล็กถึงกลาง ส่วนระบบขนาดใหญ่ยังนิยมใช้ Broker แยก
+```
 2. ฟังก์ชัน `InterceptingPublishAsync` ใน MQTTnet สามารถนำไปประยุกต์ใช้ในการกรองข้อมูลที่ผิดปกติ (Edge Validation) ก่อนส่งต่อให้ Client อื่นได้อย่างไร?
+```
+InterceptingPublishAsync ทำงานทุกครั้งที่มีข้อความ Publish เข้ามา ก่อนที่ Broker จะส่งต่อให้ Subscriber ในการทดลองเราใช้แค่พิมพ์ Log แต่ในตัวแปร args มีคุณสมบัติ ProcessPublish ถ้าตั้งเป็น false ข้อความจะถูกทิ้ง ไม่ถูกส่งต่อ จึงใช้ทำ Edge Validation ได้ เช่น
+
+server.InterceptingPublishAsync += args =>
+{
+    if (args.ApplicationMessage.Topic == "iot/esp32/telemetry")
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(args.ApplicationMessage.ConvertPayloadToString());
+            double v = doc.RootElement.GetProperty("voltage").GetDouble();
+            if (v < 0 || v > 3.3)
+                args.ProcessPublish = false;   // ค่านอกช่วงที่ ADC วัดได้ ทิ้ง
+        }
+        catch
+        {
+            args.ProcessPublish = false;       // ไม่ใช่ JSON หรือไม่มีฟิลด์ voltage ทิ้ง
+        }
+    }
+    return Task.CompletedTask;
+};
+
+การประยุกต์ใช้
+- ตรวจรูปแบบข้อมูล: ทิ้งข้อความที่ไม่ใช่ JSON หรือขาดฟิลด์ที่จำเป็น แอปปลายทางไม่ต้องรับข้อมูลเสียจนแครช (ต่างจากใบงาน 12.3 ที่ต้องป้องกันที่ฝั่ง Flutter เอง)
+- ตรวจช่วงค่า: ค่าเซนเซอร์ที่เป็นไปไม่ได้ เช่น แรงดันเกิน 3.3 V หรือติดลบ แสดงว่าสายหลวมหรือเซนเซอร์เสีย
+- ควบคุมสิทธิ์: ใช้ args.ClientId ตรวจว่าใครส่ง เช่น อนุญาตให้เฉพาะแอปที่กำหนดส่งคำสั่งไปหัวข้อ control
+- กรองสัญญาณรบกวน: ทิ้งค่าที่เปลี่ยนน้อยกว่าเกณฑ์ (Deadband) ลดทราฟฟิก
+- แปลงข้อมูล: แก้ไขข้อความก่อนส่งต่อ เช่น เติม Timestamp หรือแปลงหน่วย
+
+ข้อดีคือกรองครั้งเดียวที่ Edge ทุก Subscriber ได้ข้อมูลที่สะอาดเหมือนกันหมด และลดข้อมูลเสียที่ส่งขึ้นคลาวด์ ข้อควรระวังคือฟังก์ชันนี้ทำงานกับทุกข้อความ ถ้าประมวลผลช้า Broker ทั้งตัวจะช้าตาม จึงควรตรวจแบบเบาๆ เท่านั้น
+```
