@@ -25,8 +25,10 @@ Open the **ESP-IDF 6.1 PowerShell** (or VS Code ESP-IDF terminal):
 cd Code\Lab13-2\esp32_serial_bridge
 idf.py set-target esp32
 idf.py build
-idf.py -p COM24 flash monitor
+idf.py -p COM3 flash monitor
 ```
+
+No potentiometer? `sdkconfig.defaults` has `CONFIG_LAB_SIMULATE_ADC=y`, so the board sends random-walk ADC values (serial, JSON and LED stay real). Set it to `n` and delete `sdkconfig` when the potentiometer is wired.
 
 In the monitor you should see one JSON line every 500 ms, such as `{"voltage":1.65,"raw":2048,"led":0}`.
 Close the monitor (`Ctrl+]`) **before** starting the gateway. Windows allows only one program to open a COM port at a time.
@@ -38,7 +40,7 @@ cd Code\Lab13-2\ConvergedEdgeGateway
 dotnet user-secrets set "Mqtt:Username" "student"
 dotnet user-secrets set "Mqtt:Password" "<at-least-8-characters>"
 dotnet user-secrets set "Gateway:ApiKey" ([guid]::NewGuid().ToString("N"))
-dotnet run -- --Serial:PortName=COM24
+dotnet run -- --Serial:PortName=COM3
 ```
 
 No board? Run `dotnet run -- --Serial:Mode=Simulated` to generate the same JSON in software.

@@ -23,7 +23,7 @@ cd Code\Lab13-3\ConvergedEdgeGateway
 dotnet user-secrets set "Mqtt:Username" "student"
 dotnet user-secrets set "Mqtt:Password" "<at-least-8-characters>"
 dotnet user-secrets set "Gateway:ApiKey" ([guid]::NewGuid().ToString("N"))
-dotnet run -- --Serial:PortName=COM24        # or: dotnet run -- --Serial:Mode=Simulated
+dotnet run -- --Serial:PortName=COM3        # or: dotnet run -- --Serial:Mode=Simulated
 ```
 
 Open **http://localhost:5000**.

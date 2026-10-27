@@ -3,6 +3,8 @@ using MQTTnet.AspNetCore;
 using MQTTnet.Protocol;
 using MQTTnet.Server;
 
+Console.OutputEncoding = System.Text.Encoding.UTF8;   // แสดงภาษาไทยและอีโมจิในคอนโซลได้ถูกต้อง
+
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 

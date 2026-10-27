@@ -40,7 +40,7 @@ Web      --SignalR ToggleLed(true)--------------+--> LedController --Serial "LED
    dotnet user-secrets set "Mqtt:Username" "student"
    dotnet user-secrets set "Mqtt:Password" "<at-least-8-characters>"
    dotnet user-secrets set "Gateway:ApiKey" ([guid]::NewGuid().ToString("N"))
-   dotnet run -- --Serial:PortName=COM24
+   dotnet run -- --Serial:PortName=COM3
    ```
 3. **Firewall** (once, PowerShell as Administrator; your Wi-Fi profile must be *Private*):
    ```powershell

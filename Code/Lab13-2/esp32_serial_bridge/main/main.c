@@ -6,6 +6,9 @@
  *  - รับคำสั่งจาก Kestrel Gateway ทาง UART0 ทีละบรรทัด: "LED:ON" / "LED:OFF" -> GPIO2
  *
  * บอร์ดนี้คุยกับเกตเวย์ผ่านสาย USB เท่านั้น ไม่ได้ใช้ Wi-Fi จึงไม่มี SSID/รหัสผ่านอยู่ในเฟิร์มแวร์
+ *
+ * CONFIG_LAB_SIMULATE_ADC=y (ตั้งใน sdkconfig.defaults หรือ idf.py menuconfig) = ไม่มี Potentiometer
+ * ให้สุ่มค่า ADC แบบ random walk แทนการอ่าน GPIO34 ส่วน Serial / JSON / LED ยังทำงานจริงทั้งหมด
  */
 #include <stdio.h>
 #include <string.h>
@@ -15,6 +18,7 @@
 #include "driver/gpio.h"
 #include "driver/uart.h"
 #include "esp_log.h"
+#include "esp_random.h"
 #include "esp_adc/adc_oneshot.h"
 #include "esp_adc/adc_cali.h"
 #include "esp_adc/adc_cali_scheme.h"
@@ -133,7 +137,20 @@ void app_main(void)
     ESP_ERROR_CHECK(uart_driver_install(BRIDGE_UART, UART_RX_BUF_SIZE, 0, 0, NULL, 0));
     xTaskCreate(uart_rx_task, "uart_rx", 3072, NULL, 10, NULL);
 
+#if CONFIG_LAB_SIMULATE_ADC
+    int sim_raw = 2048;
+    ESP_LOGW(TAG, "LAB_SIMULATE_ADC=y: sending random values, GPIO34 is not read");
+#endif
+
     while (1) {
+#if CONFIG_LAB_SIMULATE_ADC
+        // 4. ไม่มี Potentiometer: สุ่มค่าแบบ random walk (เปลี่ยนทีละ -150..+150) ให้ดูเหมือนหมุนจริง
+        sim_raw += (int)(esp_random() % 301) - 150;
+        if (sim_raw < 0) sim_raw = 0;
+        if (sim_raw > 4095) sim_raw = 4095;
+        int raw = sim_raw;
+        bool use_cali = false;
+#else
         // 4. อ่านค่า ADC (เฉลี่ย ADC_SAMPLES ครั้ง)
         int sum = 0;
         for (int i = 0; i < ADC_SAMPLES; i++) {
@@ -142,10 +159,12 @@ void app_main(void)
             sum += sample;
         }
         int raw = sum / ADC_SAMPLES;
+        bool use_cali = calibrated;
+#endif
 
         float voltage;
         int mv = 0;
-        if (calibrated && adc_cali_raw_to_voltage(cali_handle, raw, &mv) == ESP_OK) {
+        if (use_cali && adc_cali_raw_to_voltage(cali_handle, raw, &mv) == ESP_OK) {
             voltage = mv / 1000.0f;
         } else {
             voltage = (raw / 4095.0f) * 3.3f;
