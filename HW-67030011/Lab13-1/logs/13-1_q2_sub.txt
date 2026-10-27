@@ -1,0 +1,2 @@
+sensors/room1/temp 28.5
+sensors/room1/temp 30.1

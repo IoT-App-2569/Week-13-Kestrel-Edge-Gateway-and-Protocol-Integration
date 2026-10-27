@@ -1,0 +1,1 @@
+test/edge/topic Hello from CLI via Kestrel Embedded MQTT!

@@ -1,0 +1,18 @@
+^D  Determining projects to restore...
+  Writing /var/folders/5_/z_k3gmzx31g1ykbfn2n95hwc0000gn/T/tmpOJUAj5.tmp
+info : X.509 certificate chain validation will use the fallback certificate bundle at '/usr/local/share/dotnet/sdk/9.0.301/trustedroots/codesignctl.pem'.
+info : X.509 certificate chain validation will use the fallback certificate bundle at '/usr/local/share/dotnet/sdk/9.0.301/trustedroots/timestampctl.pem'.
+info : Adding PackageReference for package 'MQTTnet.AspNetCore' into project '/Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-1/ConvergedEdgeGateway/ConvergedEdgeGateway.csproj'.
+info : Restoring packages for /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-1/ConvergedEdgeGateway/ConvergedEdgeGateway.csproj...
+info :   GET https://api.nuget.org/v3-flatcontainer/mqttnet.aspnetcore/index.json
+info :   OK https://api.nuget.org/v3-flatcontainer/mqttnet.aspnetcore/index.json 697ms
+info :   GET https://api.nuget.org/v3-flatcontainer/mqttnet.aspnetcore/4.3.7.1207/mqttnet.aspnetcore.4.3.7.1207.nupkg
+info :   OK https://api.nuget.org/v3-flatcontainer/mqttnet.aspnetcore/4.3.7.1207/mqttnet.aspnetcore.4.3.7.1207.nupkg 37ms
+info : Installed MQTTnet.AspNetCore 4.3.7.1207 from https://api.nuget.org/v3/index.json to /Users/kbbk/.nuget/packages/mqttnet.aspnetcore/4.3.7.1207 with content hash aDtlDjDv65kK0J3/SeagD9h1/xAzxSjbIMEQOzwChyv9mZt79KRRX0TIHQ03SyXfsRC6yyOcyqJxIp8K7FON1A==.
+info :   CACHE https://api.nuget.org/v3/vulnerabilities/index.json
+info :   CACHE https://api.nuget.org/v3-vulnerabilities/2026.10.26.23.37.37/vulnerability.base.json
+info :   CACHE https://api.nuget.org/v3-vulnerabilities/2026.10.26.23.37.37/2026.10.26.23.37.37/vulnerability.update.json
+info : Package 'MQTTnet.AspNetCore' is compatible with all the specified frameworks in project '/Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-1/ConvergedEdgeGateway/ConvergedEdgeGateway.csproj'.
+info : PackageReference for package 'MQTTnet.AspNetCore' version '4.3.7.1207' added to file '/Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-1/ConvergedEdgeGateway/ConvergedEdgeGateway.csproj'.
+info : Writing assets file to disk. Path: /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-1/ConvergedEdgeGateway/obj/project.assets.json
+log  : Restored /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-1/ConvergedEdgeGateway/ConvergedEdgeGateway.csproj (in 1.02 sec).
