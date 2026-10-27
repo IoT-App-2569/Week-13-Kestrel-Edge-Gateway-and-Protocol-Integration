@@ -86,3 +86,6 @@ csproj
       🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
 [40m[32minfo[39m[22m[49m: GatewayHub[0]
       🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+[?1h=
