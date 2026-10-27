@@ -60,7 +60,8 @@
 | **4. Third-Party REST Override** | ยิงคำสั่งผ่าน cURL หรือ Postman:<br/>`curl -X POST http://localhost:5000/api/led/on` | 1. หลอดไฟ LED สว่างขึ้น<br/>2. ทั้งหน้าเว็บและแอปมือถืออัปเดตสถานะเป็น "ON" พร้อมกัน | ผ่าน |
 
 ### 13-4_ทดสอบซิงค์สถานะ_ESP32_เว็บ_แอปมือถือ_REST
-    LINK :  https://youtube.com/shorts/Rh3bLno5W_U?si=1eQl4e2NN8N61ee4
+
+- LINK :  https://youtube.com/shorts/Rh3bLno5W_U?si=1eQl4e2NN8N61ee4
 
 ---
 
