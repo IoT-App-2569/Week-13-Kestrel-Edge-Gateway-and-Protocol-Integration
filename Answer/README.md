@@ -7,7 +7,7 @@
 | 13.1 | Embedded MQTT Broker และ Client ภายใน Kestrel (MQTTnet) | [Lab13-1.md](Lab13-1.md) | `Code/Lab13-1` | ✅ ทดลองแล้ว |
 | 13.2 | Hardware Serial → MQTT และ REST Bridge | [Lab13-2.md](Lab13-2.md) | `Code/Lab13-2` | ✅ ทดลองแล้ว (บอร์ดจริง, ค่า ADC สุ่ม) |
 | 13.3 | SignalR Hub และ Converged Web Dashboard | [Lab13-3.md](Lab13-3.md) | `Code/Lab13-3` | ✅ ทดลองแล้ว (บอร์ดจริง, ตัวต้านทานปรับค่าได้จริง) |
-| 13.4 | Grand Finale: ESP32 + Kestrel + Flutter + Web | Lab13-4.md | `Code/Lab13-4` | ⏳ |
+| 13.4 | Grand Finale: ESP32 + Kestrel + Flutter + Web | [Lab13-4.md](Lab13-4.md) | `Code/Lab13-4` | ✅ ทดลองแล้ว (Verification Matrix ผ่านครบ 4 ข้อ, รอทดสอบตัดเน็ต) |
 
 ## วิธีใช้สมุดนี้
 
