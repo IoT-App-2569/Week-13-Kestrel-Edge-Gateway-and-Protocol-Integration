@@ -1,51 +1,8 @@
-```mermaid
-flowchart TD
-Start[เริ่มต้น] --> Stop[สิ้นสุด]
-```
+<p align="center"><img src="Fig_Untitled_2026-10-27T20-10-09_academic.svg" alt="Untitled" width="200" ></p>
+<p align="center">  แผนภาพแสดงโครงสร้าง</p>
 
 
-```mermaid
-classDiagram
-
-class Duck{
-            +String beakColor
-            +swim()
-            +quack()
-        }
-
-class BankAccount
-        BankAccount : +String owner
-        BankAccount : +Bigdecimal balance
-        BankAccount : +deposit(amount)
-        BankAccount : +withdrawal(amount)
-
- 
- 
-
-classM <|.. classN
- 
-        Animal <|-- Duck
-        Animal <|-- Fish
-        Animal <|-- Zebra
-        Animal : +int age
-        Animal : +String gender
-        Animal: +isMammal()
-        Animal: +mate()
-        class Duck{
-            +String beakColor
-            +swim()
-            +quack()
-        }
-        class Fish{
-            -int sizeInFeet
-            -canEat()
-        }
-        class Zebra{
-            +bool is_wild
-            +run()
-        }
-
-
-```
+<p align="center"><img src="Fig_Untitled_2026-10-27T20-10-07_academic.svg" alt="Untitled" width="800" ></p>
+<p align="center">  แผนภาพแสดงโครงสร้าง</p>
 
 

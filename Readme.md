@@ -23,91 +23,28 @@
 
 ## 2. แผนผังเนื้อหาการเรียนรู้ประจำสัปดาห์ (Lesson Roadmap)
 
-```mermaid
-flowchart TD
-    W13["<b>สัปดาห์ที่ 13: The Ultimate Converged Edge Gateway</b><br/>(สถาปัตยกรรมเกตเวย์อเนกประสงค์ .NET 8 Kestrel)"]
-
-    M1["<b>1. Edge Computing & สถาปัตยกรรม Converged Gateway</b><br/>- Cloud vs Edge Paradigm<br/>- ปัญหา Protocol Heterogeneity<br/>- Universal Bridge & Local Survivability"]
-    M2["<b>2. กลไก Kestrel & งานเบื้องหลังแบบ Concurrency</b><br/>- Kestrel Engine Internal Pipeline<br/>- BackgroundService & IHostedService<br/>- System.Threading.Channels Queue"]
-    M3["<b>3. การเชื่อมต่อ 4 โปรโตคอล (Multi-Protocol Unification)</b><br/>- MQTTnet Embedded Broker / Client<br/>- Hardware SerialPort Data Listener<br/>- RESTful Minimal API Endpoints<br/>- ASP.NET Core SignalR WebSockets"]
-    M4["<b>4. ความทนทานและการบัฟเฟอร์ข้อมูลระดับขอบ (Edge Resilience)</b><br/>- Offline Data Buffering (Store-and-Forward)<br/>- Circuit Breaker & Rate Limiting<br/>- Thread-Safe Shared State Synchronization"]
-
-    W13 --> M1
-    W13 --> M2
-    W13 --> M3
-    W13 --> M4
-
-    L1["<b>ใบงานที่ 13.1</b><br/>Embedded MQTT Broker & Client with MQTTnet<br/>(รัน MQTT Broker ภายใน Kestrel และเชื่อมโยง Internal Event Pipeline)"]
-    L2["<b>ใบงานที่ 13.2</b><br/>Hardware Serial-to-MQTT & REST Bridge<br/>(ดักฟัง UART จาก ESP32, แปลงเข้า MQTT Topic และ REST API State)"]
-    L3["<b>ใบงานที่ 13.3</b><br/>Real-time SignalR Hub & Converged Web Command Center<br/>(สตรีมมิ่งข้อมูลเข้า Web UI, วัดปริมาณทราฟฟิก 4 โปรโตคอล)"]
-    L4["<b>ใบงานที่ 13.4 (The Grand Finale)</b><br/>End-to-End Converged Multi-Protocol System Integration<br/>(ESP32 + Kestrel Gateway + Flutter App + Web Dashboard)"]
-
-    M1 --> L1
-    M2 --> L2
-    M3 --> L3
-    M4 --> L4
-```
+<p align="center"><img src="Images/Fig_Readme_2026-10-27T20-01-55_academic.svg" alt="Readme"  ></p>
+<p align="center">  2. แผนผังเนื้อหาการเรียนรู้ประจำสัปดาห์ (Lesson Roadmap)</p>
 
 ---
 
 ## 3. ผังโครงสร้างสถาปัตยกรรม All-in-One Converged Gateway
 
-```
-+-------------------------------------------------------------------------------------------------+
-|                       THE ULTIMATE CONVERGED EDGE GATEWAY (.NET 8 KESTREL)                      |
-+-------------------------------------------------------------------------------------------------+
 
-                                ┌─────────────────────────────────────────┐
-                                │        Presentation & Client Layers     │
-                                └────────────────────┬────────────────────┘
-                                                     │
-         ┌───────────────────────────────────────────┼───────────────────────────────────────────┐
-         ▼                                           ▼                                           ▼
-  [ Web Browser Dashboard ]                 [ Flutter Mobile App ]                      [ Third-Party IT System ]
-  (SignalR WebSockets Push)                 (MQTT over TCP / REST)                      (HTTP RESTful JSON API)
-         │                                           │                                           │
-         │ WebSocket (Hub)                           │ Port 1883 / HTTP                          │ Port 5000 (HTTP)
-         ▼                                           ▼                                           ▼
-+─────────────────────────────────────────────────────────────────────────────────────────────────────────+
-|                                      KESTREL WEB & PROTOCOL ENGINE                                      |
-|                                                                                                         |
-|   ┌───────────────────────┐   ┌───────────────────────┐   ┌─────────────────────────────────────────┐   |
-|   │   SignalR Realtime    │   │  Embedded MQTT Broker │   │          Minimal Web APIs               │   |
-|   │         Hub           │   │      (MQTTnet 4.x)    │   │        /api/telemetry, /api/led         │   |
-|   └───────────┬───────────┘   └───────────┬───────────┘   └────────────────────┬────────────────────┘   |
-|               │                           │                                    │                        |
-|               ▼                           ▼                                    ▼                        |
-|   ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐   |
-|   │                        Unified In-Memory Message Bus & State Store                              │   |
-|   │                     (System.Threading.Channels & ConcurrentDictionary)                          │   |
-|   └───────────────────────────────────────────▲─────────────────────────────────────────────────────┘   |
-|                                               │                                                         |
-|                               ┌───────────────┴───────────────┐                                         |
-|                               │   Hardware Serial Listener    │                                         |
-|                               │      (BackgroundService)      │                                         |
-|                               └───────────────▲───────────────┘                                         |
-+───────────────────────────────────────────────┼─────────────────────────────────────────────────────────+
-                                                │
-                                                │ USB-UART Serial (COMx / /dev/ttyUSB0)
-                                                ▼
-                                    ┌────────────────────────────┐
-                                    │        บอร์ด ESP32         │
-                                    │ - Potentiometer (GPIO34)   │
-                                    │ - LED Status (GPIO2)       │
-                                    └────────────────────────────┘
-```
+<p align="center"><img src="Images/Fig_Readme_2026-10-27T20-07-25_academic.svg" alt="Readme" ></p>
+<p align="center">  3. ผังโครงสร้างสถาปัตยกรรม All-in-One Converged Gateway</p>
 
 ---
 
 ## 4. ตารางเปรียบเทียบ 4 โปรโตคอลบน Converged Gateway
 
-| มิติเชิงเทคนิค | Hardware Serial (UART) | Embedded MQTT Broker | HTTP RESTful API | WebSockets (SignalR) |
-| :--- | :--- | :--- | :--- | :--- |
-| **สื่อกลาง (Transport)** | สายสัญญาณ USB-Serial | TCP/IP (พอร์ต 1883) | TCP/IP (พอร์ต 5000/80) | HTTP Upgrade to WebSocket |
-| **รูปแบบการสื่อสาร** | Byte Stream สองทาง | Publish / Subscribe | Request / Response | Bi-directional Push |
-| **ขนาด Overhead** | ต่ำที่สุด (เฉพาะข้อมูลดิบ) | ต่ำมาก (2 ไบต์ Fixed Header) | สูง (HTTP Headers > 100B) | ต่ำมากหลัง Handshake (2–10B) |
-| **บทบาทในเกตเวย์** | เชื่อมต่อฮาร์ดแวร์โดยตรง | เชื่อมต่อโหนดและแอปมือถือ | อินเทอร์เฟซสำหรับระบบภายนอก | อัปเดตกราฟบนหน้าเว็บแบบสดๆ |
-| **ความหน่วงเวลา (Latency)**| < 1 ms | 2–10 ms | 10–50 ms | 1–5 ms |
+| มิติเชิงเทคนิค              | Hardware Serial (UART)     | Embedded MQTT Broker         | HTTP RESTful API            | WebSockets (SignalR)         |
+| :-------------------------- | :------------------------- | :--------------------------- | :-------------------------- | :--------------------------- |
+| **สื่อกลาง (Transport)**    | สายสัญญาณ USB-Serial       | TCP/IP (พอร์ต 1883)          | TCP/IP (พอร์ต 5000/80)      | HTTP Upgrade to WebSocket    |
+| **รูปแบบการสื่อสาร**        | Byte Stream สองทาง         | Publish / Subscribe          | Request / Response          | Bi-directional Push          |
+| **ขนาด Overhead**           | ต่ำที่สุด (เฉพาะข้อมูลดิบ) | ต่ำมาก (2 ไบต์ Fixed Header) | สูง (HTTP Headers > 100B)   | ต่ำมากหลัง Handshake (2–10B) |
+| **บทบาทในเกตเวย์**          | เชื่อมต่อฮาร์ดแวร์โดยตรง   | เชื่อมต่อโหนดและแอปมือถือ    | อินเทอร์เฟซสำหรับระบบภายนอก | อัปเดตกราฟบนหน้าเว็บแบบสดๆ   |
+| **ความหน่วงเวลา (Latency)** | < 1 ms                     | 2–10 ms                      | 10–50 ms                    | 1–5 ms                       |
 
 ---
 
