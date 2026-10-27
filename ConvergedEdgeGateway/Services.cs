@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.SignalR;
 using MQTTnet;
 using MQTTnet.Server;
 
-// 1. คลาสจัดเก็บสถานะระบบแบบ Thread-Safe
 public class GatewayStateStore
 {
     private readonly ConcurrentDictionary<string, object> _state = new();
@@ -15,10 +14,8 @@ public class GatewayStateStore
     public object? Get(string key) => _state.TryGetValue(key, out var val) ? val : null;
 }
 
-// 2. โมเดลข้อมูล Telemetry
 public record TelemetryData(double Voltage, int Raw, long Timestamp);
 
-// 3. งานเบื้องหลังสำหรับเชื่อมต่อและดักฟัง Serial Port
 public class SerialBridgeWorker : BackgroundService
 {
     private SerialPort? _serial;
@@ -29,6 +26,7 @@ public class SerialBridgeWorker : BackgroundService
     private readonly IHubContext<GatewayHub> _hubContext;
     private readonly ProtocolMetrics _metrics;
     private readonly ILogger<SerialBridgeWorker> _logger;
+    private DateTime _lastStatusPublish = DateTime.MinValue;
 
     public SerialBridgeWorker(
         GatewayStateStore store,
@@ -50,6 +48,13 @@ public class SerialBridgeWorker : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
+            // ประกาศสถานะ online ให้แอป Flutter ซ้ำทุก 5 วินาที (กันกรณี Broker ยังไม่พร้อมตอนเริ่ม)
+            if (_serial?.IsOpen == true && DateTime.UtcNow - _lastStatusPublish > TimeSpan.FromSeconds(5))
+            {
+                _lastStatusPublish = DateTime.UtcNow;
+                try { await PublishMqttAsync("iot/esp32/status", "online", retain: true); } catch { }
+            }
+
             if (_serial == null || !_serial.IsOpen)
             {
                 try
@@ -64,7 +69,6 @@ public class SerialBridgeWorker : BackgroundService
                 }
                 catch
                 {
-                    // หากยังไม่เสียบบอร์ด ให้รอ 3 วินาทีแล้วลองใหม่
                     try { await Task.Delay(3000, stoppingToken); }
                     catch (TaskCanceledException) { break; }
                     continue;
@@ -73,19 +77,19 @@ public class SerialBridgeWorker : BackgroundService
 
             try
             {
-                // อ่านบน thread pool เพื่อไม่ให้บล็อก thread หลักของ Host
                 string line = (await Task.Run(() => _serial.ReadLine(), stoppingToken)).Trim();
                 if (!string.IsNullOrEmpty(line))
                 {
                     await HandleIncomingSerialLine(line);
                 }
             }
-            catch (TimeoutException) { /* ปกติเมื่อไม่มีข้อมูลส่งมาใน 1 วิ */ }
+            catch (TimeoutException) { }
             catch (OperationCanceledException) { break; }
             catch (Exception ex)
             {
                 _logger.LogWarning("Serial Read Warning: {Message}", ex.Message);
                 _serial?.Close();
+                try { await PublishMqttAsync("iot/esp32/status", "offline", retain: true); } catch { }
             }
         }
     }
@@ -94,7 +98,6 @@ public class SerialBridgeWorker : BackgroundService
     {
         try
         {
-            // ตัวอย่างข้อมูลที่ ESP32 ยิงมา: {"voltage":1.65,"raw":2048}
             using var doc = JsonDocument.Parse(line);
             var root = doc.RootElement;
             double v = root.GetProperty("voltage").GetDouble();
@@ -102,11 +105,9 @@ public class SerialBridgeWorker : BackgroundService
 
             _metrics.SerialPackets++;
 
-            // 1. อัปเดตลง State Store (ใช้โดย /api/telemetry/latest)
             var telemetry = new TelemetryData(v, r, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
             _store.Set("latest_telemetry", telemetry);
 
-            // 2. ผลักเข้า Embedded MQTT Broker
             _metrics.MqttMessages++;
             var mqttMsg = new MqttApplicationMessageBuilder()
                 .WithTopic("iot/esp32/telemetry")
@@ -115,7 +116,6 @@ public class SerialBridgeWorker : BackgroundService
                 .Build();
             await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(mqttMsg));
 
-            // 3. ผลักเข้า SignalR หาหน้าเว็บทันที
             _metrics.SignalRPushes++;
             await _hubContext.Clients.All.SendAsync("ReceiveTelemetry", new
             {
@@ -124,10 +124,9 @@ public class SerialBridgeWorker : BackgroundService
                 metrics = _metrics
             });
         }
-        catch { /* หากไม่ใช่ JSON (เช่น boot log ของ ESP32) ให้ข้ามไป */ }
+        catch { /* ไม่ใช่ JSON (เช่น boot log) ให้ข้าม */ }
     }
 
-    // ฟังก์ชันส่งคำสั่งย้อนกลับไปหาบอร์ดทาง Serial
     public bool SendSerialCommand(string cmd)
     {
         if (_serial?.IsOpen == true)
@@ -136,6 +135,32 @@ public class SerialBridgeWorker : BackgroundService
             return true;
         }
         return false;
+    }
+
+    public async Task PublishMqttAsync(string topic, string payload, bool retain = false)
+    {
+        var msg = new MqttApplicationMessageBuilder()
+            .WithTopic(topic)
+            .WithPayload(payload)
+            .WithRetainFlag(retain)
+            .Build();
+        await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(msg));
+    }
+
+    // ตัวกลาง: ทุกเส้นทาง (REST / MQTT / SignalR) เรียกอันนี้
+    public async Task<bool> SetLedAsync(bool on)
+    {
+        string cmd = on ? "LED:ON" : "LED:OFF";
+        bool sent = SendSerialCommand(cmd);                 // 1. สั่งบอร์ด
+        _store.Set("led_state", on);                        // 2. จำสถานะ
+
+        await _hubContext.Clients.All.SendAsync("LedStateUpdated", on);   // 3. แจ้งเว็บ
+
+        // 4. แจ้งแอป Flutter (รูปแบบที่แอปอ่านได้: {"led_state":true/false})
+        await PublishMqttAsync("iot/esp32/led_ack",
+            $"{{\"led_state\":{(on ? "true" : "false")}}}", retain: true);
+
+        return sent;
     }
 
     public override void Dispose()

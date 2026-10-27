@@ -4,20 +4,17 @@ using MQTTnet.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ตั้งค่า Kestrel (5050 แทน 5000 เพราะชนกับ AirPlay บน macOS)
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(5050);
+    options.ListenAnyIP(5050);   // 5050 แทน 5000 (ชน AirPlay บน macOS)
     options.ListenAnyIP(1883, l => l.UseMqtt());
 });
 
-// ลงทะเบียน Services
 builder.Services.AddSingleton<GatewayStateStore>();
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<ProtocolMetrics>();
 builder.Services.AddMqttServer(options => options.WithDefaultEndpoint());
 builder.Services.AddHostedService<SerialBridgeWorker>();
-// เพื่อให้ API และ Hub เรียกใช้งาน Worker ได้
 builder.Services.AddSingleton(sp =>
     sp.GetServices<IHostedService>().OfType<SerialBridgeWorker>().First());
 
@@ -55,31 +52,47 @@ app.UseMqttServer(server =>
     server.InterceptingPublishAsync += args =>
     {
         var topic = args.ApplicationMessage.Topic;
-        var payload = args.ApplicationMessage.ConvertPayloadToString();
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine($"[MQTT Message] 📩 {topic} | {payload}");
-        Console.ResetColor();
+        var payload = args.ApplicationMessage.ConvertPayloadToString() ?? "";
+
+        // ไม่พิมพ์ telemetry/status ที่ Gateway ส่งเองทุกครึ่งวินาที เพื่อให้ log อ่านง่าย
+        if (topic != "iot/esp32/telemetry" && topic != "iot/esp32/status")
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"[MQTT Message] 📩 {topic} | {payload}");
+            Console.ResetColor();
+        }
+
+        // คำสั่งเปิด-ปิดไฟจากแอป Flutter: {"led":"ON"} / {"led":"OFF"}
+        if (topic == "iot/esp32/control")
+        {
+            try
+            {
+                using var doc = System.Text.Json.JsonDocument.Parse(payload);
+                bool on = doc.RootElement.GetProperty("led").GetString()?.ToUpper() == "ON";
+                var worker = app.Services.GetRequiredService<SerialBridgeWorker>();
+                _ = worker.SetLedAsync(on);
+            }
+            catch { /* payload ไม่ใช่ JSON ที่ต้องการ */ }
+        }
+
         return Task.CompletedTask;
     };
 });
 
-// 1. API อ่านข้อมูลเซนเซอร์ล่าสุด
 app.MapGet("/api/telemetry/latest", (GatewayStateStore store) =>
 {
     var data = store.Get("latest_telemetry");
     return data != null ? Results.Ok(data) : Results.NotFound(new { error = "No telemetry yet" });
 });
 
-// 2. API ควบคุมหลอดไฟผ่าน Serial Bridge
-app.MapPost("/api/led/{state}", (string state, SerialBridgeWorker worker) =>
+app.MapPost("/api/led/{state}", async (string state, SerialBridgeWorker worker) =>
 {
-    string cmd = state.ToLower() == "on" ? "LED:ON" : "LED:OFF";
-    bool success = worker.SendSerialCommand(cmd);
-
+    bool on = state.ToLower() == "on";
+    bool sent = await worker.SetLedAsync(on);
     return Results.Ok(new
     {
-        dispatchedCommand = cmd,
-        sentToSerial = success,
+        dispatchedCommand = on ? "LED:ON" : "LED:OFF",
+        sentToSerial = sent,
         serverTime = DateTime.Now.ToString("HH:mm:ss")
     });
 });
