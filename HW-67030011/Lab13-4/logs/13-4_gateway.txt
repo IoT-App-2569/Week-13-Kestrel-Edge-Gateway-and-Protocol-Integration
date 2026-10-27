@@ -1,0 +1,433 @@
+[?1h=Using launch settings from /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-4/ConvergedEdgeGateway/Properties/launchSettings.json...
+Building...
+[?25l[1F
+[?25h[?25l[1F
+[?25h[?25l[1F
+[?25h[?25l[1F
+[?25h[?25l[1F
+[?25h[?25l[1F
+csproj
+[?25h[?25l[2F
+[120G[6D(0.1s)
+[?25h[?25l[2F
+[120G[6D(0.1s)
+[?25h[?25l[2F
+[120G[6D(0.1s)
+[?25h[?25l[2F
+[120G[6D(0.2s)
+[?25h[?25l[2F
+[120G[6D(0.2s)
+[?25h[?25l[2F
+[120G[6D(0.2s)
+[?25h[?25l[2F
+[120G[6D(0.3s)
+[?25h[?25l[2F
+[120G[6D(0.3s)
+[?25h[?25l[2F
+[120G[6D(0.3s)
+[?25h[?25l[2F
+[120G[6D(0.4s)
+[?25h[?25l[2F
+[120G[6D(0.4s)
+[?25h[?25l[2F
+[120G[6D(0.4s)
+[?25h[?25l[2F
+[120G[6D(0.5s)
+[?25h[2F
+[J[?1h=[40m[32minfo[39m[22m[49m: SerialBridgeWorker[0]
+      🔌 พยายามเปิด Serial Port /dev/cu.usbserial-0001...
+[40m[1m[33mwarn[39m[22m[49m: Microsoft.AspNetCore.Server.Kestrel[0]
+      Overriding address(es) 'http://localhost:5080'. Binding to endpoints defined via IConfiguration and/or UseKestrel() instead.
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://[::]:5080
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://[::]:1883
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+[40m[32minfo[39m[22m[49m: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-4/ConvergedEdgeGateway
+[40m[32minfo[39m[22m[49m: SerialBridgeWorker[0]
+      ✅ เชื่อมต่อฮาร์ดแวร์ Serial Port /dev/cu.usbserial-0001 สำเร็จ!
+[40m[32minfo[39m[22m[49m: SerialBridgeWorker[0]
+      📡 iot/esp32/status = online
+[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: chk1 (จาก Endpoint: [::ffff:127.0.0.1]:49538)
+[39;49m[39;49m[33m[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: chk1
+[39;49m[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: chk2 (จาก Endpoint: [::ffff:127.0.0.1]:49544)
+[39;49m[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: chk3 (จาก Endpoint: [::ffff:127.0.0.1]:49545)
+[39;49m[39;49m[33m[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: chk3
+[39;49m[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (chk3) → LED:ON (sentToSerial=True)
+[39;49m[33m[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: chk2
+[39;49m[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: chk4 (จาก Endpoint: [::ffff:127.0.0.1]:49551)
+[39;49m[39;49m[33m[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: chk4
+[39;49m[39;49m[92m[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: Flutter_Switch_1793069514422 (จาก Endpoint: [::ffff:127.0.0.1]:49611)
+[39;49m[MQTT Server] 🟢 Client เชื่อมต่อ: Flutter_Telemetry_1793069514366 (จาก Endpoint: [::ffff:127.0.0.1]:49610)
+[39;49m[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:OFF (sentToSerial=True)
+[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: latency_probe (จาก Endpoint: [::ffff:127.0.0.1]:49821)
+[39;49m[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:OFF (sentToSerial=True)
+[39;49m[33m[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: latency_probe
+[39;49m[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:ON (sentToSerial=True)
+[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: offline_sub (จาก Endpoint: [::ffff:127.0.0.1]:50024)
+[39;49m[39;49m[33m[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: offline_sub
+[39;49m[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:OFF (sentToSerial=True)
+[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: latency_probe (จาก Endpoint: [::ffff:127.0.0.1]:50035)
+[39;49m[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (latency_probe) → LED:ON (sentToSerial=True)
+[39;49m[33m[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: latency_probe
+[39;49m[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 REST → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 MQTT (Flutter_Switch_1793069514422) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:OFF
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:OFF (sentToSerial=True)
+[40m[32minfo[39m[22m[49m: GatewayHub[0]
+      🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: LED:ON
+[40m[32minfo[39m[22m[49m: LedController[0]
+      💡 SignalR (Web) → LED:ON (sentToSerial=True)
+[39;49m[92m[MQTT Server] 🟢 Client เชื่อมต่อ: cli_check (จาก Endpoint: [::ffff:127.0.0.1]:50222)
+[39;49m[39;49m[33m[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: cli_check
+[39;49m

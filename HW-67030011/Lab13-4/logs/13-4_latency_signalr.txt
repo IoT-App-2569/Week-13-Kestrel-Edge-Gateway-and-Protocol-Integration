@@ -1,0 +1,1 @@
+SignalR invoke->LedStateUpdated  n=20  min=1.10  median=2.05  mean=2.19  max=4.90 ms
