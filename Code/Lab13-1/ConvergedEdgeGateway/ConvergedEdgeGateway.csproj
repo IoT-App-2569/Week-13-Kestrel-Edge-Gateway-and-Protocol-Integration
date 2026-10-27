@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <!-- Secrets (MQTT password) live in %APPDATA%\Microsoft\UserSecrets\<id>, never in this folder -->
+    <UserSecretsId>week13-lab13-1-converged-edge-gateway</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Versions are pinned in Code/Directory.Packages.props -->
+    <PackageReference Include="MQTTnet" />
+    <PackageReference Include="MQTTnet.AspNetCore" />
+  </ItemGroup>
+
+</Project>

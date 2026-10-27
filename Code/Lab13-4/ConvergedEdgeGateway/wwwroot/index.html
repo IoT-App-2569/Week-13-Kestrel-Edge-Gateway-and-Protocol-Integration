@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kestrel Converged Edge Command Center</title>
+    <!-- SignalR client เก็บไว้ในเครื่อง (ไม่โหลดจาก CDN) เพื่อให้ใช้งานได้แม้ตัดอินเทอร์เน็ต -->
+    <script src="lib/signalr/signalr.min.js"></script>
+    <script src="app.js" defer></script>
+    <style>
+        :root {
+            --bg: #0b0f19;
+            --card-bg: rgba(22, 30, 49, 0.75);
+            --primary: #00E5FF;
+            --accent: #00E676;
+            --danger: #FF5252;
+            --rest: #FFC400;
+            --ws: #e040fb;
+            --muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            background: var(--bg);
+            color: #f1f5f9;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .status {
+            font-weight: bold;
+            color: var(--muted);
+        }
+
+        .status.online { color: var(--accent); }
+        .status.offline { color: var(--danger); }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: var(--muted);
+        }
+
+        .center { text-align: center; }
+
+        .gauge-val {
+            font-size: 52px;
+            font-weight: 800;
+            font-family: monospace;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .unit {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .bar {
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            margin: 16px 0 8px;
+        }
+
+        .bar-fill {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s;
+        }
+
+        .metric-badge {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .btn-toggle {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #334155;
+            color: white;
+            margin-top: 16px;
+        }
+
+        .btn-toggle:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-active {
+            background: var(--accent);
+            color: black;
+            box-shadow: 0 0 20px rgba(0, 230, 118, 0.4);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div>
+            <div class="title">⚡ Kestrel Converged Edge Command Center</div>
+            <div class="subtitle">All-in-One Multi-Protocol Bridge (.NET 10 Kestrel)</div>
+        </div>
+        <div id="connStatus" class="status">● Connecting...</div>
+    </div>
+
+    <div class="grid">
+        <!-- การ์ด 1: มาตรวัดเซนเซอร์ -->
+        <div class="card center">
+            <h3>Real-time Potentiometer Voltage</h3>
+            <div class="gauge-val"><span id="voltageText">0.00</span> <span class="unit">V</span></div>
+            <div class="bar"><div class="bar-fill" id="voltageBar"></div></div>
+            <div class="subtitle" id="rawText">Raw ADC: 0 / 4095</div>
+        </div>
+
+        <!-- การ์ด 2: สวิตช์ควบคุมฮาร์ดแวร์ -->
+        <div class="card">
+            <h3>Hardware Actuator Control</h3>
+            <div class="subtitle">ควบคุม LED Status ขา GPIO2 ข้ามทุกโปรโตคอล</div>
+            <button id="ledBtn" class="btn-toggle" type="button" disabled>🌑 หลอดไฟปิดอยู่ (OFF)</button>
+        </div>
+
+        <!-- การ์ด 3: ตัวนับทราฟฟิก 4 โปรโตคอล -->
+        <div class="card">
+            <h3>Protocol Convergence Metrics</h3>
+            <div class="metric-badge"><span>🔌 Serial Packets (UART)</span><b id="mSerial" style="color:var(--primary);">0</b></div>
+            <div class="metric-badge"><span>📬 MQTT Messages (Broker)</span><b id="mMqtt" style="color:var(--accent);">0</b></div>
+            <div class="metric-badge"><span>🧾 REST Requests (HTTP)</span><b id="mRest" style="color:var(--rest);">0</b></div>
+            <div class="metric-badge"><span>🌐 WebSockets (SignalR)</span><b id="mSignalR" style="color:var(--ws);">0</b></div>
+        </div>
+    </div>
+</body>
+
+</html>

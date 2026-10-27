@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "dependencies": {
+    "net10.0": {
+      "MQTTnet": {
+        "type": "Direct",
+        "requested": "[4.3.7.1207, )",
+        "resolved": "4.3.7.1207",
+        "contentHash": "ah7aHXoedWp5m5a4zy2u4phOEVj0QFYzOb5tFKQeV8RRBrxp+1QREF4ymZuG8D+hzB2dhtrrG81WxTFv0PzOeQ=="
+      },
+      "MQTTnet.AspNetCore": {
+        "type": "Direct",
+        "requested": "[4.3.7.1207, )",
+        "resolved": "4.3.7.1207",
+        "contentHash": "aDtlDjDv65kK0J3/SeagD9h1/xAzxSjbIMEQOzwChyv9mZt79KRRX0TIHQ03SyXfsRC6yyOcyqJxIp8K7FON1A==",
+        "dependencies": {
+          "MQTTnet": "4.3.7.1207"
+        }
+      }
+    }
+  }
+}
