@@ -423,7 +423,7 @@ curl -X POST http://localhost:5000/api/led/on
 <img src="Images/lab13-2-led-on.jpg" alt="LED ติด" width="45%">
 <img src="Images/lab13-2-led-off.jpg" alt="LED ดับ" width="45%">
 </p>
-<p align="center">LED บน GPIO2 ติด (ซ้าย, หลัง <code>LED:ON</code>) และดับ (ขวา, หลัง <code>LED:OFF</code>)</p>
+<p align="center">หลัง <code>LED:ON</code> (ซ้าย) LED สีแดงที่ต่อเพิ่มบน Breadboard และ LED สีฟ้าบนบอร์ด (ทั้งคู่อยู่ที่ GPIO2) ติดพร้อมกัน<br>หลัง <code>LED:OFF</code> (ขวา) ทั้งสองดวงดับ เหลือแค่ไฟสีแดงบนบอร์ดซึ่งเป็นไฟแสดงสถานะไฟเลี้ยง (Power LED)</p>
 
 ---
 
