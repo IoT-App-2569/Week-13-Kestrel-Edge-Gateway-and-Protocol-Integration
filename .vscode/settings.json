@@ -56,5 +56,6 @@
   "C_Cpp_Runner.showCompilationTime": false,
   "C_Cpp_Runner.useLinkTimeOptimization": false,
   "C_Cpp_Runner.msvcSecureNoWarnings": false,
-  "cmake.sourceDirectory": "D:/GitHubRepos/__ENGEDU/__Iot_App_2569/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/Example_Codes/ESP32_ADC_Stream"
+  "cmake.sourceDirectory": "D:/GitHubRepos/__ENGEDU/__Iot_App_2569/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/Example_Codes/ESP32_ADC_Stream",
+  "idf.currentSetup": "C:\\esp\\v6.0.2\\esp-idf"
 }
