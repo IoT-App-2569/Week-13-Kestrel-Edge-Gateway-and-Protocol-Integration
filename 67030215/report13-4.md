@@ -1,1 +1,276 @@
+# ใบงานการทดลองที่ 13.4 (The Grand Finale)
+### การทดสอบผสานรวมระบบไอโอทีแบบครบวงจร (ESP32 + Kestrel Gateway + Flutter App + Web Command Center)
 
+> [!NOTE] **คำชี้แจง (The Grand Finale Capstone)**
+> ยินดีด้วยที่ท่านได้เดินทางมาถึงการทดลองสุดท้ายของรายวิชา! ในใบงานนี้นักศึกษาจะได้นำผลงานที่สร้างขึ้นตลอดทั้งภาคการศึกษามารวมพลังกันเป็น **ระบบนิเวศไอโอทีแบบบูรณาการระดับสมบูรณ์แบบ (The Ultimate Converged IoT Ecosystem)** โดยมี **Kestrel .NET 8 Edge Gateway** ทำหน้าที่เป็นหัวใจบัญชาการ สื่อสารกับ **ฮาร์ดแวร์จริง ESP32**, เชื่อมต่อกับ **แอปมือถือ Flutter**, และประสานข้อมูลสดกับ **เว็บแดชบอร์ด SignalR** อย่างไร้รอยต่อ
+
+---
+
+## 1. วัตถุประสงค์การทดลอง
+1. สามารถประกอบและเชื่อมโยงระบบไอโอทีที่ใช้ 4 โปรโตคอล (Serial, MQTT, REST, WebSockets) ให้ทำงานสอดประสานกันได้สมบูรณ์
+2. สามารถทดสอบการซิงโครไนซ์สถานะแบบสามประสาน (Hardware <-> Mobile App <-> Web Dashboard) แบบเรียลไทม์ได้
+3. สามารถพิสูจน์คุณสมบัติความอยู่รอดในระดับขอบ (Local Survivability) เมื่อตัดการเชื่อมต่ออินเทอร์เน็ตภายนอกได้
+4. สามารถวัดความหน่วงเวลาเปรียบเทียบในแต่ละเส้นทางการสื่อสารของระบบได้
+
+---
+
+### กิจกรรมที่ 13-4.2: การทดสอบ 4 มหาการทดลอง (The Grand Verification Matrix)
+
+ให้นักศึกษาทำการทดสอบและบันทึกผลการทำงาน
+
+**1. Universal Telemetry Sync**
+```
+ทำอะไร: หมุนตัวต้านทานปรับค่าได้ (Potentiometer) บนบอร์ดจริง
+เกิดอะไรขึ้น: ค่าแรงดันวิ่งผ่านสาย Serial เข้า Kestrel แล้วตัวเลขบนเว็บและเข็ม Radial Gauge บน Flutter หมุนตามพร้อมกัน
+ผล: ✅ ผ่าน
+```
+
+**2. Mobile-to-Web Actuation**
+```
+ทำอะไร: แตะสวิตช์เปิดไฟบนแอป Flutter (ส่งผ่าน MQTT)
+เกิดอะไรขึ้น: หลอดไฟ LED บนบอร์ด ESP32 ติด และปุ่มบนหน้าเว็บเปลี่ยนเป็นสีเขียว "ON" เอง
+ผล: ✅ ผ่าน
+```
+
+**3. Web-to-Mobile Actuation**
+```
+ทำอะไร: คลิกปุ่มปิดไฟบนหน้าเว็บ (ส่งผ่าน SignalR)
+เกิดอะไรขึ้น: หลอดไฟ LED บนบอร์ดดับทันที และสวิตช์บนแอป Flutter สลับเป็น "OFF" ทันที
+ผล: ✅ ผ่าน
+```
+
+**4. Third-Party REST Override**
+```
+ทำอะไร: ยิงคำสั่ง curl -X POST http://localhost:5000/api/led/on
+เกิดอะไรขึ้น: หลอดไฟสว่าง และทั้งหน้าเว็บกับแอปมือถืออัปเดตเป็น "ON" พร้อมกัน
+ผล: ✅ ผ่าน
+```
+
+---
+
+### กิจกรรมที่ 13-4.3: การทดสอบความทนทานในสภาวะตัดเน็ต (Local Survivability Challenge)
+
+1. ถอดสาย LAN หรือปิดอินเทอร์เน็ตภายนอกของคอมพิวเตอร์และมือถือ (เหลือเฉพาะ Wi-Fi วงแลนที่ไม่มีเน็ต)
+2. สังเกตว่า ESP32 ยังส่งข้อมูลได้ไหม และแอป Flutter กับเว็บแดชบอร์ดยังดูค่าและสั่งไฟได้ไหม
+3. **สรุปผล**: ระบบแบบ Converged Edge Gateway อยู่รอดได้ 100% ไม่ล่มตามอินเทอร์เน็ตภายนอก
+
+---
+
+## ผลการทดลอง
+
+### กิจกรรม 13-4.1 การเตรียมระบบ
+
+**ESP32**
+```
+เฟิร์มแวร์ Lab13_ESP32_Serial (ESP-IDF v6.0.2)
+ส่ง {"voltage":..,"raw":..,"uptime":..} ทุก 500 ms ทาง COM3 115200 bps
+รับคำสั่ง LED:ON / LED:OFF และตอบ {"led_state":true,"ack":true} ทุกครั้งที่ไฟเปลี่ยน
+```
+
+**Kestrel Gateway**
+```
+.NET 10, MQTTnet 4.3.7, System.IO.Ports 8.0.0
+พอร์ต HTTP 5000 และ MQTT 1883
+```
+
+**เว็บแดชบอร์ด**
+```
+http://localhost:5000 โหลด signalr.min.js จาก wwwroot/lib ในเครื่อง
+```
+
+**แอป Flutter**
+```
+iot_unified_dashboard จากใบงาน 12.4 ใช้ Broker 127.0.0.1 ไม่ได้แก้โค้ด
+```
+
+### การปรับโค้ดจากใบงาน
+
+โค้ด Gateway ตามใบงาน 13.1–13.3 ใช้กับแอป Flutter สัปดาห์ 12 ไม่ได้ เพราะแอปต้องการ 3 หัวข้อที่ Gateway ไม่มี จึงปรับดังนี้
+
+**1. ไม่มีใครส่ง `iot/esp32/status`**
+```
+ปัญหา: แอปขึ้น OFFLINE และกดสวิตช์ไม่ได้
+แก้: Gateway ส่ง online/offline แบบ Retain ตามว่ายังได้ข้อมูล Serial อยู่ไหม (เงียบเกิน 5 วินาที = offline)
+```
+
+**2. ไม่มีใครฟัง `iot/esp32/control`**
+```
+ปัญหา: กดสวิตช์ในแอปแล้วไฟไม่ติด
+แก้: ใช้ InterceptingPublishAsync ดักข้อความจาก Client ภายนอก แปลง {"led":"ON"} เป็น LED:ON แล้วส่งลง Serial
+```
+
+**3. ไม่มีใครส่ง `iot/esp32/led_ack`**
+```
+ปัญหา: สวิตช์ในแอปค้างที่ Waiting ACK
+แก้: ESP32 ตอบ ACK ทาง Serial แล้ว Gateway ส่งต่อเข้า iot/esp32/led_ack
+```
+
+**4. ปุ่มเว็บเปลี่ยนก่อนรู้ผลจริง**
+```
+ปัญหา: สั่งจาก REST หรือ Flutter แล้วปุ่มเว็บไม่ตรงความจริง (พบในใบงาน 13.3)
+แก้: ทุกช่องทางอัปเดตจาก Hardware ACK เท่านั้น ปุ่มรอ ACK และกดไม่ได้เมื่อบอร์ดออฟไลน์
+```
+
+**5. เว็บโหลด SignalR จาก CDN**
+```
+ปัญหา: ตัดเน็ตแล้วเว็บใช้ไม่ได้
+แก้: ดาวน์โหลด signalr.min.js ไว้ใน wwwroot/lib
+```
+
+**6. ตัวนับใช้ `++` และไม่นับ REST**
+```
+ปัญหา: ค่าอาจผิดเมื่อหลายเธรดเพิ่มพร้อมกัน
+แก้: ใช้ Interlocked และเพิ่มตัวนับ REST บนหน้าเว็บ
+```
+
+**7. หลายช่องทางเขียน Serial พร้อมกันได้**
+```
+ปัญหา: คำสั่งอาจปนกัน
+แก้: ใส่ lock ใน SendSerialCommand
+```
+
+**8. หน้าเว็บที่หลุดยังขึ้น SignalR Online**
+```
+ปัญหา: ผู้ใช้เข้าใจผิดว่าระบบปกติ
+แก้: เพิ่ม onreconnecting / onclose ให้ป้ายเปลี่ยนตามสถานะจริง
+```
+
+**เส้นทางคำสั่ง LED หลังปรับ (ทุกช่องทางเหมือนกัน)**
+```
+เว็บ (SignalR) / Flutter (MQTT) / curl (REST)
+        ↓
+Gateway → Serial "LED:ON" → ESP32 เปิดไฟที่ GPIO 2
+                                ↓
+ESP32 → Serial {"led_state":true,"ack":true}
+        ↓
+Gateway → MQTT iot/esp32/led_ack (Flutter) + SignalR LedStateUpdated (เว็บ)
+```
+
+### กิจกรรม 13-4.2 The Grand Verification Matrix
+
+**1. Universal Telemetry Sync**
+```
+ทำอะไร: หมุน Potentiometer
+ผลที่เห็น: เว็บและ Flutter แสดงค่าเดียวกันพร้อมกัน 2.35 V / 2913 เข็ม Gauge กับกราฟ Live Trend ขยับตาม และ Uptime แสดงปกติ
+ผล: ✅ ผ่าน
+```
+
+**2. Mobile-to-Web Actuation**
+```
+ทำอะไร: กดสวิตช์ปิดไฟใน Flutter
+Log: 📩 Flutter_Switch_... -> iot/esp32/control : {"led":"OFF"} → [MQTT] ส่ง LED:OFF → ACK OFF
+ผลที่เห็น: ไฟดับ และปุ่มเว็บเปลี่ยนเป็น OFF เอง
+ผล: ✅ ผ่าน
+```
+
+**3. Web-to-Mobile Actuation**
+```
+ทำอะไร: กดปุ่มเปิดไฟบนเว็บ
+Log: [SignalR] ส่ง LED:ON → ACK ON
+ผลที่เห็น: ไฟติด และสวิตช์ใน Flutter เปลี่ยนเป็น ON เอง
+ผล: ✅ ผ่าน
+```
+
+**4. Third-Party REST Override**
+```
+ทำอะไร: curl.exe -X POST http://localhost:5000/api/led/on
+ผลที่เห็น: ได้ "serverTime":"18:16:23" และหน้าเว็บขึ้น "อัปเดตจาก Hardware ACK 6:16:23 PM" ในวินาทีเดียวกัน ไฟติด ทั้งเว็บและ Flutter เป็น ON
+ผล: ✅ ผ่าน
+```
+
+<img width="1568" height="741" alt="image" src="https://github.com/user-attachments/assets/fc182c35-1942-44c8-a3c5-14f09f4d8803" />
+
+
+<img width="1568" height="750" alt="image" src="https://github.com/user-attachments/assets/8f485cb9-f8ae-411f-bf93-9a7ca15b60a1" />
+<img width="808" height="275" alt="image" src="https://github.com/user-attachments/assets/a65c8cc8-701e-4404-92fb-61aeab35e0fa" />
+
+
+<img width="1568" height="738" alt="image" src="https://github.com/user-attachments/assets/c275b662-53aa-4ab3-b00d-a184fe2d9563" />
+
+
+<img width="1883" height="1100" alt="image" src="https://github.com/user-attachments/assets/55f5ea5a-cbae-467e-bbc1-919c9b478f03" />
+
+
+### กิจกรรม 13-4.3 Local Survivability Challenge
+
+ปิด Wi-Fi ของคอมพิวเตอร์ ยืนยันด้วย `google.com` ขึ้น `ERR_INTERNET_DISCONNECTED`
+
+```
+✅ ESP32 ยังส่งข้อมูล เว็บและ Flutter แสดงค่าเดียวกัน (1.03 V / 1279)
+✅ กดปุ่มบนเว็บ ([SignalR] ส่ง LED:OFF → ACK OFF) Flutter เปลี่ยนตาม
+✅ กดสวิตช์ใน Flutter ([MQTT] ส่ง LED:ON → ACK ON) เว็บเปลี่ยนตาม
+✅ รีเฟรชหน้าเว็บ (Ctrl+F5) ยังโหลดได้และขึ้น SignalR Online
+```
+
+ระบบทำงานครบโดยไม่มีอินเทอร์เน็ต เพราะ Broker, เว็บเซิร์ฟเวอร์, SignalR และไฟล์หน้าเว็บอยู่บน Gateway เครื่องเดียว และ ESP32 ต่อทางสาย USB ไม่ผ่านเครือข่าย
+
+<img width="1917" height="1198" alt="image" src="https://github.com/user-attachments/assets/90323b9d-95ff-4aae-929c-bef636d3b035" />
+<img width="1917" height="1130" alt="image" src="https://github.com/user-attachments/assets/30fa105f-aee9-4d16-a809-fba146af9bf6" />
+
+
+<img width="1917" height="1198" alt="image" src="https://github.com/user-attachments/assets/7e71b249-4140-4742-9037-5ecc808fd66e" />
+<img width="1917" height="1198" alt="image" src="https://github.com/user-attachments/assets/2eeaabb1-be0a-43d1-aabf-42d6626a0d42" />
+
+
+### การทดสอบเพิ่มเติม: ถอดสาย USB ของ ESP32
+
+**ตอนถอดสาย**
+```
+Gateway: Could not find file 'COM3' → 🔴 ESP32 OFFLINE
+เว็บ: ● ESP32 Offline ปุ่มกดไม่ได้
+Flutter: ESP32 ฮาร์ดแวร์: ออฟไลน์ (OFFLINE)
+```
+
+**ตอนเสียบสายกลับ**
+```
+Gateway: ✅ เชื่อมต่อ COM3 สำเร็จ! → 🟢 ESP32 ONLINE
+เว็บ: กลับเป็น Online เอง
+Flutter: กลับเป็น ONLINE เอง
+```
+
+ตรวจพบภายในไม่กี่วินาที เร็วกว่า LWT ในใบงาน 12.4 ที่ใช้ราว 90 วินาที เพราะ Gateway รู้ทันทีที่พอร์ต COM หายไป ไม่ต้องรอ Keep Alive หมดเวลา
+
+<img width="1917" height="1137" alt="image" src="https://github.com/user-attachments/assets/9761561c-2628-46be-94da-86a53aa5fb76" />
+<img width="1917" height="1128" alt="image" src="https://github.com/user-attachments/assets/876b49b5-7263-4c18-96d6-9706c7f868d3" />
+
+
+### ข้อสังเกต
+
+**1. สถานะไฟไม่ตรงหลังบอร์ดรีบูต**
+```
+เสียบสายกลับแล้วบอร์ดรีบูตและไฟดับ แต่เว็บกับ Flutter ยังขึ้น ON
+เพราะ ACK ตอนบูตออกมาก่อนที่ Gateway จะเปิด COM3 ทัน (ลองใหม่ทุก 3 วินาที) ข้อความเลยหาย
+แก้: ให้ ESP32 แนบสถานะไฟไปกับ Telemetry ทุกรอบ ทุกช่องทางจะซิงก์เองใน 500 ms
+```
+
+**2. เปิด Gateway ใหม่ตอนไฟติดค้าง**
+```
+ระบบเข้าใจว่าไฟปิด ต้องกดปุ่ม EN ให้บอร์ดรีบูตแล้วรายงานสถานะใหม่ (สาเหตุเดียวกับข้อ 1)
+```
+
+**3. ACK ไม่ได้ส่งแบบ Retain**
+```
+Flutter ที่เปิดทีหลังจะไม่รู้สถานะไฟจนกว่าไฟจะเปลี่ยนครั้งถัดไป
+แก้: ส่ง iot/esp32/led_ack แบบ Retain เหมือน iot/esp32/status
+```
+
+**4. ตัวนับ MQTT มากกว่า Serial เล็กน้อย**
+```
+เพราะ MQTT นับรวมข้อความ status ที่ Gateway สร้างเอง และคำสั่งที่ Flutter ส่งเข้ามา ซึ่งไม่ได้มาจาก Serial
+```
+
+### ปัญหาที่พบและการแก้ไข
+
+**1. ไฟบนบอร์ดติดค้าง แต่ Gateway ใหม่เข้าใจว่าปิด**
+```
+สาเหตุ: บอร์ดรายงานสถานะไฟเฉพาะตอนบูตและตอนเปลี่ยน
+วิธีแก้: กดปุ่ม EN ให้บอร์ดรีบูตแล้วรายงานสถานะใหม่
+```
+
+**2. แท็บเว็บค้างที่ OFF และตัวเลขไม่ขยับ แต่ยังขึ้น SignalR Online**
+```
+สาเหตุ: แท็บเปิดค้างจากใบงาน 13.3 พอ Gateway ถูกหยุดนานเกินช่วง Auto Reconnect (0, 2, 10, 30 วินาที) ก็หลุดถาวร และหน้าเก่าไม่มีโค้ดเปลี่ยนป้ายเมื่อหลุด
+วิธีแก้: ปิดแท็บเก่า เปิดใหม่แล้วกด Ctrl+F5
+```
+
+---
