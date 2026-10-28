@@ -1,0 +1,32 @@
+[09:55:14] waiting for internet to go down (turn Wi-Fi off now)...
+[09:56:48] internet check: curl https://www.google.com -> 000 Could not resolve host: www.google.com
+[09:56:48] Wi-Fi: Wi-Fi Power (en0): Off
+[09:56:48] en0: inactive  inet: 
+
+[09:56:48] 1) telemetry still flowing (Serial -> REST/MQTT/SignalR)
+{"voltage":0.82,"raw":1023,"timestamp":1793069808}
+iot/esp32/telemetry {"voltage":0.79,"raw":981}
+iot/esp32/telemetry {"voltage":0.72,"raw":891}
+iot/esp32/telemetry {"voltage":0.77,"raw":958}
+[09:56:49] web off1_telemetry {"t":"09:56:53","v":"0.77 V","raw":"Raw ADC: 957 / 4095","led":"🌑 หลอดไฟปิดอยู่ (OFF)","s":"696","rest":"26","m":"815","r":"787","conn":"● SignalR Online"}
+
+[09:56:53] 2) MQTT control (as the Flutter app) -> LED ON
+MQTT control->led_ack  n=1  min=1.14  median=1.14  mean=1.14  max=1.14 ms
+[09:56:54] web off2_mqtt_on {"t":"09:56:57","v":"0.77 V","raw":"Raw ADC: 952 / 4095","led":"🌑 หลอดไฟปิดอยู่ (OFF)","s":"704","rest":"26","m":"829","r":"798","conn":"● SignalR Online"}
+
+[09:56:57] 3) Web (SignalR) -> LED OFF
+[09:56:57] web off3_web_off {"t":"09:57:02","v":"0.77 V","raw":"Raw ADC: 951 / 4095","led":"💡 หลอดไฟกำลังสว่าง (ON)","s":"713","rest":"26","m":"839","r":"808","conn":"● SignalR Online"}
+
+[09:57:02] 4) REST -> LED ON
+{"dispatchedCommand":"LED:ON","sentToSerial":true,"serverTime":"09:57:02"}
+[09:57:02] web off4_rest_on {"t":"09:57:05","v":"1.56 V","raw":"Raw ADC: 1939 / 4095","led":"💡 หลอดไฟกำลังสว่าง (ON)","s":"720","rest":"27","m":"847","r":"816","conn":"● SignalR Online"}
+
+[09:57:05] 5) turn the potentiometer now (10 s)
+{"voltage":2.03,"raw":2515,"timestamp":1793069828}
+{"voltage":1.77,"raw":2194,"timestamp":1793069831}
+{"voltage":3.3,"raw":4095,"timestamp":1793069834}
+[09:57:14] web off5_pot {"t":"09:57:17","v":"0.00 V","raw":"Raw ADC: 0 / 4095","led":"💡 หลอดไฟกำลังสว่าง (ON)","s":"744","rest":"30","m":"875","r":"842","conn":"● SignalR Online"}
+
+[09:57:17] still offline? yes
+[09:57:17] done - turn Wi-Fi back on
+[09:57:34] internet back: yes

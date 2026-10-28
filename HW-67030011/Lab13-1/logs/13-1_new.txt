@@ -1,0 +1,9 @@
+^DThe template "ASP.NET Core Empty" was created successfully.
+
+Processing post-creation actions...
+Restoring /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-1/ConvergedEdgeGateway/ConvergedEdgeGateway.csproj:
+  Determining projects to restore...
+  Restored /Users/kbbk/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/HW-67030011/Lab13-1/ConvergedEdgeGateway/ConvergedEdgeGateway.csproj (in 32 ms).
+Restore succeeded.
+
+

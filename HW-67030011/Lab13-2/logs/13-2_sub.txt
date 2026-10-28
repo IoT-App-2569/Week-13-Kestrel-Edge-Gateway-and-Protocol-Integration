@@ -1,0 +1,8 @@
+iot/esp32/telemetry {"voltage":0.80,"raw":991}
+iot/esp32/telemetry {"voltage":0.81,"raw":1008}
+iot/esp32/telemetry {"voltage":0.79,"raw":986}
+iot/esp32/telemetry {"voltage":0.80,"raw":987}
+iot/esp32/telemetry {"voltage":0.82,"raw":1012}
+iot/esp32/telemetry {"voltage":0.79,"raw":984}
+iot/esp32/telemetry {"voltage":0.80,"raw":997}
+iot/esp32/telemetry {"voltage":0.78,"raw":974}

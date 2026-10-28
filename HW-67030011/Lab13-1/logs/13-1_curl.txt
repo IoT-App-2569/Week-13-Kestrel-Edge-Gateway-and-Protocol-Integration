@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Date: Tue, 27 Oct 2026 02:17:20 GMT
+Server: Kestrel
+Transfer-Encoding: chunked
+
+🚀 Kestrel Converged Edge Gateway with Embedded MQTTnet Broker is RUNNING!
