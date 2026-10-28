@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.IO.Ports;
 using System.Text.Json;
+using Microsoft.AspNetCore.SignalR;
 using MQTTnet;
 using MQTTnet.Server;
 
@@ -25,12 +26,21 @@ public class SerialBridgeWorker : BackgroundService
     private readonly int _baudRate = 115200;
     private readonly GatewayStateStore _store;
     private readonly MqttServer _mqttServer;
+    private readonly IHubContext<GatewayHub> _hubContext;
+    private readonly ProtocolMetrics _metrics;
     private readonly ILogger<SerialBridgeWorker> _logger;
 
-    public SerialBridgeWorker(GatewayStateStore store, MqttServer mqttServer, ILogger<SerialBridgeWorker> logger)
+    public SerialBridgeWorker(
+        GatewayStateStore store,
+        MqttServer mqttServer,
+        IHubContext<GatewayHub> hubContext,
+        ProtocolMetrics metrics,
+        ILogger<SerialBridgeWorker> logger)
     {
         _store = store;
         _mqttServer = mqttServer;
+        _hubContext = hubContext;
+        _metrics = metrics;
         _logger = logger;
     }
 
@@ -80,29 +90,64 @@ public class SerialBridgeWorker : BackgroundService
 
     private async Task HandleIncomingSerialLine(string line)
     {
+        double voltage;
+        int raw;
+
         try
         {
-            // ตัวอย่างข้อมูลที่ ESP32 ยิงมา: {"voltage": 1.65, "raw": 2048}
             using var doc = JsonDocument.Parse(line);
             var root = doc.RootElement;
-            double v = root.GetProperty("voltage").GetDouble();
-            int r = root.GetProperty("raw").GetInt32();
-
-            var telemetry = new TelemetryData(v, r, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-            
-            // 1. อัปเดตลง State Store ในหน่วยความจำ
-            _store.Set("latest_telemetry", telemetry);
-
-            // 2. แปลงและผลักเข้าสู่ Embedded MQTT Broker
-            var mqttMsg = new MqttApplicationMessageBuilder()
-                .WithTopic("iot/esp32/telemetry")
-                .WithPayload(line)
-                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce)
-                .Build();
-
-            await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(mqttMsg));
+            if (!root.TryGetProperty("voltage", out var voltageElement) ||
+                !voltageElement.TryGetDouble(out voltage) ||
+                !root.TryGetProperty("raw", out var rawElement) ||
+                !rawElement.TryGetInt32(out raw))
+            {
+                _logger.LogWarning("Ignoring invalid telemetry payload from serial port: {Payload}", line);
+                return;
+            }
         }
-        catch { /* หากไม่ใช่ JSON ให้ข้ามไป */ }
+        catch (JsonException ex)
+        {
+            _logger.LogWarning(ex, "Ignoring invalid JSON from serial port.");
+            return;
+        }
+
+        _metrics.RecordSerialPacket();
+        _store.Set("latest_telemetry", new TelemetryData(
+            voltage,
+            raw,
+            DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
+
+        var mqttMsg = new MqttApplicationMessageBuilder()
+            .WithTopic("iot/esp32/telemetry")
+            .WithPayload(line)
+            .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce)
+            .Build();
+
+        try
+        {
+            await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(mqttMsg));
+            _metrics.RecordMqttMessage();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to forward telemetry to MQTT.");
+        }
+
+        _metrics.RecordSignalRPush();
+        try
+        {
+            await _hubContext.Clients.All.SendAsync("ReceiveTelemetry", new
+            {
+                voltage,
+                raw,
+                metrics = _metrics
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to push telemetry to SignalR clients.");
+        }
     }
 
     // ฟังก์ชันส่งคำสั่งย้อนกลับไปหาบอร์ดทาง Serial

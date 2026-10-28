@@ -29,8 +29,18 @@ public class GatewayHub : Hub
 // 2. คลาสนับสถิติทราฟฟิกของแต่ละโปรโตคอล
 public class ProtocolMetrics
 {
-    public long SerialPackets { get; set; } = 0;
-    public long MqttMessages { get; set; } = 0;
-    public long RestRequests { get; set; } = 0;
-    public long SignalRPushes { get; set; } = 0;
+    private long _serialPackets;
+    private long _mqttMessages;
+    private long _restRequests;
+    private long _signalRPushes;
+
+    public long SerialPackets => Interlocked.Read(ref _serialPackets);
+    public long MqttMessages => Interlocked.Read(ref _mqttMessages);
+    public long RestRequests => Interlocked.Read(ref _restRequests);
+    public long SignalRPushes => Interlocked.Read(ref _signalRPushes);
+
+    public void RecordSerialPacket() => Interlocked.Increment(ref _serialPackets);
+    public void RecordMqttMessage() => Interlocked.Increment(ref _mqttMessages);
+    public void RecordRestRequest() => Interlocked.Increment(ref _restRequests);
+    public void RecordSignalRPush() => Interlocked.Increment(ref _signalRPushes);
 }

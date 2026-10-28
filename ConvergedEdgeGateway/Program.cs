@@ -18,7 +18,25 @@ builder.Services.AddHostedService<SerialBridgeWorker>();
 builder.Services.AddSingleton(sp => 
     sp.GetServices<IHostedService>().OfType<SerialBridgeWorker>().First());
 
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<ProtocolMetrics>();
+
 var app = builder.Build();
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        context.RequestServices.GetRequiredService<ProtocolMetrics>().RecordRestRequest();
+    }
+
+    await next();
+});
+
+app.MapHub<GatewayHub>("/hubs/gateway");
 
 app.UseMqttServer(server => { /* callbacks */ });
 

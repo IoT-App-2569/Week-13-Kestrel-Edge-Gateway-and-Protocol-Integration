@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kestrel Converged Edge Command Center</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <style>
+        :root {
+            color-scheme: dark;
+            --bg: #0b0f19;
+            --card-bg: rgba(22, 30, 49, 0.78);
+            --primary: #00e5ff;
+            --accent: #00e676;
+            --danger: #ff5252;
+            --muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.09);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            margin: 0;
+            padding: 24px;
+            background: radial-gradient(ellipse at top, #17243b 0, var(--bg) 55%);
+            color: #f1f5f9;
+            font-family: "Segoe UI", system-ui, sans-serif;
+        }
+
+        main { max-width: 1180px; margin: 0 auto; }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .title { color: var(--primary); font-size: clamp(20px, 3vw, 28px); font-weight: 750; }
+        .subtitle, .label { color: var(--muted); }
+        .subtitle { margin-top: 6px; font-size: 14px; }
+        #connStatus { color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            padding: 24px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: var(--card-bg);
+            box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(16px);
+        }
+
+        h2 { margin: 0 0 18px; color: var(--muted); font-size: 16px; }
+        .gauge-val { margin: 10px 0; color: white; font: 800 52px/1.2 ui-monospace, monospace; text-align: center; }
+        .unit { color: var(--primary); font-size: 24px; }
+        #rawText { color: var(--muted); text-align: center; }
+
+        .btn-toggle {
+            width: 100%;
+            margin-top: 20px;
+            padding: 16px;
+            border: 0;
+            border-radius: 14px;
+            background: #334155;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn-toggle:hover:not(:disabled) { transform: translateY(-1px); }
+        .btn-toggle:disabled { cursor: not-allowed; opacity: 0.55; }
+        .btn-active { background: var(--accent); color: #062414; }
+        .metric-badge {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 8px 0;
+            padding: 12px;
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.28);
+        }
+
+        @media (max-width: 520px) {
+            body { padding: 16px; }
+            .header { align-items: flex-start; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <header class="header">
+            <div>
+                <div class="title">⚡ Kestrel Converged Edge Command Center</div>
+                <div class="subtitle">Real-time Serial, MQTT, REST &amp; SignalR gateway</div>
+            </div>
+            <div id="connStatus" role="status">● กำลังเชื่อมต่อ SignalR...</div>
+        </header>
+
+        <section class="grid" aria-label="Gateway dashboard">
+            <article class="card">
+                <h2>Real-time Potentiometer Voltage</h2>
+                <div class="gauge-val"><span id="voltageText">--.--</span> <span class="unit">V</span></div>
+                <div id="rawText">กำลังรอข้อมูลจาก ESP32...</div>
+            </article>
+
+            <article class="card">
+                <h2>Hardware Actuator Control</h2>
+                <div class="label">ควบคุม LED Status ขา GPIO2 ผ่าน Serial</div>
+                <button id="ledBtn" class="btn-toggle" type="button" disabled>🌑 หลอดไฟปิดอยู่ (OFF)</button>
+                <div id="commandStatus" class="subtitle" role="status"></div>
+            </article>
+
+            <article class="card">
+                <h2>Protocol Convergence Metrics</h2>
+                <div class="metric-badge"><span>🔌 Serial Packets</span><b id="mSerial">0</b></div>
+                <div class="metric-badge"><span>📬 MQTT Messages</span><b id="mMqtt">0</b></div>
+                <div class="metric-badge"><span>🌐 REST Requests</span><b id="mRest">0</b></div>
+                <div class="metric-badge"><span>🔗 SignalR Pushes</span><b id="mSignalR">0</b></div>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        const statusElement = document.getElementById("connStatus");
+        const commandStatus = document.getElementById("commandStatus");
+        const ledButton = document.getElementById("ledBtn");
+        let isLedOn = false;
+
+        function setConnectionStatus(message, online) {
+            statusElement.textContent = message;
+            statusElement.style.color = online ? "var(--accent)" : "var(--danger)";
+            ledButton.disabled = !online;
+        }
+
+        function updateLedButton() {
+            ledButton.classList.toggle("btn-active", isLedOn);
+            ledButton.textContent = isLedOn
+                ? "💡 หลอดไฟกำลังสว่าง (ON)"
+                : "🌑 หลอดไฟปิดอยู่ (OFF)";
+        }
+
+        function showTelemetry(data) {
+            document.getElementById("voltageText").textContent = Number(data.voltage).toFixed(2);
+            document.getElementById("rawText").textContent = `Raw ADC: ${data.raw} / 4095`;
+
+            if (data.metrics) {
+                document.getElementById("mSerial").textContent = data.metrics.serialPackets;
+                document.getElementById("mMqtt").textContent = data.metrics.mqttMessages;
+                document.getElementById("mRest").textContent = data.metrics.restRequests;
+                document.getElementById("mSignalR").textContent = data.metrics.signalRPushes;
+            }
+        }
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/gateway")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("ReceiveTelemetry", showTelemetry);
+        connection.on("LedStateUpdated", state => {
+            isLedOn = state;
+            updateLedButton();
+            commandStatus.textContent = `สถานะ LED: ${state ? "ON" : "OFF"}`;
+        });
+
+        connection.onreconnecting(() => setConnectionStatus("● กำลังเชื่อมต่อใหม่...", false));
+        connection.onreconnected(() => setConnectionStatus("● SignalR Online", true));
+        connection.onclose(() => setConnectionStatus("○ SignalR Disconnected", false));
+
+        ledButton.addEventListener("click", async () => {
+            ledButton.disabled = true;
+            commandStatus.textContent = "กำลังส่งคำสั่ง...";
+            try {
+                await connection.invoke("ToggleLed", !isLedOn);
+            } catch (error) {
+                console.error("Could not send LED command:", error);
+                commandStatus.textContent = "ส่งคำสั่งไม่สำเร็จ กรุณาตรวจการเชื่อมต่อ";
+            } finally {
+                ledButton.disabled = connection.state !== signalR.HubConnectionState.Connected;
+            }
+        });
+
+        connection.start()
+            .then(() => setConnectionStatus("● SignalR Online", true))
+            .catch(error => {
+                console.error("SignalR connection failed:", error);
+                setConnectionStatus("○ SignalR Disconnected", false);
+            });
+    </script>
+</body>
+</html>
