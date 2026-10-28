@@ -1,3 +1,8 @@
+### กิจกรรมที่ 13-2.4: โค้ดฝั่ง ESP32 สำหรับสื่อสารสองทางผ่าน Serial (`main.c`)
+
+สำหรับฝั่งไมโครคอนโทรลเลอร์ ให้เขียนโค้ดในโปรเจกต์ ESP-IDF เพื่ออ่านค่าแอนะล็อกและสตรีม JSON ออกทาง Serial รวมถึงอ่านคำสั่งควบคุมหลอดไฟจาก C# Gateway
+<img width="1024" height="358" alt="image" src="https://github.com/user-attachments/assets/ee07cce0-575b-40cd-959e-f9a152903a86" />
+
 ### กิจกรรมที่ 13-2.5: การทดสอบสะพานเชื่อมต่อ
 
 > [!WARNING] **ข้อพึงระวังเรื่องพอร์ตสื่อสารอนุกรม (Serial Port Exclusive Lock):**
@@ -23,6 +28,8 @@ mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v
 curl -X POST http://localhost:5000/api/led/on
 ```
 *สังเกตว่าคำสั่ง `LED:ON` ถูกส่งผ่านสาย USB เข้าไปควบคุมบอร์ดทันที!*
+### ผลทดลอง
+<img width="1024" height="311" alt="image" src="https://github.com/user-attachments/assets/9ac25a30-fc1b-4060-b62d-08fc301282a7" />
 
 ---
 
