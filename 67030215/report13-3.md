@@ -1,8 +1,10 @@
 <img width="993" height="296" alt="image" src="https://github.com/user-attachments/assets/f6a66f4b-b612-4e9d-bae9-afd21ba2b0a4" />
+
 รันเซิร์ฟเวอร์ด้วย `dotnet run` และเปิดเบราว์เซอร์ไปที่ `http://localhost:5000`:
 * คุณจะพบหน้าจอศูนย์บัญชาการที่ตัวเลขแรงดันไฟฟ้าวิ่งสดๆ ตามการหมุนตัวต้านทานบนบอร์ด!
 * ตัวเลขนับทราฟฟิกของทั้ง Serial, MQTT และ SignalR จะวิ่งขึ้นพร้อมๆ กันในเสี้ยววินาที!
 * เมื่อคลิกปุ่มเปิดไฟบนหน้าเว็บ หลอดไฟ LED จริงบนบอร์ด ESP32 จะสว่างขึ้นทันที!
+
 
 # ผลการทดลองกลุ่มร่วมกับWuthichai
 <img width="991" height="340" alt="image" src="https://github.com/user-attachments/assets/edac3d5a-956c-4f26-9b51-7d731661e789" />
