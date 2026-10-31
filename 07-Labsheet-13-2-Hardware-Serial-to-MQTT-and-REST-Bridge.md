@@ -308,6 +308,12 @@ dotnet run
 curl http://localhost:5000/api/telemetry/latest
 ```
 *สังเกตว่าจะได้ข้อมูล JSON ของแรงดันไฟฟ้าทันที!*
+
+<img width="1917" height="957" alt="image" src="https://github.com/user-attachments/assets/dbb8ac48-7b83-455b-83b6-ed580f6dd106" />
+
+<img width="1917" height="342" alt="image" src="https://github.com/user-attachments/assets/a07f1833-1aba-4c90-aacc-eb33e1cb3370" />
+
+
 3. เปิด `mosquitto_sub`:
 ```powershell
 mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v
