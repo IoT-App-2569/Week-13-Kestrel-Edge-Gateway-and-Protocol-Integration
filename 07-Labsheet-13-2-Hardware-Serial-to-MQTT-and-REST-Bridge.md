@@ -308,19 +308,38 @@ dotnet run
 curl http://localhost:5000/api/telemetry/latest
 ```
 *สังเกตว่าจะได้ข้อมูล JSON ของแรงดันไฟฟ้าทันที!*
+
+<img width="1512" height="601" alt="ภาพถ่ายหน้าจอ 2569-10-26 เวลา 10 39 44" src="https://github.com/user-attachments/assets/54b02c78-e918-4e6f-b584-9c7739258efe" />
+
 3. เปิด `mosquitto_sub`:
 ```powershell
 mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v
 ```
 *สังเกตว่าข้อมูลที่อ่านจากสาย USB Serial ถูกส่งต่อเข้าหัวข้อ MQTT อัตโนมัติ!*
+
+<img width="1512" height="982" alt="ภาพถ่ายหน้าจอ 2569-10-26 เวลา 10 40 54" src="https://github.com/user-attachments/assets/87996f34-8edd-4739-8f53-58a8e63cf0c2" />
+
 4. ทดสอบสั่งเปิด-ปิดไฟผ่าน REST API:
 ```powershell
 curl -X POST http://localhost:5000/api/led/on
 ```
 *สังเกตว่าคำสั่ง `LED:ON` ถูกส่งผ่านสาย USB เข้าไปควบคุมบอร์ดทันที!*
 
+<img width="802" height="471" alt="ภาพถ่ายหน้าจอ 2569-10-26 เวลา 10 42 12" src="https://github.com/user-attachments/assets/7f422e70-8950-44d1-9575-d750055fcfef" />
+
+<img width="549" height="728" alt="image" src="https://github.com/user-attachments/assets/e231c197-29de-4fd6-a0d2-bb6779613694" />
+
 ---
 
 ## 4. คำถามท้ายการทดลอง
 1. สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?
+
+```
+อุปกรณ์รุ่นเก่าที่ไม่มี Wi-Fi ส่งข้อมูลทางสาย Serial ได้อย่างเดียว แต่เมื่อต่อเข้ากับ Gateway ข้อมูลที่อ่านได้จะถูก publish ไป MQTT Broker ทำให้แอปมือถือและเว็บแดชบอร์ดดูค่าได้จากเครือข่ายโดยไม่ต้องเปลี่ยนอุปกรณ์ และสั่งงานกลับได้ เช่น เปิด-ปิดไฟผ่าน SendSerialCommand อุปกรณ์เดิมจึงเชื่อมต่อและใช้งานแบบออนไลน์ร่วมกับระบบสมัยใหม่ได้ผ่าน Gateway ตัวเดียว
+```
+
 2. เพราะเหตุใดเราจึงต้องใช้ `BackgroundService` ในการอ่านข้อมูล Serial แทนที่จะเปิดพอร์ตอ่านตรงๆ ภายในฟังก์ชันของ REST API?
+
+```
+พอร์ต Serial ต้องเปิดค้างและอ่านต่อเนื่อง แต่ REST จบเป็นรายคำขอ ถ้าเปิดทุกคำขอจะพลาดข้อมูลระหว่างคำขอ และเปิดพอร์ตซ้อนกันไม่ได้ BackgroundService เปิดพอร์ตครั้งเดียวในลูป ExecuteAsync ลองเปิดใหม่ทุก 3 วินาทีด้วย Task.Delay(3000) เมื่อพอร์ตหลุด และให้ API ใช้ Worker ตัวเดียวกันผ่าน SendSerialCommand ตอนทดลองบน macOS เมื่อ idf monitor เปิดพอร์ตซ้อนกับ Kestrel ข้อมูลถูกแย่งกันอ่านและ /api/telemetry/latest ตอบ No telemetry yet
+```
