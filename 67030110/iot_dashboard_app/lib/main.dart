@@ -39,7 +39,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
   // หมายเลข IP ของเครื่องรัน Broker:
   // - ใช้ '127.0.0.1' หากรันบนคอมพิวเตอร์เครื่องเดียวกัน (Windows Desktop) สำหรับการทดสอบจำลอง
   // - เปลี่ยนเป็น IP วง LAN ของเครื่องคอมพิวเตอร์ (เช่น '192.168.1.100') เมื่อรันแอปบนมือถือ หรือเชื่อมต่อกับ ESP32 จริง
-  final String brokerIp = '10.0.2.2';
+  final String brokerIp = '172.20.10.3';
 
   late final List<Widget> _pages;
 
@@ -81,3 +81,6 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     );
   }
 }
+
+
+

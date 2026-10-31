@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "D:/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/67030110/ESP32_ADC_Stream"
+    "cmake.sourceDirectory": "D:/IOT/Week-13-Kestrel-Edge-Gateway-and-Protocol-Integration/67030110/ESP32_ADC_Stream",
+    "idf.currentSetup": "C:\\Users\\natja\\esp\\v5.5.1\\esp-idf"
 }
