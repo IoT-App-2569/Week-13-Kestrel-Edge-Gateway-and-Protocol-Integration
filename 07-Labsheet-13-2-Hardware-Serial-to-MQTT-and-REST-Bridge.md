@@ -325,6 +325,11 @@ curl -X POST http://localhost:5000/api/led/on
 ```
 *สังเกตว่าคำสั่ง `LED:ON` ถูกส่งผ่านสาย USB เข้าไปควบคุมบอร์ดทันที!*
 
+<img width="931" height="312" alt="image" src="https://github.com/user-attachments/assets/c84236b6-fab6-442b-b3dd-e8cda0161eff" />
+
+<img width="1632" height="538" alt="image" src="https://github.com/user-attachments/assets/90d41be5-fdc9-4577-b974-6baeb0ee9bfc" />
+
+
 ---
 
 ## 4. คำถามท้ายการทดลอง
