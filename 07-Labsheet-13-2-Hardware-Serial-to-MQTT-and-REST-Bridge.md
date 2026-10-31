@@ -321,6 +321,15 @@ curl -X POST http://localhost:5000/api/led/on
 
 ---
 
-## 4. คำถามท้ายการทดลอง
-1. สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?
-2. เพราะเหตุใดเราจึงต้องใช้ `BackgroundService` ในการอ่านข้อมูล Serial แทนที่จะเปิดพอร์ตอ่านตรงๆ ภายในฟังก์ชันของ REST API?
+## 4. คำถามท้ายการทดลอง (Review Questions)
+
+1. **สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?**
+   * **คำตอบ:** 
+     * สถาปัตยกรรมนี้ทำหน้าที่เป็น **Edge Protocol Gateway Transpiler**
+     * ช่วยให้อุปกรณ์รุ่นเก่าหรือไมโครคอนโทรลเลอร์ที่ไม่มีโมดูล Wi-Fi/Ethernet ในตัว (เช่น Arduino UNO, Legacy Microcontrollers หรืออุปกรณ์ในโรงงานอุตสาหกรรม) สามารถส่งข้อมูลผ่านพอร์ตอนุกรมพื้นฐาน (UART/RS-232/RS-485) มายัง Edge Gateway (.NET Kestrel) 
+     * ตัว Gateway จะทำการห่อหุ้ม (Encapsulate) ข้อมูลดิบนั้นให้กลายเป็นโปรโตคอลมาตรฐาน IoT สมัยใหม่ เช่น **MQTT Topics** และ **RESTful API** ทำให้อุปกรณ์รุ่นเก่าสามารถเชื่อมต่อกับ Web Apps, Mobile Apps หรือ Cloud Dashboard ได้ทันทีโดยไม่ต้องแก้ไขฮาร์ดแวร์เดิม
+
+2. **เพราะเหตุใดเราจึงต้องใช้ `BackgroundService` ในการอ่านข้อมูล Serial แทนที่จะเปิดพอร์ตอ่านตรงๆ ภายในฟังก์ชันของ REST API?**
+   * **คำตอบ:** 
+     1. **การทำงานแบบ Non-blocking และ Async Continuous Stream:** พอร์ต Serial เป็นสายสัญญาณสตรีมมิงแบบต่อเนื่อง (Continuous Stream) การอ่านข้อมูลจากพอร์ตต้องทำแบบวนลูปดักฟัง หากเปิดพอร์ตอ่านภายใน REST API Request จะทำให้ HTTP Thread ถูกบล็อก (Blocked) จนเกิด Timeout
+     2. **การแชร์การเชื่อมต่อพอร์ตอนุกรม (Exclusive Resource Sharing):** พอร์ต COM บนระบบปฏิบัติการอนุญาตให้เปิดได้เพียง 1 Process/Thread ในเวลาเดียวกัน การให้ `BackgroundService` ทำหน้าที่เปิดพอร์ตค้างไว้เพียงผู้เดียว แล้วแคชข้อมูลลง `GatewayStateStore` จะช่วยให้ REST API และ MQTT สามารถเข้าถึงข้อมูลล่าสุดได้พร้อมกันโดยไม่เกิดข้อผิดพลาดพอร์ตชนกัน

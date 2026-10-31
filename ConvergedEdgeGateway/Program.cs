@@ -1,28 +1,26 @@
-using MQTTnet;
 using MQTTnet.AspNetCore;
 using MQTTnet.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// 1. กำหนดค่า Kestrel ให้เปิดทั้งพอร์ต HTTP (5000) และ MQTT TCP (1883)
+// 1. ตั้งค่า Kestrel
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(5000);
-    options.ListenAnyIP(1883, listenOptions =>
-    {
-        listenOptions.UseMqtt();
-    });
+    options.ListenAnyIP(1883, l => l.UseMqtt());
 });
 
-// 2. ลงทะเบียนบริการ MQTT Server
-builder.Services.AddMqttServer(options =>
-{
-    options.WithDefaultEndpoint();
-});
+// 2. ลงทะเบียน Services
+builder.Services.AddSingleton<GatewayStateStore>();
+builder.Services.AddMqttServer(options => options.WithDefaultEndpoint());
+builder.Services.AddHostedService<SerialBridgeWorker>();
+
+// ลงทะเบียนให้ REST API ดึงคลาส SerialBridgeWorker ไปใช้งานสั่งการได้
+builder.Services.AddSingleton(sp =>
+    sp.GetServices<IHostedService>().OfType<SerialBridgeWorker>().First());
 
 var app = builder.Build();
 
-// 3. ผูก Event Handlers สำหรับจัดการข้อความใน Broker
 app.UseMqttServer(server =>
 {
     server.ValidatingConnectionAsync += args =>
@@ -37,34 +35,33 @@ app.UseMqttServer(server =>
     server.ClientConnectedAsync += args =>
     {
         Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine($"[MQTT Server] 🟢 Client เชื่อมต่อ: {args.ClientId} (จาก Endpoint: {args.Endpoint})");
+        Console.WriteLine($"[MQTT Server] 🟢 Client เชื่อมต่อ: {args.ClientId}");
         Console.ResetColor();
-        return Task.CompletedTask;
-    };
-
-    server.ClientDisconnectedAsync += args =>
-    {
-        Console.ForegroundColor = ConsoleColor.DarkYellow;
-        Console.WriteLine($"[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: {args.ClientId}");
-        Console.ResetColor();
-        return Task.CompletedTask;
-    };
-
-    server.InterceptingPublishAsync += args =>
-    {
-        var topic = args.ApplicationMessage.Topic;
-        var payload = args.ApplicationMessage.ConvertPayloadToString();
-        var qos = args.ApplicationMessage.QualityOfServiceLevel;
-
-        Console.ForegroundColor = ConsoleColor.Cyan;
-        Console.WriteLine($"[MQTT Message] 📩 หัวข้อ: {topic} | QoS: {qos} | ข้อความ: {payload}");
-        Console.ResetColor();
-
         return Task.CompletedTask;
     };
 });
 
-// 4. จุดทดสอบ REST Endpoint
-app.MapGet("/", () => "🚀 Kestrel Converged Edge Gateway with Embedded MQTTnet Broker is RUNNING!");
+// 3. REST API อ่านข้อมูลเซนเซอร์ล่าสุด
+app.MapGet("/api/telemetry/latest", (GatewayStateStore store) =>
+{
+    var data = store.Get("latest_telemetry");
+    return data != null ? Results.Ok(data) : Results.NotFound(new { error = "No telemetry yet" });
+});
+
+// 4. REST API ควบคุมหลอดไฟผ่าน Serial Bridge
+app.MapPost("/api/led/{state}", (string state, SerialBridgeWorker worker) =>
+{
+    string cmd = state.ToLower() == "on" ? "LED:ON" : "LED:OFF";
+    bool success = worker.SendSerialCommand(cmd);
+
+    return Results.Ok(new
+    {
+        dispatchedCommand = cmd,
+        sentToSerial = success,
+        serverTime = DateTime.Now.ToString("HH:mm:ss")
+    });
+});
+
+app.MapGet("/", () => "🚀 Kestrel Converged Edge Gateway with Serial Bridge is RUNNING!");
 
 app.Run();
