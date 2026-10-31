@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 // ตั้งค่า Kestrel
 builder.WebHost.ConfigureKestrel(options =>
 {
-    options.ListenAnyIP(5000);
+    options.ListenAnyIP(5002);
     options.ListenAnyIP(1883, l => l.UseMqtt());
 });
 
