@@ -303,15 +303,19 @@ void app_main(void)
 ```powershell
 dotnet run
 ```
+
+![alt text](Images/image-4.png)
 2. ทดสอบเรียกดูค่าเซนเซอร์ผ่านเบราว์เซอร์หรือ cURL:
 ```powershell
 curl http://localhost:5000/api/telemetry/latest
 ```
+![alt text](Images/image-5.png)
 *สังเกตว่าจะได้ข้อมูล JSON ของแรงดันไฟฟ้าทันที!*
 3. เปิด `mosquitto_sub`:
 ```powershell
 mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v
 ```
+![alt text](Images/image-6.png)
 *สังเกตว่าข้อมูลที่อ่านจากสาย USB Serial ถูกส่งต่อเข้าหัวข้อ MQTT อัตโนมัติ!*
 4. ทดสอบสั่งเปิด-ปิดไฟผ่าน REST API:
 ```powershell
@@ -319,8 +323,16 @@ curl -X POST http://localhost:5000/api/led/on
 ```
 *สังเกตว่าคำสั่ง `LED:ON` ถูกส่งผ่านสาย USB เข้าไปควบคุมบอร์ดทันที!*
 
+![alt text](Images/image-7.png)
+
+![alt text](Images/image-8.png)
 ---
 
 ## 4. คำถามท้ายการทดลอง
 1. สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?
+
+   **คำตอบ:** Serial-to-MQTT Bridge ทำหน้าที่เป็นตัวกลางระหว่างอุปกรณ์เดิมกับระบบ IoT โดยอ่านข้อมูลจากอุปกรณ์ผ่านสาย Serial แล้วแปลงหรือส่งต่อเป็นข้อความ MQTT และอาจเปิดให้เข้าถึงผ่าน REST API ได้ อุปกรณ์จึงไม่จำเป็นต้องมี Wi-Fi หรือรองรับ MQTT ด้วยตัวเอง ก็สามารถส่งข้อมูลไปยังระบบและรับคำสั่งควบคุมจากระบบสมัยใหม่ผ่าน Gateway ได้
+
 2. เพราะเหตุใดเราจึงต้องใช้ `BackgroundService` ในการอ่านข้อมูล Serial แทนที่จะเปิดพอร์ตอ่านตรงๆ ภายในฟังก์ชันของ REST API?
+
+   **คำตอบ:** ข้อมูล Serial เข้ามาต่อเนื่องและไม่สัมพันธ์กับเวลาที่มี HTTP Request จึงควรอ่านใน `BackgroundService` ซึ่งทำงานเบื้องหลังตลอดอายุของแอป แล้วเก็บข้อมูลล่าสุดไว้ให้ REST API อ่านหรือส่งต่อไป MQTT ได้ หากอ่าน Serial ในฟังก์ชัน API คำขออาจต้องรอข้อมูลจนช้า ค้าง หรือหมดเวลา และการเปิดพอร์ตซ้ำในแต่ละคำขอยังเสี่ยงต่อการแย่งใช้พอร์ตและจัดการทรัพยากรไม่ถูกต้อง

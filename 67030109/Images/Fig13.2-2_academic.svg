@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 300" width="100%" id="diagram-root" style="max-width:800px; height:auto; background:#ffffff; border-radius:10px; font-family:'Sarabun', 'TH Sarabun New', 'Prompt', system-ui, -apple-system, sans-serif;">
+  <defs>
+    <filter id="shadowFilter" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.1"/>
+    </filter>
+    <marker id="arrowhead" markerWidth="9" markerHeight="9" refX="5" refY="4.5" orient="auto">
+      <polygon points="0 1.5, 7 4.5, 0 7.5" fill="#0284c7" />
+    </marker>
+  </defs>
+  <!-- Step 1 -> 2 -->
+  <line x1="210" y1="82" x2="210" y2="111" stroke="#0284c7" stroke-width="1.8" marker-end="url(#arrowhead)"/>
+  <!-- Step 2 -> 3 -->
+  <line x1="210" y1="168" x2="210" y2="197" stroke="#0284c7" stroke-width="1.8" marker-end="url(#arrowhead)"/>
+  <!-- Stage Card 1: Producer: Serial Listener -->
+  <g id="stage-1" filter="url(#shadowFilter)">
+    <rect x="110" y="32" width="200" height="50" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.7"/>
+    <text x="210" y="62" fill="#0369a1" font-size="14.5" font-weight="700" text-anchor="middle">Producer: Serial Listener</text>
+  </g>
+  <!-- UML Note Link (Dashed Line) -->
+  <line x1="310" y1="57" x2="360" y2="57" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <!-- Comment/Annotation Box 1 -->
+  <g id="note-1">
+    <!-- Background Callout with Left Accent Border -->
+    <rect x="360" y="32" width="480" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+    <rect x="360" y="32" width="4" height="50" rx="2" fill="#0284c7"/>
+    <text x="378" y="56" fill="#334155" font-size="13" font-weight="500">ChannelWriter.WriteAsync(data)</text>
+  </g>
+  <!-- Stage Card 2: Bounded Channel -->
+  <g id="stage-2" filter="url(#shadowFilter)">
+    <rect x="110" y="118" width="200" height="50" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.7"/>
+    <text x="210" y="148" fill="#0369a1" font-size="14.5" font-weight="700" text-anchor="middle">Bounded Channel</text>
+  </g>
+  <!-- UML Note Link (Dashed Line) -->
+  <line x1="310" y1="143" x2="360" y2="143" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <!-- Comment/Annotation Box 2 -->
+  <g id="note-2">
+    <!-- Background Callout with Left Accent Border -->
+    <rect x="360" y="118" width="480" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+    <rect x="360" y="118" width="4" height="50" rx="2" fill="#0284c7"/>
+    <text x="378" y="142" fill="#334155" font-size="13" font-weight="500">คิวพักข้อมูลแบบ Thread-Safe (จำกัด 100 รายการ)</text>
+  </g>
+  <!-- Stage Card 3: Consumer: MQTT / SignalR -->
+  <g id="stage-3" filter="url(#shadowFilter)">
+    <rect x="110" y="204" width="200" height="50" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.7"/>
+    <text x="210" y="234" fill="#0369a1" font-size="14.5" font-weight="700" text-anchor="middle">Consumer: MQTT / SignalR</text>
+  </g>
+  <!-- UML Note Link (Dashed Line) -->
+  <line x1="310" y1="229" x2="360" y2="229" stroke="#cbd5e1" stroke-width="1.3" stroke-dasharray="4 3"/>
+  <!-- Comment/Annotation Box 3 -->
+  <g id="note-3">
+    <!-- Background Callout with Left Accent Border -->
+    <rect x="360" y="204" width="480" height="50" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+    <rect x="360" y="204" width="4" height="50" rx="2" fill="#0284c7"/>
+    <text x="378" y="228" fill="#334155" font-size="13" font-weight="500">ChannelReader.ReadAsync()</text>
+  </g>
+</svg>
