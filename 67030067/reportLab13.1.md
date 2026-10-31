@@ -18,8 +18,7 @@
 
 ## 2. โครงสร้างสถาปัตยกรรม (Architecture Diagram)
 
-<p align="center"><img src="Images/Fig_06-Labsheet-13-1_academic.svg" alt="06-Labsheet-13-1-Embedded-MQTT-Broker-and-Client-with-MQTTnet" width="400" style="  height: auto;" ></p>
-<p align="center"><b></b>โครงสร้างสถาปัตยกรรม (Architecture Diagram)</p>
+<img width="1432" height="725" alt="Screenshot 2569-11-01 at 04 05 30" src="https://github.com/user-attachments/assets/2fc7ffcf-caec-4447-a799-1babedfba1a7" />
 
 ---
 
