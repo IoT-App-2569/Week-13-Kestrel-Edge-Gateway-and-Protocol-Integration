@@ -1,10 +1,10 @@
 using System.Collections.Concurrent;
 using System.IO.Ports;
 using System.Text.Json;
+using Microsoft.AspNetCore.SignalR;
 using MQTTnet;
 using MQTTnet.Server;
 
-// 1. คลาสจัดเก็บสถานะระบบแบบ Thread-Safe
 public class GatewayStateStore
 {
     private readonly ConcurrentDictionary<string, object> _state = new();
@@ -14,23 +14,30 @@ public class GatewayStateStore
     public object? Get(string key) => _state.TryGetValue(key, out var val) ? val : null;
 }
 
-// 2. โมเดลข้อมูล Telemetry
 public record TelemetryData(double Voltage, int Raw, long Timestamp);
 
-// 3. งานเบื้องหลังสำหรับเชื่อมต่อและดักฟัง Serial Port
 public class SerialBridgeWorker : BackgroundService
 {
     private SerialPort? _serial;
-    private readonly string _portName = "COM3"; // ปรับให้ตรงกับ COM Port ของ ESP32 บนเครื่องคุณ
+    private readonly string _portName = "COM3"; // ปรับให้ตรงกับ COM Port ของคุณ
     private readonly int _baudRate = 115200;
     private readonly GatewayStateStore _store;
     private readonly MqttServer _mqttServer;
+    private readonly IHubContext<GatewayHub> _hubContext;
+    private readonly ProtocolMetrics _metrics;
     private readonly ILogger<SerialBridgeWorker> _logger;
 
-    public SerialBridgeWorker(GatewayStateStore store, MqttServer mqttServer, ILogger<SerialBridgeWorker> logger)
+    public SerialBridgeWorker(
+        GatewayStateStore store,
+        MqttServer mqttServer,
+        IHubContext<GatewayHub> hubContext,
+        ProtocolMetrics metrics,
+        ILogger<SerialBridgeWorker> logger)
     {
         _store = store;
         _mqttServer = mqttServer;
+        _hubContext = hubContext;
+        _metrics = metrics;
         _logger = logger;
     }
 
@@ -54,7 +61,6 @@ public class SerialBridgeWorker : BackgroundService
                 }
                 catch
                 {
-                    // หากยังไม่เสียบบอร์ด หรือไม่พบพอร์ต ให้รอ 3 วินาทีแล้วลองใหม่
                     await Task.Delay(3000, stoppingToken);
                     continue;
                 }
@@ -68,7 +74,7 @@ public class SerialBridgeWorker : BackgroundService
                     await HandleIncomingSerialLine(line);
                 }
             }
-            catch (TimeoutException) { /* ปกติเมื่อไม่มีข้อมูลส่งมาใน 1 วินาที */ }
+            catch (TimeoutException) { }
             catch (Exception ex)
             {
                 _logger.LogWarning("Serial Read Warning: {Message}", ex.Message);
@@ -81,18 +87,18 @@ public class SerialBridgeWorker : BackgroundService
     {
         try
         {
-            // ตัวอย่างข้อมูลที่ ESP32 ส่งมา: {"voltage": 1.65, "raw": 2048}
             using var doc = JsonDocument.Parse(line);
             var root = doc.RootElement;
             double v = root.GetProperty("voltage").GetDouble();
             int r = root.GetProperty("raw").GetInt32();
 
             var telemetry = new TelemetryData(v, r, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-
-            // 1. อัปเดตลง State Store ในหน่วยความจำ
             _store.Set("latest_telemetry", telemetry);
 
-            // 2. แปลงและผลักเข้าสู่ Embedded MQTT Broker
+            _metrics.SerialPackets++;
+
+            // 1. ผลักเข้า MQTT
+            _metrics.MqttMessages++;
             var mqttMsg = new MqttApplicationMessageBuilder()
                 .WithTopic("iot/esp32/telemetry")
                 .WithPayload(line)
@@ -100,11 +106,19 @@ public class SerialBridgeWorker : BackgroundService
                 .Build();
 
             await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(mqttMsg));
+
+            // 2. ผลักเข้า SignalR หาหน้าเว็บทันที!
+            _metrics.SignalRPushes++;
+            await _hubContext.Clients.All.SendAsync("ReceiveTelemetry", new
+            {
+                voltage = v,
+                raw = r,
+                metrics = _metrics
+            });
         }
-        catch { /* หากไม่ใช่ JSON ให้ข้ามไป */ }
+        catch { }
     }
 
-    // ฟังก์ชันส่งคำสั่งย้อนกลับไปหาบอร์ดทาง Serial
     public bool SendSerialCommand(string cmd)
     {
         if (_serial?.IsOpen == true)
