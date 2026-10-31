@@ -15,14 +15,7 @@ public class GatewayHub : Hub
     // เมื่อหน้าเว็บกดปุ่มสลับสถานะสวิตช์
     public async Task ToggleLed(bool state)
     {
-        string cmd = state ? "LED:ON" : "LED:OFF";
-        _logger.LogInformation("🌐 สั่งการจาก Web Dashboard ผ่าน SignalR: {Cmd}", cmd);
-        
-        // ส่งคำสั่งเข้าสู่พอร์ต Serial
-        _serialWorker.SendSerialCommand(cmd);
-
-        // กระจายสถานะใหม่หาทุกหน้าที่เปิดอยู่
-        await Clients.All.SendAsync("LedStateUpdated", state);
+        await _serialWorker.SetLedStateAsync(state, "SignalR Web");
     }
 }
 

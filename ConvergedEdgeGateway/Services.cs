@@ -62,6 +62,7 @@ public class SerialBridgeWorker : BackgroundService
                     };
                     _serial.Open();
                     _logger.LogInformation("✅ เชื่อมต่อฮาร์ดแวร์ Serial Port {Port} สำเร็จ!", _portName);
+                    await PublishDeviceStatusAsync("online");
                 }
                 catch
                 {
@@ -76,7 +77,10 @@ public class SerialBridgeWorker : BackgroundService
                 string line = _serial.ReadLine().Trim();
                 if (!string.IsNullOrEmpty(line))
                 {
-                    await HandleIncomingSerialLine(line);
+                    if (line.StartsWith("{") && line.EndsWith("}"))
+                    {
+                        await HandleIncomingSerialLine(line);
+                    }
                 }
             }
             catch (TimeoutException) { /* ปกติเมื่อไม่มีข้อมูลส่งมาใน 1 วิ */ }
@@ -84,12 +88,80 @@ public class SerialBridgeWorker : BackgroundService
             {
                 _logger.LogWarning("Serial Read Warning: {Message}", ex.Message);
                 _serial?.Close();
+                await PublishDeviceStatusAsync("offline");
             }
         }
     }
 
+    public async Task PublishDeviceStatusAsync(string status)
+    {
+        try
+        {
+            var statusMsg = new MqttApplicationMessageBuilder()
+                .WithTopic("iot/esp32/status")
+                .WithPayload(status)
+                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
+                .WithRetainFlag(true)
+                .Build();
+
+            await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(statusMsg)
+            {
+                SenderClientId = "KestrelGateway"
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to publish device status to MQTT.");
+        }
+    }
+
+    public async Task<bool> SetLedStateAsync(bool isOn, string source)
+    {
+        string cmd = isOn ? "LED:ON" : "LED:OFF";
+        bool sentToSerial = SendSerialCommand(cmd);
+        _store.Set("led_state", isOn);
+
+        _logger.LogInformation("💡 [{Source}] สั่งงาน {Cmd} (Serial: {Sent})", source, cmd, sentToSerial);
+
+        // 1. ส่ง ACK กลับไปยังแอป Flutter ผ่าน MQTT (iot/esp32/led_ack)
+        try
+        {
+            string ackPayload = JsonSerializer.Serialize(new { led_state = isOn, ack = true });
+            var ackMsg = new MqttApplicationMessageBuilder()
+                .WithTopic("iot/esp32/led_ack")
+                .WithPayload(ackPayload)
+                .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
+                .WithRetainFlag(true)
+                .Build();
+
+            await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(ackMsg)
+            {
+                SenderClientId = "KestrelGateway"
+            });
+            _metrics.RecordMqttMessage();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to publish LED ACK to MQTT.");
+        }
+
+        // 2. อัปเดตปุ่มสวิตช์บนหน้าเว็บผ่าน SignalR
+        try
+        {
+            await _hubContext.Clients.All.SendAsync("LedStateUpdated", isOn);
+            _metrics.RecordSignalRPush();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to broadcast LedStateUpdated to SignalR.");
+        }
+
+        return sentToSerial;
+    }
+
     private async Task HandleIncomingSerialLine(string line)
     {
+        _logger.LogInformation("📥 ได้รับข้อมูล Serial: {Line}", line);
         double voltage;
         int raw;
 
@@ -118,16 +190,24 @@ public class SerialBridgeWorker : BackgroundService
             raw,
             DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
 
+        // ส่งสถานะ online แบบ Retain เพื่อให้แอป Flutter ที่เพิ่งเปิดใหม่ทราบว่าบอร์ดออนไลน์อยู่เสมอ
+        await PublishDeviceStatusAsync("online");
+
         var mqttMsg = new MqttApplicationMessageBuilder()
             .WithTopic("iot/esp32/telemetry")
             .WithPayload(line)
-            .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce)
+            .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtLeastOnce)
+            .WithRetainFlag(true)
             .Build();
 
         try
         {
-            await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(mqttMsg));
+            await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(mqttMsg)
+            {
+                SenderClientId = "KestrelGateway"
+            });
             _metrics.RecordMqttMessage();
+            _logger.LogInformation("🚀 Injected MQTT telemetry successfully: {Line}", line);
         }
         catch (Exception ex)
         {
