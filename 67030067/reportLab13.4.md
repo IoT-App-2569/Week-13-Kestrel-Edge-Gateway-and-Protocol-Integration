@@ -17,7 +17,8 @@
 
 ## 2. ผังความเชื่อมโยงระบบสมบูรณ์ (The Grand Ecosystem Topology)
 
-<p align="center"><img src="Images/Fig_09-Labsheet-13-4_academic.svg" style="height: auto;"></p>
+<img width="1791" height="1011" alt="Screenshot 2569-11-01 at 04 14 53" src="https://github.com/user-attachments/assets/7fa8d515-c57e-4d53-9439-77e36f4a7e7e" />
+
 
 ---
 
