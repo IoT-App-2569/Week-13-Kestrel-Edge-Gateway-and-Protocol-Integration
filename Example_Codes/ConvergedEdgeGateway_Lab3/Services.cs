@@ -22,7 +22,7 @@ public record TelemetryData(double Voltage, int Raw, long Timestamp);
 public class SerialBridgeWorker : BackgroundService
 {
     private SerialPort? _serial;
-    private readonly string _portName = "COM24"; // ปรับให้ตรงกับพอร์ตของ ESP32 บนเครื่องคุณ (COM24)
+    private readonly string _portName = "/dev/cu.usbserial-0001"; // ปรับให้ตรงกับพอร์ตของ ESP32 บนเครื่องคุณ (COM24)
     private readonly int _baudRate = 115200;
     private readonly GatewayStateStore _store;
     private readonly MqttServer _mqttServer;
