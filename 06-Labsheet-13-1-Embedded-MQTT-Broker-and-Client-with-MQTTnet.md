@@ -144,6 +144,9 @@ mosquitto_sub -h 127.0.0.1 -p 1883 -t "test/edge/topic" -i "sub_client" -v
 
 *สังเกตหน้าต่างคอนโซลของ Kestrel จะขึ้นข้อความสีเขียวว่ามี Client เชื่อมต่อเข้ามา!*
 
+<img width="880" height="438" alt="image" src="https://github.com/user-attachments/assets/575f99dd-65a8-4407-8a28-2f038a1acbc4" />
+
+
 #### 3. เปิดหน้าต่าง PowerShell ที่สาม: ทดสอบ Publish ข้อความ
 ส่งข้อความผ่าน `mosquitto_pub`:
 ```powershell
@@ -154,8 +157,18 @@ mosquitto_pub -h 127.0.0.1 -p 1883 -t "test/edge/topic" -m "Hello from CLI via K
 * หน้าต่าง Kestrel จะพิมพ์ Log สีฟ้าว่าดักจับข้อความได้ถูกต้อง
 * หน้าต่าง `mosquitto_sub` จะได้รับข้อความที่ถูกส่งต่อผ่าน Broker สำเร็จทันที
 
+<img width="1403" height="375" alt="image" src="https://github.com/user-attachments/assets/9878972e-b962-44b1-b768-4480786a35f8" />
+
 ---
 
 ## 4. คำถามท้ายการทดลอง (Review Questions)
 1. การรัน Embedded MQTT Broker ภายใน Kestrel มีข้อได้เปรียบกว่าการติดตั้งซอฟต์แวร์ Mosquitto แยกต่างหากอย่างไรในแง่ของการกระจายงาน (Deployment) และการประมวลผลข้อมูลในหน่วยความจำ?
+~~~
+Deployment รวมทุกบริการเป็นแอปพลิเคชันตัวเดียว ติดตั้งและดูแลรักษาง่าย ไม่ต้องติดตั้ง Service ภายนอกหรือคอนฟิกพอร์ตแยกให้ซับซ้อน
+In-Memory Processing ส่งต่อข้อมูลผ่านหน่วยความจำของ Process เดียวกันได้โดยตรง ช่วยลด Latency และลด Overhead จากการแปลงส่งผ่าน Network Loopback
+~~~
 2. ฟังก์ชัน `InterceptingPublishAsync` ใน MQTTnet สามารถนำไปประยุกต์ใช้ในการกรองข้อมูลที่ผิดปกติ (Edge Validation) ก่อนส่งต่อให้ Client อื่นได้อย่างไร?
+~~~
+ทำหน้าที่เป็นตัวดักจับ ก่อนที่ Broker จะกระจายข้อความต่อ โดยสามารถอ่าน Payload มาตรวจสอบเงื่อนไข ถ้าพบข้อมูลผิดปกติ สามารถสั่งยกเลิกการส่งต่อได้ทันทีด้วย args.ProcessPublish = false;
+หรือเขียนแก้ไขค่า ก่อนส่งต่อให้ Client อื่นได้
+~~~
