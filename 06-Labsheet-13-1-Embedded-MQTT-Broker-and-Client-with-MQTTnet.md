@@ -157,5 +157,14 @@ mosquitto_pub -h 127.0.0.1 -p 1883 -t "test/edge/topic" -m "Hello from CLI via K
 ---
 
 ## 4. คำถามท้ายการทดลอง (Review Questions)
-1. การรัน Embedded MQTT Broker ภายใน Kestrel มีข้อได้เปรียบกว่าการติดตั้งซอฟต์แวร์ Mosquitto แยกต่างหากอย่างไรในแง่ของการกระจายงาน (Deployment) และการประมวลผลข้อมูลในหน่วยความจำ?
-2. ฟังก์ชัน `InterceptingPublishAsync` ใน MQTTnet สามารถนำไปประยุกต์ใช้ในการกรองข้อมูลที่ผิดปกติ (Edge Validation) ก่อนส่งต่อให้ Client อื่นได้อย่างไร?
+
+1. **การรัน Embedded MQTT Broker ภายใน Kestrel มีข้อได้เปรียบกว่าการติดตั้งซอฟต์แวร์ Mosquitto แยกต่างหากอย่างไรในแง่ของการกระจายงาน (Deployment) และการประมวลผลข้อมูลในหน่วยความจำ?**
+   * **คำตอบ:** 
+     1. **ด้านการกระจายงาน (Deployment Simplification):** ลดความซับซ้อนในการติดตั้งและดูแลระบบ (Single-Executable Deployment) เนื่องจากรวมทั้ง Web Server, REST API และ MQTT Broker ไว้ในแอปพลิเคชัน C# (.NET) เพียงไฟล์เดียว ไม่ต้องคอยติดตั้ง สตาร์ต หรือตั้งค่าไฟล์คอนฟิกของ Mosquitto แยกภายนอก
+     2. **ด้านการประมวลผลข้อมูลในหน่วยความจำ (In-Memory Processing Efficiency):** สามารถดักจับข้อมูล Payload ที่ส่งเข้ามาผ่าน Event Interceptor แล้วส่งเข้าสู่ส่วนประมวลผล C# Object, Database หรือ SignalR ได้ทันทีผ่านหน่วยความจำ (In-Memory Data Bus) โดยไม่ต้องเสียเวลาส่งผ่าน Socket ย้อนกลับไปมาระหว่างโปรเซส (Inter-Process Communication - IPC Overhead)
+
+2. **ฟังก์ชัน `InterceptingPublishAsync` ใน MQTTnet สามารถนำไปประยุกต์ใช้ในการกรองข้อมูลที่ผิดปกติ (Edge Validation) ก่อนส่งต่อให้ Client อื่นได้อย่างไร?**
+   * **คำตอบ:** 
+     * `InterceptingPublishAsync` ทำหน้าที่เป็น Gateway Middleware ดักจับข้อความทุกฉบับที่ถูกส่งเข้ามา ก่อนที่ Broker จะทำการกระจาย (Forward) ไปยัง Subscriber
+     * สามารถเขียน Logic ตรวจสอบความถูกต้องของข้อมูล (Validation Rules) เช่น ตรวจสอบโครงสร้าง JSON, กรองค่าแรงดัน/อุณหภูมิที่หลุดช่วงมาตรฐาน (Out-of-bound Values) หรือตรวจสอบสิทธิ์ Security Token
+     * หากพบข้อมูลผิดปกติ สามารถสั่งยกเลิกการส่งต่อข้อความโดยตั้งค่า `args.ProcessPublish = false;` เพื่อยับยั้งไม่ให้ข้อมูลขยะหรือข้อมูลที่เป็นอันตรายแพร่กระจายไปยัง Client ตัวอื่นในระบบ
