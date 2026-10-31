@@ -26,16 +26,16 @@
 
 1. **ฮาร์ดแวร์ ESP32**: ต่อ Potentiometer เข้าขา **GPIO34** (ADC Input) และใช้ขา **GPIO2** สำหรับ LED Status จากนั้นเสียบสาย USB เข้ากับคอมพิวเตอร์ และตรวจสอบว่าเฟิร์มแวร์กำลังพิมพ์ค่า JSON แรงดันออกทาง Serial
 
-![alt text](image-10.png)
+![alt text](Images/image-10.png)
 
 
 2. **Kestrel Edge Gateway**: 
    * ตรวจสอบว่า `Program.cs` รวมบริการทั้ง Embedded MQTT Broker, Serial Bridge, REST APIs, และ SignalR ไว้ครบถ้วน
    * รันคำสั่ง `dotnet run` ในโฟลเดอร์โปรเจกต์
-![alt text](image-10.png)
+![alt text](Images/image-10.png)
 
 3. **เว็บเบราว์เซอร์**: เปิดหน้าต่างเว็บไปที่ `http://localhost:5000` (ตรวจสอบว่าขึ้น SignalR Online สีเขียว)
-![alt text](image-11.png)
+![alt text](Images/image-11.png)
 
 
 4. **แอปมือถือ Flutter**:
@@ -43,9 +43,9 @@
    * ตั้งค่า Broker IP ให้ชี้มาที่หมายเลข IP ของคอมพิวเตอร์ (พอร์ต 1883)
    * สั่งรันแอปบนมือถือจริง หรือรันบนเครื่องคอมพิวเตอร์ผ่าน `flutter run`
 
-![alt text](image-12.png)
+![alt text](Images/image-12.png)
 
-![alt text](image-13.png)
+![alt text](Images/image-13.png)
 
 ---
 

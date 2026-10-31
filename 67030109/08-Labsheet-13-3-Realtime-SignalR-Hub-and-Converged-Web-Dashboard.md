@@ -286,7 +286,7 @@ app.UseStaticFiles(); // ให้บริการไฟล์ใน wwwroot
 app.MapHub<GatewayHub>("/hubs/gateway");
 ```
 
-![alt text](image-9.png)
+![alt text](Images/image-9.png)
 
 รันเซิร์ฟเวอร์ด้วย `dotnet run` และเปิดเบราว์เซอร์ไปที่ `http://localhost:5000`:
 * คุณจะพบหน้าจอศูนย์บัญชาการที่ตัวเลขแรงดันไฟฟ้าวิ่งสดๆ ตามการหมุนตัวต้านทานบนบอร์ด!
