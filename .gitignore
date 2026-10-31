@@ -481,3 +481,9 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 **/build/**
+
+.obsidian/
+bin/
+obj/
+build/
+managed_components/
