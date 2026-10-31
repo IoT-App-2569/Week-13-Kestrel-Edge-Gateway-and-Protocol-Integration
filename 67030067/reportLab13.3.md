@@ -17,8 +17,8 @@
 
 ## 2. ผังการทำงานของ SignalR Realtime Push
 
-<p align="center"><img src="Images/Fig_08-Labsheet-13-3_academic.svg" alt="08-Labsheet-13-3-Realtime-SignalR-Hub-and-Converged-Web-Dashboard" style="height: auto;"></p>
-<p align="center"><b></b>ผังการทำงานของ SignalR Realtime Push</p>
+<img width="1601" height="1017" alt="Screenshot 2569-11-01 at 04 13 01" src="https://github.com/user-attachments/assets/a80ed1d2-bf83-4d37-ac87-dfdeb028626b" />
+
 
 ---
 
