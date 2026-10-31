@@ -17,8 +17,8 @@
 
 ## 2. โครงสร้างการเชื่อมโยงข้อมูล (Data Bridge Topology)
 
-<p align="center"><img src="Images/Fig_07-Labsheet-13-2_academic.svg" alt="07-Labsheet-13-2-Hardware-Serial-to-MQTT-and-REST-Bridge" style="height: auto;"></p>
-<p align="center"><b></b>โครงสร้างการเชื่อมโยงข้อมูล (Data Bridge Topology)</p>
+<img width="1780" height="937" alt="Screenshot 2569-11-01 at 04 06 45" src="https://github.com/user-attachments/assets/e256ba2d-97ce-4bf9-a4d7-c9c5cd68f8b0" />
+
 
 ---
 
