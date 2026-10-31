@@ -303,11 +303,19 @@ void app_main(void)
 ```powershell
 dotnet run
 ```
+
+<img width="1082" height="205" alt="image" src="https://github.com/user-attachments/assets/9a854735-2023-4d2b-8536-545332b0e4bf" />
+
+
 2. ทดสอบเรียกดูค่าเซนเซอร์ผ่านเบราว์เซอร์หรือ cURL:
 ```powershell
 curl http://localhost:5000/api/telemetry/latest
 ```
 *สังเกตว่าจะได้ข้อมูล JSON ของแรงดันไฟฟ้าทันที!*
+
+<img width="950" height="118" alt="image" src="https://github.com/user-attachments/assets/36a232ce-2c32-47f1-99dc-cc32034a869b" />
+
+
 3. เปิด `mosquitto_sub`:
 ```powershell
 mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v
@@ -319,8 +327,21 @@ curl -X POST http://localhost:5000/api/led/on
 ```
 *สังเกตว่าคำสั่ง `LED:ON` ถูกส่งผ่านสาย USB เข้าไปควบคุมบอร์ดทันที!*
 
+<img width="962" height="557" alt="image" src="https://github.com/user-attachments/assets/227a1c4f-26c8-44cf-a508-5938814608dc" />
+
 ---
 
 ## 4. คำถามท้ายการทดลอง
 1. สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?
+~~~
+ทำหน้าที่เป็น ตัวกลางแปลงโปรโตคอล โดยรับส่งข้อมูลผ่านสายสัญญาณดั้งเดิม แล้วนำมาแปลงให้อยู่ในรูปแบบ JSON ผ่าน MQTT/IP
+ช่วยให้อุปกรณ์เดิมเชื่อมต่อกับระบบคลาวด์ แอปมือถือ หรือเว็บแดชบอร์ดสมัยใหม่ได้ทันที โดยไม่ต้องเปลี่ยนฮาร์ดแวร์หรือแก้เฟิร์มแวร์หลักของอุปกรณ์เดิม
+~~~
 2. เพราะเหตุใดเราจึงต้องใช้ `BackgroundService` ในการอ่านข้อมูล Serial แทนที่จะเปิดพอร์ตอ่านตรงๆ ภายในฟังก์ชันของ REST API?
+~~~
+ป้องกัน Port Locking & Concurrency Conflict พอร์ต Serial บนระบบปฏิบัติการอนุญาตให้เปิดใช้งานได้เพียง 1 Process/Connection เดียวในเวลาเดียวกัน
+ถ้าเปิดใน REST API ทุกครั้งที่ Request เข้ามาจะเกิดปัญหาแย่งพอร์ตหรือพอร์ตชนกัน
+ไม่บล็อกการทำงานของ Web Server สตรีมข้อมูลจาก Serial วิ่งเข้ามาตลอดเวลา การใช้ BackgroundService ช่วยให้ลูปการอ่านทำงานอยู่เบื้องหลังอย่างต่อเนื่อง
+แล้วนำค่ามาเก็บไว้ในหน่วยความจำ ทำให้ REST API ตอบสนองได้ทันที โดยไม่ต้องรอรอบการอ่าน Serial 
+~~~
+
