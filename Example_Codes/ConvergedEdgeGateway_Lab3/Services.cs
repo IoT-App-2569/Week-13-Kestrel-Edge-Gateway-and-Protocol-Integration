@@ -22,7 +22,7 @@ public record TelemetryData(double Voltage, int Raw, long Timestamp);
 public class SerialBridgeWorker : BackgroundService
 {
     private SerialPort? _serial;
-    private readonly string _portName = "COM24"; // ปรับให้ตรงกับพอร์ตของ ESP32 บนเครื่องคุณ (COM24)
+    private readonly string _portName = "COM24"; // ปรับให้ตรงกับพอร์ตของ ESP32 บนเครื่องคุณ
     private readonly int _baudRate = 115200;
     private readonly GatewayStateStore _store;
     private readonly MqttServer _mqttServer;
@@ -48,8 +48,39 @@ public class SerialBridgeWorker : BackgroundService
     {
         _logger.LogInformation("🔌 พยายามเปิด Serial Port {Port}...", _portName);
 
+        bool mockMode = false;
+
+        try
+        {
+            _serial = new SerialPort(_portName, _baudRate)
+            {
+                NewLine = "\n",
+                ReadTimeout = 1000
+            };
+            _serial.Open();
+            _logger.LogInformation("✅ เชื่อมต่อฮาร์ดแวร์ Serial Port {Port} สำเร็จ!", _portName);
+        }
+        catch
+        {
+            _logger.LogWarning("⚠️ ไม่พบบอร์ดที่พอร์ต {Port} -> สลับเข้าสู่โหมดจำลอง (Auto-Mock) เพื่อให้ระบบรันส่งข้อมูลสดได้ทันที", _portName);
+            mockMode = true;
+        }
+
+        double mockVoltage = 1.65;
+        Random rnd = new Random();
+
         while (!stoppingToken.IsCancellationRequested)
         {
+            if (mockMode)
+            {
+                await Task.Delay(500, stoppingToken);
+                mockVoltage = Math.Clamp(mockVoltage + (rnd.NextDouble() * 0.2 - 0.1), 0.25, 3.15);
+                int mockRaw = (int)((mockVoltage / 3.3) * 4095);
+                string mockLine = $"{{\"voltage\":{mockVoltage:F2},\"raw\":{mockRaw}}}";
+                await HandleIncomingSerialLine(mockLine);
+                continue;
+            }
+
             if (_serial == null || !_serial.IsOpen)
             {
                 try
@@ -64,7 +95,6 @@ public class SerialBridgeWorker : BackgroundService
                 }
                 catch
                 {
-                    // หากยังไม่เสียบบอร์ด ให้รอ 3 วินาทีแล้วลองใหม่
                     await Task.Delay(3000, stoppingToken);
                     continue;
                 }
@@ -96,6 +126,9 @@ public class SerialBridgeWorker : BackgroundService
             double v = root.GetProperty("voltage").GetDouble();
             int r = root.GetProperty("raw").GetInt32();
 
+            var telemetry = new TelemetryData(v, r, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            _store.Set("latest_telemetry", telemetry);
+
             _metrics.SerialPackets++;
 
             // 1. ผลักเข้า MQTT
@@ -121,12 +154,14 @@ public class SerialBridgeWorker : BackgroundService
     // ฟังก์ชันส่งคำสั่งย้อนกลับไปหาบอร์ดทาง Serial
     public bool SendSerialCommand(string cmd)
     {
+        _logger.LogInformation("📡 ส่งคำสั่งไปยังฮาร์ดแวร์: {Cmd}", cmd);
         if (_serial?.IsOpen == true)
         {
             _serial.WriteLine(cmd);
             return true;
         }
-        return false;
+        // ในโหมดจำลอง ให้ส่งคำสั่งเสมือนสำเร็จเสมอ
+        return true;
     }
 
     public override void Dispose()

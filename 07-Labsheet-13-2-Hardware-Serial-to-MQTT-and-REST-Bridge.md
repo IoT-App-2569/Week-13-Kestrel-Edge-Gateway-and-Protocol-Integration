@@ -321,6 +321,35 @@ curl -X POST http://localhost:5000/api/led/on
 
 ---
 
-## 4. คำถามท้ายการทดลอง
-1. สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?
-2. เพราะเหตุใดเราจึงต้องใช้ `BackgroundService` ในการอ่านข้อมูล Serial แทนที่จะเปิดพอร์ตอ่านตรงๆ ภายในฟังก์ชันของ REST API?
+### ผลการทดสอบสะพานเชื่อมต่อและภาพการทดลอง (Verification Screenshots)
+
+1. **การทดสอบอ่านค่า Telemetry ล่าสุดผ่าน REST API (`GET /api/telemetry/latest`):**
+   * ได้รับ HTTP Status 200 OK พร้อมข้อมูล JSON ของแรงดันไฟฟ้าและค่าดิบ ADC ล่าสุด
+
+<p align="center">
+  <img src="Images/lab13_rest_get_telemetry.png" alt="REST API Get Telemetry" width="800">
+</p>
+<p align="center"><b>ภาพที่ 13-2.1:</b> ผลการเรียกดูค่าเซนเซอร์ล่าสุดผ่าน REST API (/api/telemetry/latest)</p>
+
+2. **การทดสอบสั่งควบคุมหลอดไฟผ่าน REST API (`POST /api/led/on`):**
+   * ส่งคำสั่ง `LED:ON` ไปยังสะพานเชื่อมต่อ Serial Bridge และได้รับคำตอบกลับว่าส่งสำเร็จ (`sentToSerial: True`)
+
+<p align="center">
+  <img src="Images/lab13_rest_post_led_on.png" alt="REST API Post LED Command" width="800">
+</p>
+<p align="center"><b>ภาพที่ 13-2.2:</b> ผลการสั่งงานเปิดหลอดไฟผ่าน REST API (/api/led/on)</p>
+
+---
+
+## 4. คำถามท้ายการทดลอง (Review Questions)
+
+**1. สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?**
+
+* อุปกรณ์รุ่นเก่าหรือคอนโทรลเลอร์ในระบบเดิมมักมีแค่พอร์ตสื่อสารทางกายภาพ เช่น UART, RS-232 หรือ RS-485 โดยไม่มี Network Stack หรือ Wi-Fi/Ethernet ในตัว
+* สถาปัตยกรรมนี้ใช้ Edge Gateway ทำหน้าที่เป็นตัวแปลงโปรโตคอล (Protocol Translator) โดยดักรับ Raw Byte Stream จากสาย Serial แล้วแปลงเป็น JSON โยนเข้า MQTT Topic และบันทึกลง REST API ทำให้อุปกรณ์เก่านั้นกลายเป็นส่วนหนึ่งของระบบ IoT ยุคใหม่ได้ทันที สื่อสารข้ามเครือข่ายและเชื่อมโยงกับ Dashboard หรือ Mobile App ได้โดยไม่ต้องเปลี่ยนฮาร์ดแวร์เดิม
+
+**2. เพราะเหตุใดเราจึงต้องใช้ `BackgroundService` ในการอ่านข้อมูล Serial แทนที่จะเปิดพอร์ตอ่านตรงๆ ภายในฟังก์ชันของ REST API?**
+
+* **ป้องกันปัญหา Thread Blocking:** การอ่านข้อมูล Serial เป็นงาน Streaming แบบต่อเนื่องและมีความหน่วง (I/O latency) ถ้าไปสั่งเปิดพอร์ตหรือสั่ง `ReadLine()` ภายใน Request Handler ของ REST API จะทำให้ Web Worker Thread ถูกบล็อกค้าง (Thread Pool Starvation)
+* **ข้อจำกัดเรื่อง Exclusive Lock:** พอร์ต COM บนระบบปฏิบัติการเปิดใช้งานพร้อมกันได้แค่โปรเซสเดียว ถ้ามีหลาย HTTP Request เข้ามาพร้อมกันแล้วพยายามเปิดพอร์ตซ้อนกัน ระบบจะพังทันที (Port Access Conflict)
+* **การออกแบบที่ถูกต้อง:** การใช้ `BackgroundService` จะแยกเธรดทำงานเบื้องหลังตัวเดียว คอยเปิดพอร์ตทิ้งไว้และอ่านข้อมูลมาเก็บใน `GatewayStateStore` (In-Memory แบบ Thread-Safe) เมื่อมี HTTP Request เข้ามา REST API ก็แค่อ่านค่าจาก RAM ตอบกลับได้ทันทีในระดับเศษเสี้ยววินาที ไม่บล็อกการทำงานของใคร

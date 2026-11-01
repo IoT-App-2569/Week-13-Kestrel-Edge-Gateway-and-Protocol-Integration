@@ -4,7 +4,7 @@ using MQTTnet.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ตั้งค่า Kestrel
+// ตั้งค่า Kestrel: เปิดพอร์ต HTTP (5000) และ MQTT TCP (1883)
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(5000);
@@ -15,10 +15,8 @@ builder.WebHost.ConfigureKestrel(options =>
 builder.Services.AddSingleton<GatewayStateStore>();
 builder.Services.AddMqttServer(options => options.WithDefaultEndpoint());
 builder.Services.AddHostedService<SerialBridgeWorker>();
-// เพื่อให้ API เรียกใช้งาน Worker ได้
 builder.Services.AddSingleton(sp =>
     sp.GetServices<IHostedService>().OfType<SerialBridgeWorker>().First());
-
 
 builder.Services.AddSignalR();
 builder.Services.AddSingleton<ProtocolMetrics>();
@@ -30,7 +28,47 @@ app.UseStaticFiles(); // ให้บริการไฟล์ใน wwwroot
 
 app.MapHub<GatewayHub>("/hubs/gateway");
 
-app.UseMqttServer(server => { /* callbacks */ });
+app.UseMqttServer(server =>
+{
+    // กรณี Client ไม่ได้ส่ง Client ID มา ให้สุ่มสร้างให้เพื่อไม่ให้โดนปฏิเสธ
+    server.ValidatingConnectionAsync += args =>
+    {
+        if (string.IsNullOrEmpty(args.ClientId))
+        {
+            args.AssignedClientIdentifier = Guid.NewGuid().ToString("N");
+        }
+        return Task.CompletedTask;
+    };
+
+    server.ClientConnectedAsync += args =>
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine($"[MQTT Server] 🟢 Client เชื่อมต่อ: {args.ClientId} (จาก Endpoint: {args.Endpoint})");
+        Console.ResetColor();
+        return Task.CompletedTask;
+    };
+
+    server.ClientDisconnectedAsync += args =>
+    {
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine($"[MQTT Server] 🔴 Client ตัดการเชื่อมต่อ: {args.ClientId}");
+        Console.ResetColor();
+        return Task.CompletedTask;
+    };
+
+    server.InterceptingPublishAsync += args =>
+    {
+        var topic = args.ApplicationMessage.Topic;
+        var payload = args.ApplicationMessage.ConvertPayloadToString();
+        var qos = args.ApplicationMessage.QualityOfServiceLevel;
+
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.WriteLine($"[MQTT Message] 📩 หัวข้อ: {topic} | QoS: {qos} | ข้อความ: {payload}");
+        Console.ResetColor();
+
+        return Task.CompletedTask;
+    };
+});
 
 // 1. API อ่านข้อมูลเซนเซอร์ล่าสุด
 app.MapGet("/api/telemetry/latest", (GatewayStateStore store) =>
