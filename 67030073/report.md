@@ -3,7 +3,7 @@
 
 **รหัสนักศึกษา:** 67030073
 **ชื่อ-นามสกุล:** นายณัฐพงศ์ เนียมประดิษฐ
-**ชื่อภาษาอังกฤษ:** Natthaphong Niampradit
+**ชื่อภาษาอังกฤษ:** Natthapong Niampradit
 **วิชา:** ระบบสมองกลฝังตัวและการเชื่อมต่อเครือข่าย (Embedded Systems & IoT)
 **บอร์ดทดลอง:** ESP32 (ESP32-D0WD-V3)
 **ไฟล์โปรเจกต์:** `Week13_Kestrel_Edge_Gateway/67030073_template/`
