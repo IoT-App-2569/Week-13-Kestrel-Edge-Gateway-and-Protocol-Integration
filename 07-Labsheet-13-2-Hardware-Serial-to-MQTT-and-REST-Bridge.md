@@ -329,6 +329,8 @@ curl -X POST http://localhost:5000/api/led/on
 
 <img width="1632" height="538" alt="image" src="https://github.com/user-attachments/assets/90d41be5-fdc9-4577-b974-6baeb0ee9bfc" />
 
+<img width="3024" height="4032" alt="Image (11)" src="https://github.com/user-attachments/assets/384de2a8-abd8-4de8-9e7c-79e3eaff0eb3" />
+
 
 ---
 
