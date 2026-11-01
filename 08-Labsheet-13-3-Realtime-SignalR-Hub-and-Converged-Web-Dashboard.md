@@ -291,6 +291,10 @@ app.MapHub<GatewayHub>("/hubs/gateway");
 * ตัวเลขนับทราฟฟิกของทั้ง Serial, MQTT และ SignalR จะวิ่งขึ้นพร้อมๆ กันในเสี้ยววินาที!
 * เมื่อคลิกปุ่มเปิดไฟบนหน้าเว็บ หลอดไฟ LED จริงบนบอร์ด ESP32 จะสว่างขึ้นทันที!
 
+
+
+<img width="1217" height="476" alt="image" src="https://github.com/user-attachments/assets/54205313-a6c6-4388-9b9a-b9eeab57ab74" />
+
 ---
 
 ## 4. คำถามท้ายการทดลอง
