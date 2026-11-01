@@ -73,9 +73,9 @@ curl.exe -X POST http://localhost:5000/api/led/on
    * บอร์ด ESP32 ยังคงส่งข้อมูลได้หรือไม่?
    * แอปมือถือ Flutter และเว็บแดชบอร์ดยังสามารถเปิดดูค่าและสั่งงานหลอดไฟได้หรือไม่?
 3. **สรุปผล**: การสื่อสาร Serial, MQTT, REST และ SignalR ภายในเครื่อง/เครือข่าย LAN ไม่จำเป็นต้องใช้บริการคลาวด์ภายนอก แต่หน้า Dashboard โหลด SignalR JavaScript จาก CDN จึงต้องมีอินเทอร์เน็ตตอนโหลดหน้า เว้นแต่จะเตรียมไลบรารีไว้ในเครื่องก่อน
-![alt text](image.png)
-![alt text](image-1.png) ![alt text](image-2.png)
-![alt text](image-3.png)
+![alt text](img/image88.png)
+![alt text](img/image89.png) ![alt text](img/image90.png)
+![alt text](img/image91.png)
 
 link การทดลองปิดไฟ 67030043 : https://youtube.com/shorts/fHyWw_oLZ6I?si=gfH2WtRPfu4w-mFL
 
@@ -93,7 +93,6 @@ link การทดลองปิดไฟ 67030043 : https://youtube.com/shor
 ควรเริ่มจาก (ก) ยืนยันตัวตนและกำหนดสิทธิ์ MQTT/API พร้อมเข้ารหัสการสื่อสาร (ข) แบ่งเครือข่ายอุปกรณ์และ Gateway พร้อมใช้ Firewall/Allowlist และ (ค) เพิ่มการบันทึก Log การเฝ้าระวัง การสำรองข้อมูล และแผนกู้คืนเมื่อระบบขัดข้อง
 
 3. ขอแสดงความยินดีกับนักศึกษาทุกท่านที่สำเร็จการฝึกอบรมการพัฒนาแอปพลิเคชันไอโอทีระดับมืออาชีพอย่างสมบูรณ์แบบ! 🎉
-
 
 
 
