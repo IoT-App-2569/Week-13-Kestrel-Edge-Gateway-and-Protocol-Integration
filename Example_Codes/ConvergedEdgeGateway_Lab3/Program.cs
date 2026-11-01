@@ -4,52 +4,108 @@ using MQTTnet.Server;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ตั้งค่า Kestrel
 builder.WebHost.ConfigureKestrel(options =>
 {
     options.ListenAnyIP(5000);
-    options.ListenAnyIP(1883, l => l.UseMqtt());
+    options.ListenAnyIP(1883, listenOptions => listenOptions.UseMqtt());
 });
 
-// ลงทะเบียน Services
 builder.Services.AddSingleton<GatewayStateStore>();
-builder.Services.AddMqttServer(options => options.WithDefaultEndpoint());
-builder.Services.AddHostedService<SerialBridgeWorker>();
-// เพื่อให้ API เรียกใช้งาน Worker ได้
-builder.Services.AddSingleton(sp =>
-    sp.GetServices<IHostedService>().OfType<SerialBridgeWorker>().First());
-
-
-builder.Services.AddSignalR();
 builder.Services.AddSingleton<ProtocolMetrics>();
+builder.Services.AddMqttServer(options => options.WithDefaultEndpoint());
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<SerialBridgeWorker>();
+builder.Services.AddHostedService(serviceProvider =>
+    serviceProvider.GetRequiredService<SerialBridgeWorker>());
 
 var app = builder.Build();
 
-app.UseDefaultFiles();
-app.UseStaticFiles(); // ให้บริการไฟล์ใน wwwroot
-
-app.MapHub<GatewayHub>("/hubs/gateway");
-
-app.UseMqttServer(server => { /* callbacks */ });
-
-// 1. API อ่านข้อมูลเซนเซอร์ล่าสุด
-app.MapGet("/api/telemetry/latest", (GatewayStateStore store) =>
+app.Use(async (context, next) =>
 {
-    var data = store.Get("latest_telemetry");
-    return data != null ? Results.Ok(data) : Results.NotFound(new { error = "No telemetry yet" });
+    if (context.Request.Path.StartsWithSegments("/api"))
+    {
+        context.RequestServices.GetRequiredService<ProtocolMetrics>().RecordRestRequest();
+    }
+
+    await next(context);
 });
 
-// 2. API ควบคุมหลอดไฟผ่าน Serial Bridge
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.MapHub<GatewayHub>("/hubs/gateway");
+
+app.UseMqttServer(server =>
+{
+    server.ValidatingConnectionAsync += args =>
+    {
+        if (string.IsNullOrEmpty(args.ClientId))
+        {
+            args.AssignedClientIdentifier = Guid.NewGuid().ToString("N");
+        }
+
+        return Task.CompletedTask;
+    };
+
+    server.ClientConnectedAsync += args =>
+    {
+        app.Logger.LogInformation("MQTT Client เชื่อมต่อ: {ClientId}", args.ClientId);
+        return Task.CompletedTask;
+    };
+
+    server.ClientDisconnectedAsync += args =>
+    {
+        app.Logger.LogInformation("MQTT Client ตัดการเชื่อมต่อ: {ClientId}", args.ClientId);
+        return Task.CompletedTask;
+    };
+
+    server.InterceptingPublishAsync += args =>
+    {
+        app.Logger.LogInformation(
+            "MQTT Message: {Topic} | QoS: {QoS} | ข้อความ: {Payload}",
+            args.ApplicationMessage.Topic,
+            args.ApplicationMessage.QualityOfServiceLevel,
+            args.ApplicationMessage.ConvertPayloadToString());
+        return Task.CompletedTask;
+    };
+});
+
+app.MapGet("/", () => Results.Redirect("/index.html"));
+
+app.MapGet("/api/telemetry/latest", (GatewayStateStore store) =>
+{
+    var telemetry = store.LatestTelemetry;
+    return telemetry is null
+        ? Results.NotFound(new { error = "No telemetry received from the serial device yet." })
+        : Results.Ok(telemetry);
+});
+
 app.MapPost("/api/led/{state}", (string state, SerialBridgeWorker worker) =>
 {
-    string cmd = state.ToLower() == "on" ? "LED:ON" : "LED:OFF";
-    bool success = worker.SendSerialCommand(cmd);
+    string? command = state.ToLowerInvariant() switch
+    {
+        "on" => "LED:ON",
+        "off" => "LED:OFF",
+        _ => null
+    };
+
+    if (command is null)
+    {
+        return Results.BadRequest(new { error = "State must be 'on' or 'off'." });
+    }
+
+    if (!worker.SendSerialCommand(command))
+    {
+        return Results.Problem(
+            title: "Serial device unavailable",
+            detail: "The command was not sent. Check the configured COM port and serial connection.",
+            statusCode: StatusCodes.Status503ServiceUnavailable);
+    }
 
     return Results.Ok(new
     {
-        dispatchedCommand = cmd,
-        sentToSerial = success,
-        serverTime = DateTime.Now.ToString("HH:mm:ss")
+        dispatchedCommand = command,
+        sentToSerial = true,
+        serverTime = DateTimeOffset.Now.ToString("HH:mm:ss")
     });
 });
 

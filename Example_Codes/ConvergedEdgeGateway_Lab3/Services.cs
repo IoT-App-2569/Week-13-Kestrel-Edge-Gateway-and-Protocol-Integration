@@ -1,137 +1,275 @@
-using System.Collections.Concurrent;
 using System.IO.Ports;
 using System.Text.Json;
 using Microsoft.AspNetCore.SignalR;
 using MQTTnet;
 using MQTTnet.Server;
 
-// 1. คลาสจัดเก็บสถานะระบบแบบ Thread-Safe
-public class GatewayStateStore
+public sealed class GatewayStateStore
 {
-    private readonly ConcurrentDictionary<string, object> _state = new();
+    private TelemetryData? _latestTelemetry;
 
-    public void Set(string key, object val) => _state[key] = val;
-    public T? Get<T>(string key) => _state.TryGetValue(key, out var val) && val is T t ? t : default;
-    public object? Get(string key) => _state.TryGetValue(key, out var val) ? val : null;
+    public TelemetryData? LatestTelemetry => Volatile.Read(ref _latestTelemetry);
+
+    public void SetLatestTelemetry(TelemetryData telemetry) =>
+        Volatile.Write(ref _latestTelemetry, telemetry);
 }
 
-// 2. โมเดลข้อมูล Telemetry
-public record TelemetryData(double Voltage, int Raw, long Timestamp);
+public sealed record TelemetryData(double Voltage, int Raw, long Timestamp);
 
-// 3. งานเบื้องหลังสำหรับเชื่อมต่อและดักฟัง Serial Port
-public class SerialBridgeWorker : BackgroundService
+public sealed class SerialBridgeWorker : BackgroundService
 {
-    private SerialPort? _serial;
-    private readonly string _portName = "COM24"; // ปรับให้ตรงกับพอร์ตของ ESP32 บนเครื่องคุณ (COM24)
-    private readonly int _baudRate = 115200;
+    private readonly object _serialLock = new();
+    private readonly string _portName;
+    private readonly int _baudRate;
     private readonly GatewayStateStore _store;
     private readonly MqttServer _mqttServer;
-    private readonly ILogger<SerialBridgeWorker> _logger;
     private readonly IHubContext<GatewayHub> _hubContext;
     private readonly ProtocolMetrics _metrics;
+    private readonly IHostApplicationLifetime _applicationLifetime;
+    private readonly ILogger<SerialBridgeWorker> _logger;
+    private SerialPort? _serial;
 
     public SerialBridgeWorker(
+        IConfiguration configuration,
         GatewayStateStore store,
         MqttServer mqttServer,
         IHubContext<GatewayHub> hubContext,
         ProtocolMetrics metrics,
+        IHostApplicationLifetime applicationLifetime,
         ILogger<SerialBridgeWorker> logger)
     {
+        _portName = configuration["Serial:PortName"] ?? "COM3";
+        _baudRate = configuration.GetValue("Serial:BaudRate", 115200);
         _store = store;
         _mqttServer = mqttServer;
         _hubContext = hubContext;
         _metrics = metrics;
+        _applicationLifetime = applicationLifetime;
         _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("🔌 พยายามเปิด Serial Port {Port}...", _portName);
+        _logger.LogInformation("พยายามเปิด Serial Port {Port}...", _portName);
 
-        while (!stoppingToken.IsCancellationRequested)
+        try
         {
-            if (_serial == null || !_serial.IsOpen)
+            var applicationStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            using var registration = _applicationLifetime.ApplicationStarted.Register(
+                () => applicationStarted.TrySetResult());
+            await applicationStarted.Task.WaitAsync(stoppingToken);
+
+            while (!stoppingToken.IsCancellationRequested)
             {
-                try
+                if (!EnsureSerialPortOpen(stoppingToken))
                 {
-                    _serial = new SerialPort(_portName, _baudRate)
-                    {
-                        NewLine = "\n",
-                        ReadTimeout = 1000
-                    };
-                    _serial.Open();
-                    _logger.LogInformation("✅ เชื่อมต่อฮาร์ดแวร์ Serial Port {Port} สำเร็จ!", _portName);
-                }
-                catch
-                {
-                    // หากยังไม่เสียบบอร์ด ให้รอ 3 วินาทีแล้วลองใหม่
-                    await Task.Delay(3000, stoppingToken);
+                    await Task.Delay(TimeSpan.FromSeconds(2), stoppingToken);
                     continue;
                 }
+
+                string? line = null;
+                try
+                {
+                    lock (_serialLock)
+                    {
+                        line = _serial!.ReadLine().Trim();
+                    }
+                }
+                catch (TimeoutException)
+                {
+                    // A read timeout is expected while the device is idle.
+                }
+                catch (Exception ex) when (IsSerialException(ex))
+                {
+                    _logger.LogWarning(ex, "เกิดปัญหาระหว่างอ่าน Serial Port {Port}", _portName);
+                    CloseSerialPort();
+                    continue;
+                }
+
+                if (!string.IsNullOrEmpty(line))
+                {
+                    await HandleIncomingSerialLine(line, stoppingToken);
+                }
+            }
+        }
+        finally
+        {
+            CloseSerialPort();
+        }
+    }
+
+    private bool EnsureSerialPortOpen(CancellationToken stoppingToken)
+    {
+        lock (_serialLock)
+        {
+            if (_serial?.IsOpen == true)
+            {
+                return true;
+            }
+
+            if (stoppingToken.IsCancellationRequested)
+            {
+                return false;
+            }
+
+            var serial = new SerialPort(_portName, _baudRate)
+            {
+                NewLine = "\n",
+                ReadTimeout = 500,
+                WriteTimeout = 1000
+            };
+
+            try
+            {
+                serial.Open();
+                _serial = serial;
+                _logger.LogInformation("เชื่อมต่อ Serial Port {Port} สำเร็จ", _portName);
+                return true;
+            }
+            catch (Exception ex) when (IsSerialException(ex))
+            {
+                serial.Dispose();
+                _logger.LogWarning(ex, "เปิด Serial Port {Port} ไม่สำเร็จ จะลองใหม่", _portName);
+                return false;
+            }
+        }
+    }
+
+    private async Task HandleIncomingSerialLine(string line, CancellationToken stoppingToken)
+    {
+        double voltage;
+        int raw;
+
+        try
+        {
+            using var document = JsonDocument.Parse(line);
+            var root = document.RootElement;
+            if (root.ValueKind != JsonValueKind.Object ||
+                !root.TryGetProperty("voltage", out var voltageElement) ||
+                !root.TryGetProperty("raw", out var rawElement) ||
+                !voltageElement.TryGetDouble(out voltage) ||
+                !rawElement.TryGetInt32(out raw))
+            {
+                _logger.LogDebug("ข้ามข้อมูล Serial ที่ไม่มีฟิลด์ voltage/raw: {Line}", line);
+                return;
+            }
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogDebug(ex, "ข้ามข้อมูล Serial ที่ไม่ใช่ JSON Telemetry");
+            return;
+        }
+
+        if (!double.IsFinite(voltage) || voltage < 0 || voltage > 3.3 || raw is < 0 or > 4095)
+        {
+            _logger.LogWarning("ข้ามค่า Telemetry ที่อยู่นอกช่วง: voltage={Voltage}, raw={Raw}", voltage, raw);
+            return;
+        }
+
+        _store.SetLatestTelemetry(new TelemetryData(
+            voltage,
+            raw,
+            DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()));
+        _metrics.RecordSerialPacket();
+
+        var mqttMessage = new MqttApplicationMessageBuilder()
+            .WithTopic("iot/esp32/telemetry")
+            .WithPayload(line)
+            .WithQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.AtMostOnce)
+            .Build();
+
+        try
+        {
+            await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(mqttMessage), stoppingToken);
+            _metrics.RecordMqttMessage();
+        }
+        catch (InvalidOperationException ex) when (!stoppingToken.IsCancellationRequested)
+        {
+            _logger.LogError(ex, "ส่ง Telemetry เข้า MQTT Broker ไม่สำเร็จ");
+        }
+
+        _metrics.RecordSignalRPush();
+        try
+        {
+            await _hubContext.Clients.All.SendAsync(
+                "ReceiveTelemetry",
+                new
+                {
+                    voltage,
+                    raw,
+                    metrics = _metrics.GetSnapshot()
+                },
+                stoppingToken);
+        }
+        catch (InvalidOperationException ex) when (!stoppingToken.IsCancellationRequested)
+        {
+            _logger.LogWarning(ex, "ส่ง Telemetry ผ่าน SignalR ไม่สำเร็จ");
+        }
+    }
+
+    public bool SendSerialCommand(string command)
+    {
+        lock (_serialLock)
+        {
+            if (_serial?.IsOpen != true)
+            {
+                return false;
             }
 
             try
             {
-                string line = _serial.ReadLine().Trim();
-                if (!string.IsNullOrEmpty(line))
-                {
-                    await HandleIncomingSerialLine(line);
-                }
+                _serial.WriteLine(command);
+                return true;
             }
-            catch (TimeoutException) { /* ปกติเมื่อไม่มีข้อมูลส่งมาใน 1 วิ */ }
-            catch (Exception ex)
+            catch (Exception ex) when (IsSerialException(ex))
             {
-                _logger.LogWarning("Serial Read Warning: {Message}", ex.Message);
-                _serial?.Close();
+                _logger.LogWarning(ex, "ส่งคำสั่ง {Command} ไปยัง Serial Port {Port} ไม่สำเร็จ", command, _portName);
+                CloseSerialPort();
+                return false;
             }
         }
     }
 
-    private async Task HandleIncomingSerialLine(string line)
+    private void CloseSerialPort()
     {
-        try
+        lock (_serialLock)
         {
-            using var doc = JsonDocument.Parse(line);
-            var root = doc.RootElement;
-            double v = root.GetProperty("voltage").GetDouble();
-            int r = root.GetProperty("raw").GetInt32();
-
-            _metrics.SerialPackets++;
-
-            // 1. ผลักเข้า MQTT
-            _metrics.MqttMessages++;
-            var mqttMsg = new MqttApplicationMessageBuilder()
-                .WithTopic("iot/esp32/telemetry")
-                .WithPayload(line)
-                .Build();
-            await _mqttServer.InjectApplicationMessage(new InjectedMqttApplicationMessage(mqttMsg));
-
-            // 2. ผลักเข้า SignalR หาหน้าเว็บทันที!
-            _metrics.SignalRPushes++;
-            await _hubContext.Clients.All.SendAsync("ReceiveTelemetry", new
-            {
-                voltage = v,
-                raw = r,
-                metrics = _metrics
-            });
+            _serial?.Dispose();
+            _serial = null;
         }
-        catch { }
     }
 
-    // ฟังก์ชันส่งคำสั่งย้อนกลับไปหาบอร์ดทาง Serial
-    public bool SendSerialCommand(string cmd)
-    {
-        if (_serial?.IsOpen == true)
-        {
-            _serial.WriteLine(cmd);
-            return true;
-        }
-        return false;
-    }
+    private static bool IsSerialException(Exception exception) =>
+        exception is IOException or UnauthorizedAccessException or ArgumentException or InvalidOperationException;
 
     public override void Dispose()
     {
-        _serial?.Close();
+        CloseSerialPort();
         base.Dispose();
     }
 }
+
+public sealed class ProtocolMetrics
+{
+    private long _serialPackets;
+    private long _mqttMessages;
+    private long _restRequests;
+    private long _signalRPushes;
+
+    public void RecordSerialPacket() => Interlocked.Increment(ref _serialPackets);
+    public void RecordMqttMessage() => Interlocked.Increment(ref _mqttMessages);
+    public void RecordRestRequest() => Interlocked.Increment(ref _restRequests);
+    public void RecordSignalRPush() => Interlocked.Increment(ref _signalRPushes);
+
+    public ProtocolMetricsSnapshot GetSnapshot() => new(
+        Interlocked.Read(ref _serialPackets),
+        Interlocked.Read(ref _mqttMessages),
+        Interlocked.Read(ref _restRequests),
+        Interlocked.Read(ref _signalRPushes));
+}
+
+public sealed record ProtocolMetricsSnapshot(
+    long SerialPackets,
+    long MqttMessages,
+    long RestRequests,
+    long SignalRPushes);

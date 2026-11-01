@@ -16,7 +16,7 @@
 
 ## 2. โครงสร้างการเชื่อมโยงข้อมูล (Data Bridge Topology)
 
-<p align="center"><img src="Images/Fig_07-Labsheet-13-2_academic.svg" alt="07-Labsheet-13-2-Hardware-Serial-to-MQTT-and-REST-Bridge"  style=" height: auto;" ></p>
+<p align="center"><img src="../Images/Fig_07-Labsheet-13-2_academic.svg" alt="07-Labsheet-13-2-Hardware-Serial-to-MQTT-and-REST-Bridge"  style=" height: auto;" ></p>
 <p align="center"><b></b>โครงสร้างการเชื่อมโยงข้อมูล (Data Bridge Topology)</p>
 
 ---
@@ -296,31 +296,36 @@ void app_main(void)
 ### กิจกรรมที่ 13-2.5: การทดสอบสะพานเชื่อมต่อ
 
 > [!WARNING] **ข้อพึงระวังเรื่องพอร์ตสื่อสารอนุกรม (Serial Port Exclusive Lock):**
-> 1. ตรวจสอบหมายเลข COM Port ของบอร์ด ESP32 ผ่าน Device Manager แล้วแก้ไขตัวแปร `_portName` ในไฟล์ `Services.cs` ให้ตรงกับเครื่องของคุณ (เช่น `COM24`)
+> 1. ตรวจสอบหมายเลข COM Port ของบอร์ด ESP32 ผ่าน Device Manager แล้วกำหนด `Serial:PortName` ใน `Example_Codes/ConvergedEdgeGateway_Lab2/appsettings.json` ให้ตรงกับเครื่องของคุณ (ตัวอย่างโปรเจกต์ตั้งต้นเป็น `COM3`)
 > 2. **ต้องปิด `idf monitor`, PuTTY หรือ Serial Monitor อื่นๆ ก่อนรัน Kestrel เสมอ** เพราะบน Windows พอร์ต COM จะถูกล็อกใช้งานแบบ Exclusive Access (เปิดได้เพียง 1 โปรแกรมในเวลาเดียวกัน) หากมีโปรแกรมอื่นเปิดพอร์ตค้างไว้ C# จะเปิดพอร์ตไม่สำเร็จและส่งคำสั่งไม่ได้ (`sentToSerial: false`)
 
-1. เสียบบอร์ด ESP32 เข้ากับเครื่อง และสั่งรัน Kestrel:
+1. จากโฟลเดอร์ราก Repository ให้รันโปรเจกต์ Lab 13.2 (ไม่ใช่โปรเจกต์ Lab 13.1):
 ```powershell
-dotnet run
+dotnet run --project .\Example_Codes\ConvergedEdgeGateway_Lab2\ConvergedEdgeGateway.csproj
 ```
-2. ทดสอบเรียกดูค่าเซนเซอร์ผ่านเบราว์เซอร์หรือ cURL:
+2. ทดสอบเรียกดูค่าเซนเซอร์ผ่าน PowerShell:
 ```powershell
-curl http://localhost:5000/api/telemetry/latest
+curl.exe http://localhost:5000/api/telemetry/latest
 ```
 *สังเกตว่าจะได้ข้อมูล JSON ของแรงดันไฟฟ้าทันที!*
-3. เปิด `mosquitto_sub`:
+3. เปิด Terminal อีกหน้าต่างเพื่อ Subscribe ข้อมูล MQTT (ใช้ `::1` เพื่อเชื่อมต่อ Kestrel โดยตรง และใช้ path เต็มหาก Mosquitto CLI ยังไม่ได้เพิ่มใน `PATH`):
 ```powershell
-mosquitto_sub -h 127.0.0.1 -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v
+& 'C:\Program Files\Mosquitto\mosquitto_sub.exe' -h '::1' -p 1883 -t "iot/esp32/telemetry" -i "sub_client" -v
 ```
 *สังเกตว่าข้อมูลที่อ่านจากสาย USB Serial ถูกส่งต่อเข้าหัวข้อ MQTT อัตโนมัติ!*
 4. ทดสอบสั่งเปิด-ปิดไฟผ่าน REST API:
 ```powershell
-curl -X POST http://localhost:5000/api/led/on
+curl.exe -X POST http://localhost:5000/api/led/on
 ```
 *สังเกตว่าคำสั่ง `LED:ON` ถูกส่งผ่านสาย USB เข้าไปควบคุมบอร์ดทันที!*
-
+![alt text](img/image-5.png)
+![alt text](img/image-4.png)
+![alt text](img/image-6.png)
+![alt text](img/image-7.png)
 ---
 
 ## 4. คำถามท้ายการทดลอง
 1. สถาปัตยกรรมแบบ Serial-to-MQTT Bridge นี้ช่วยให้อุปกรณ์รุ่นเก่า (Legacy Hardware) ที่ไม่มี Wi-Fi สามารถเข้าร่วมระบบนิเวศ IoT สมัยใหม่ได้อย่างไร?
+Gateway ทำหน้าที่แปลงข้อมูล Serial ของอุปกรณ์เดิมให้เป็น MQTT Topic และ REST API ทำให้อุปกรณ์หรือระบบอื่นที่รองรับเครือข่ายสามารถรับข้อมูลและสั่งงานได้ โดยไม่ต้องเพิ่ม Wi-Fi หรือเปลี่ยนเฟิร์มแวร์ให้ทำ MQTT เอง
 2. เพราะเหตุใดเราจึงต้องใช้ `BackgroundService` ในการอ่านข้อมูล Serial แทนที่จะเปิดพอร์ตอ่านตรงๆ ภายในฟังก์ชันของ REST API?
+การอ่าน Serial เป็นงานต่อเนื่องและอาจรอข้อมูลนาน หากทำใน REST Request จะทำให้คำขอค้างและผูกการอ่านไว้กับการเรียก API แต่ `BackgroundService` อ่านข้อมูลแยกจาก HTTP Request ได้ตลอดเวลา ทำให้ REST API ตอบสนองได้ตามปกติ และใช้ข้อมูลล่าสุดจาก State Store ได้ทันที

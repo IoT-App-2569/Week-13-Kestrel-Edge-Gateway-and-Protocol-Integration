@@ -16,7 +16,7 @@
 
 ## 2. โครงสร้างสถาปัตยกรรม (Architecture Diagram)
 
-<p align="center"><img src="Images/Fig_06-Labsheet-13-1_academic.svg" alt="06-Labsheet-13-1-Embedded-MQTT-Broker-and-Client-with-MQTTnet" width="400" style="  height: auto;" ></p>
+<p align="center"><img src="../Images/Fig_06-Labsheet-13-1_academic.svg" alt="06-Labsheet-13-1-Embedded-MQTT-Broker-and-Client-with-MQTTnet" width="400" style="  height: auto;" ></p>
 <p align="center"><b></b>โครงสร้างสถาปัตยกรรม (Architecture Diagram)</p>
 
 ---
@@ -135,11 +135,14 @@ dotnet run
 ```
 *สังเกตข้อความบนคอนโซลว่าเซิร์ฟเวอร์กำลังฟังที่พอร์ต 5000 (HTTP) และ 1883 (MQTT)*
 
+> **กรณี Windows แจ้งว่าไม่รู้จัก `mosquitto_sub`:** หมายความว่ายังไม่ได้ติดตั้ง Mosquitto CLI หรือยังไม่ได้เพิ่มโฟลเดอร์ติดตั้งลงใน `PATH` ให้ติดตั้ง Mosquitto สำหรับ Windows จาก [หน้าดาวน์โหลดทางการ](https://mosquitto.org/download/) แล้วเปิด PowerShell ใหม่ หรือเรียกไฟล์ `.exe` ด้วย path เต็มตามตัวอย่างด้านล่าง (ตัวอย่างนี้ติดตั้งไว้ที่ `C:\Program Files\Mosquitto`)
+
 #### 2. เปิดหน้าต่าง PowerShell ที่สอง: ทดสอบ Subscribe หัวข้อ
 ใช้คำสั่ง `mosquitto_sub` เพื่อดักฟังข้อความจาก Embedded Broker ของเรา (ระบุพารามิเตอร์ `-i` เพื่อกำหนด Client ID):
 ```powershell
-mosquitto_sub -h 127.0.0.1 -p 1883 -t "test/edge/topic" -i "sub_client" -v
+& 'C:\Program Files\Mosquitto\mosquitto_sub.exe' -h '::1' -p 1883 -t "test/edge/topic" -i "sub_client" -v
 ```
+> ใช้ `::1` เพื่อเชื่อมต่อ Kestrel โดยตรงเมื่อมี Mosquitto Service อีกตัวฟังพอร์ต `1883` ที่ `127.0.0.1` อยู่ หากเครื่องไม่มีพอร์ตชนกันและเพิ่ม Mosquitto CLI ใน `PATH` แล้ว สามารถใช้ `mosquitto_sub -h 127.0.0.1 ...` ได้ตามปกติ
 > **ข้อสังเกต:** มาตรฐาน MQTT กำหนดให้ Client ต้องมี Client ID เสมอ สำหรับเครื่องมือ `mosquitto_sub` บน Windows หากไม่ระบุออปชัน `-i` มันจะส่ง Client ID ว่างเปล่ามา ซึ่งในโค้ดฝั่ง Broker เราได้ตั้งค่า `ValidatingConnectionAsync` ให้สุ่ม Client ID ให้โดยอัตโนมัติแล้ว
 
 *สังเกตหน้าต่างคอนโซลของ Kestrel จะขึ้นข้อความสีเขียวว่ามี Client เชื่อมต่อเข้ามา!*
@@ -147,15 +150,21 @@ mosquitto_sub -h 127.0.0.1 -p 1883 -t "test/edge/topic" -i "sub_client" -v
 #### 3. เปิดหน้าต่าง PowerShell ที่สาม: ทดสอบ Publish ข้อความ
 ส่งข้อความผ่าน `mosquitto_pub`:
 ```powershell
-mosquitto_pub -h 127.0.0.1 -p 1883 -t "test/edge/topic" -m "Hello from CLI via Kestrel Embedded MQTT!" -i "pub_client"
+& 'C:\Program Files\Mosquitto\mosquitto_pub.exe' -h '::1' -p 1883 -t "test/edge/topic" -m "Hello from CLI via Kestrel Embedded MQTT!" -i "pub_client"
 ```
 
 #### 4. สังเกตผลลัพธ์
 * หน้าต่าง Kestrel จะพิมพ์ Log สีฟ้าว่าดักจับข้อความได้ถูกต้อง
 * หน้าต่าง `mosquitto_sub` จะได้รับข้อความที่ถูกส่งต่อผ่าน Broker สำเร็จทันที
 
----
+![alt text](img/image.png) ![alt text](img/image-1.png)
+![alt text](img/image-2.png) ![alt text](img/image-3.png)
 
 ## 4. คำถามท้ายการทดลอง (Review Questions)
 1. การรัน Embedded MQTT Broker ภายใน Kestrel มีข้อได้เปรียบกว่าการติดตั้งซอฟต์แวร์ Mosquitto แยกต่างหากอย่างไรในแง่ของการกระจายงาน (Deployment) และการประมวลผลข้อมูลในหน่วยความจำ?
 2. ฟังก์ชัน `InterceptingPublishAsync` ใน MQTTnet สามารถนำไปประยุกต์ใช้ในการกรองข้อมูลที่ผิดปกติ (Edge Validation) ก่อนส่งต่อให้ Client อื่นได้อย่างไร?
+
+
+1. **ด้าน Deployment:** แอปพลิเคชันและ Broker อยู่ในโปรเซส/ชุดติดตั้งเดียวกัน จึงลดขั้นตอนติดตั้ง ตั้งค่า และดูแลบริการ Broker แยกต่างหาก อีกทั้งโค้ดในแอปสามารถนำข้อความไปประมวลผลต่อได้โดยตรง โดยไม่ต้องส่งผ่านบริการหรือ IPC เพิ่ม อย่างไรก็ตาม วิธีนี้ทำให้วงจรชีวิตและความพร้อมใช้งานของ Broker ผูกกับแอป และไม่ได้หมายความว่าจะเร็วกว่า Mosquitto ในทุกกรณี เพราะยังมีการรับส่งผ่านเครือข่าย MQTT ตามปกติ
+
+2. `InterceptingPublishAsync` ทำงานเมื่อ Broker ได้รับข้อความ Publish จึงใช้ตรวจหัวข้อและ Payload ก่อน Broker ประมวลผล/ส่งต่อ เช่น ตรวจรูปแบบ JSON ชนิดข้อมูล และช่วงค่าที่อนุญาต หากไม่ผ่านเงื่อนไขให้กำหนด `args.ProcessPublish = false` เพื่อไม่ให้ Broker ประมวลผลข้อความนั้น พร้อมบันทึกเหตุผลหรือเพิ่มตัวนับสำหรับติดตาม ส่วนข้อความที่ผ่านการตรวจสอบปล่อยให้ Broker ทำงานตามปกติ การตรวจสอบควรทำให้รวดเร็วและไม่ทำ I/O ที่ใช้เวลานานใน Event Handler เพื่อไม่ให้การรับข้อความอื่นล่าช้า

@@ -70,10 +70,10 @@
 3. **[03-Multi-Protocol-Bridging-MQTT-REST-WebSockets-Serial.md](03-Multi-Protocol-Bridging-MQTT-REST-WebSockets-Serial.md)** - สถาปัตยกรรมการแปลงโปรโตคอล 4 มิติ: MQTTnet Broker, SerialPort Listener, REST API Endpoints และ SignalR Realtime Hub
 4. **[04-Edge-Security-Resilience-and-Data-Buffering.md](04-Edge-Security-Resilience-and-Data-Buffering.md)** - การสร้างความทนทานในระดับขอบ: การเก็บบัฟเฟอร์ข้อมูลยามออฟไลน์ (Store-and-Forward), กลไก Circuit Breaker, การจำกัดอัตราคำขอ (Rate Limiting) และความปลอดภัยเกตเวย์
 5. **[05-Glossary.md](05-Glossary.md)** - อภิธานศัพท์และคำย่อทางเทคนิคประจำสัปดาห์ที่ 13
-6. **[06-Labsheet-13-1-Embedded-MQTT-Broker-and-Client-with-MQTTnet.md](06-Labsheet-13-1-Embedded-MQTT-Broker-and-Client-with-MQTTnet.md)** - **ใบงานที่ 13.1: การสร้าง Embedded MQTT Broker และ Client ภายใน Kestrel .NET 8 ด้วยไลบรารี MQTTnet**
-7. **[07-Labsheet-13-2-Hardware-Serial-to-MQTT-and-REST-Bridge.md](07-Labsheet-13-2-Hardware-Serial-to-MQTT-and-REST-Bridge.md)** - **ใบงานที่ 13.2: การพัฒนา Hardware Serial Bridge ดักฟังข้อมูล USB-UART จาก ESP32 แปลงเข้าสู่ MQTT Topics และ REST API**
-8. **[08-Labsheet-13-3-Realtime-SignalR-Hub-and-Converged-Web-Dashboard.md](08-Labsheet-13-3-Realtime-SignalR-Hub-and-Converged-Web-Dashboard.md)** - **ใบงานที่ 13.3: การสร้าง SignalR Realtime Hub และเว็บแดชบอร์ดศูนย์บัญชาการ (Converged Web Dashboard) สไตล์ Glassmorphism**
-9. **[09-Labsheet-13-4-The-Grand-Finale-All-in-One-IoT-System-Integration.md](09-Labsheet-13-4-The-Grand-Finale-All-in-One-IoT-System-Integration.md)** - **ใบงานที่ 13.4 (The Grand Finale): การทดสอบผสานรวมระบบไอโอทีแบบครบวงจร (ESP32 + Kestrel Gateway + Flutter App + Web Command Center)**
+6. **[06-Labsheet-13-1-Embedded-MQTT-Broker-and-Client-with-MQTTnet.md](67030043/06-Labsheet-13-1-Embedded-MQTT-Broker-and-Client-with-MQTTnet.md)** - **ใบงานที่ 13.1: การสร้าง Embedded MQTT Broker และ Client ภายใน Kestrel .NET 8 ด้วยไลบรารี MQTTnet**
+7. **[07-Labsheet-13-2-Hardware-Serial-to-MQTT-and-REST-Bridge.md](67030043/07-Labsheet-13-2-Hardware-Serial-to-MQTT-and-REST-Bridge.md)** - **ใบงานที่ 13.2: การพัฒนา Hardware Serial Bridge ดักฟังข้อมูล USB-UART จาก ESP32 แปลงเข้าสู่ MQTT Topics และ REST API**
+8. **[08-Labsheet-13-3-Realtime-SignalR-Hub-and-Converged-Web-Dashboard.md](67030043/08-Labsheet-13-3-Realtime-SignalR-Hub-and-Converged-Web-Dashboard.md)** - **ใบงานที่ 13.3: การสร้าง SignalR Realtime Hub และเว็บแดชบอร์ดศูนย์บัญชาการ (Converged Web Dashboard) สไตล์ Glassmorphism**
+9. **[09-Labsheet-13-4-The-Grand-Finale-All-in-One-IoT-System-Integration.md](67030043/09-Labsheet-13-4-The-Grand-Finale-All-in-One-IoT-System-Integration.md)** - **ใบงานที่ 13.4 (The Grand Finale): การทดสอบผสานรวมระบบไอโอทีแบบครบวงจร (ESP32 + Kestrel Gateway + Flutter App + Web Command Center)**
 
 ---
 

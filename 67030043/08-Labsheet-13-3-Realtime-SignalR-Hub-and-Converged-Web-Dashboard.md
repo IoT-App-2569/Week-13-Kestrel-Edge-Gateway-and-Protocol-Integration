@@ -16,7 +16,7 @@
 
 ## 2. ผังการทำงานของ SignalR Realtime Push
 
-<p align="center"><img src="Images/Fig_08-Labsheet-13-3_academic.svg" alt="08-Labsheet-13-3-Realtime-SignalR-Hub-and-Converged-Web-Dashboard" style=" height: auto;" ></p>
+<p align="center"><img src="../Images/Fig_08-Labsheet-13-3_academic.svg" alt="08-Labsheet-13-3-Realtime-SignalR-Hub-and-Converged-Web-Dashboard" style=" height: auto;" ></p>
 <p align="center"><b></b>ผังการทำงานของ SignalR Realtime Push</p>
 
 ---
@@ -286,13 +286,27 @@ app.UseStaticFiles(); // ให้บริการไฟล์ใน wwwroot
 app.MapHub<GatewayHub>("/hubs/gateway");
 ```
 
-รันเซิร์ฟเวอร์ด้วย `dotnet run` และเปิดเบราว์เซอร์ไปที่ `http://localhost:5000`:
+ก่อนรัน Lab 13.3 ให้หยุดโปรเจกต์ Lab 13.2 ที่กำลังใช้ COM3 และพอร์ต 5000/1883 ด้วย `Ctrl+C` ก่อน จากโฟลเดอร์ราก Repository ให้รัน:
+```powershell
+dotnet run --project .\Example_Codes\ConvergedEdgeGateway_Lab3\ConvergedEdgeGateway.csproj
+```
+โปรเจกต์ตั้งค่าพอร์ต Serial เริ่มต้นเป็น `COM3` ใน `appsettings.json` หากบอร์ดใช้พอร์ตอื่นให้เปลี่ยนค่า `Serial:PortName` ให้ตรงกัน แล้วเปิด `http://localhost:5000`:
 * คุณจะพบหน้าจอศูนย์บัญชาการที่ตัวเลขแรงดันไฟฟ้าวิ่งสดๆ ตามการหมุนตัวต้านทานบนบอร์ด!
-* ตัวเลขนับทราฟฟิกของทั้ง Serial, MQTT และ SignalR จะวิ่งขึ้นพร้อมๆ กันในเสี้ยววินาที!
+* ตัวเลขนับทราฟฟิก Serial, MQTT, REST และ SignalR จะอัปเดตเมื่อมีข้อมูล/คำขอเข้ามา!
 * เมื่อคลิกปุ่มเปิดไฟบนหน้าเว็บ หลอดไฟ LED จริงบนบอร์ด ESP32 จะสว่างขึ้นทันที!
-
+![alt text](img/image-9.png)
+![alt text](img/image-8.png)
+![alt text](img/image-10.png)
+![alt text](img/image-11.png)
+![alt text](img/image-12.png) ![alt text](img/image-13.png)
 ---
 
 ## 4. คำถามท้ายการทดลอง
 1. เพราะเหตุใด SignalR จึงให้ประสบการณ์การใช้งาน (UX) บนหน้าเว็บที่ดีกว่าการใช้คำสั่ง JavaScript `setInterval()` เพื่อทำ HTTP GET Polling ซ้ำๆ ทุก 500 ms?
+
+ignalR เปิดการเชื่อมต่อแบบสองทางค้างไว้และส่งข้อมูลจากเซิร์ฟเวอร์เมื่อมีข้อมูลใหม่ จึงลดการร้องขอ HTTP ซ้ำๆ ลดทราฟฟิกและภาระของเซิร์ฟเวอร์ และแสดงผลได้ทันทีโดยไม่ต้องรอรอบ Polling
+
 2. การคำนวณและแสดงผล Protocol Convergence Metrics ส่งผลดีต่อการตรวจสอบสุขภาพของระบบเครือข่ายไอโอทีในระดับโรงงานอย่างไร?
+
+SignalR เปิดการเชื่อมต่อแบบสองทางค้างไว้และส่งข้อมูลจากเซิร์ฟเวอร์เมื่อมีข้อมูลใหม่ จึงลดการร้องขอ HTTP ซ้ำๆ ลดทราฟฟิกและภาระของเซิร์ฟเวอร์ และแสดงผลได้ทันทีโดยไม่ต้องรอรอบ Polling
+ตัวนับช่วยให้เห็นปริมาณข้อมูลและกิจกรรมของแต่ละเส้นทาง เช่น Serial, MQTT, REST และ SignalR ทำให้ผู้ดูแลเปรียบเทียบการไหลของข้อมูล ตรวจพบว่าช่องทางใดหยุดหรือผิดปกติ และติดตามแนวโน้มเพื่อวางแผนดูแลระบบได้ ทั้งนี้ตัวนับเป็นข้อมูลภาพรวม ไม่ได้แทนการตรวจวัด Latency, Error Rate หรือสถานะอุปกรณ์โดยละเอียด

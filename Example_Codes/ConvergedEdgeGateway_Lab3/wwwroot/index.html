@@ -98,9 +98,9 @@
     <div class="header">
         <div>
             <div class="title">⚡ Kestrel Converged Edge Command Center</div>
-            <div style="color: #94a3b8; font-size: 14px;">All-in-One Multi-Protocol Bridge (.NET 8)</div>
+            <div style="color: #94a3b8; font-size: 14px;">All-in-One Multi-Protocol Bridge (.NET)</div>
         </div>
-        <div id="connStatus" style="color: var(--accent); font-weight: bold;">● SignalR Online</div>
+        <div id="connStatus" style="color: var(--danger); font-weight: bold;">● SignalR Connecting...</div>
     </div>
 
     <div class="grid">
@@ -116,7 +116,7 @@
         <div class="card">
             <h3 style="margin-top:0; color:#94a3b8;">Hardware Actuator Control</h3>
             <div style="color: #cbd5e1; font-size: 14px;">ควบคุม LED Status ขา GPIO2 ข้ามทุกโปรโตคอล</div>
-            <button id="ledBtn" class="btn-toggle" onclick="toggleLed()">💡 สั่งเปิดไฟ LED (OFF)</button>
+            <button id="ledBtn" class="btn-toggle" onclick="toggleLed()" disabled>💡 สั่งเปิดไฟ LED (OFF)</button>
         </div>
 
         <!-- การ์ด 3: ตัวนับทราฟฟิก 4 โปรโตคอล -->
@@ -126,6 +126,7 @@
                     style="color:var(--primary);">0</b></div>
             <div class="metric-badge"><span>📬 MQTT Messages (Broker)</span><b id="mMqtt"
                     style="color:var(--accent);">0</b></div>
+            <div class="metric-badge"><span>🌐 REST API Requests</span><b id="mRest" style="color:#ffca28;">0</b></div>
             <div class="metric-badge"><span>🌐 WebSockets (SignalR)</span><b id="mSignalR" style="color:#e040fb;">0</b>
             </div>
         </div>
@@ -133,6 +134,9 @@
 
     <script>
         let isLedOn = false;
+        let isConnected = false;
+        const status = document.getElementById("connStatus");
+        const ledButton = document.getElementById("ledBtn");
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/hubs/gateway")
             .withAutomaticReconnect()
@@ -144,6 +148,7 @@
             if (data.metrics) {
                 document.getElementById("mSerial").innerText = data.metrics.serialPackets;
                 document.getElementById("mMqtt").innerText = data.metrics.mqttMessages;
+                document.getElementById("mRest").innerText = data.metrics.restRequests;
                 document.getElementById("mSignalR").innerText = data.metrics.signalRPushes;
             }
         });
@@ -153,10 +158,18 @@
             updateLedButton();
         });
 
-        function toggleLed() {
-            isLedOn = !isLedOn;
-            connection.invoke("ToggleLed", isLedOn);
-            updateLedButton();
+        async function toggleLed() {
+            if (!isConnected) return;
+            ledButton.disabled = true;
+            try {
+                await connection.invoke("ToggleLed", !isLedOn);
+            } catch (err) {
+                console.error("LED command failed:", err);
+                status.innerText = "○ LED command failed";
+                status.style.color = "var(--danger)";
+            } finally {
+                ledButton.disabled = !isConnected;
+            }
         }
 
         function updateLedButton() {
@@ -170,9 +183,22 @@
             }
         }
 
-        connection.start().catch(err => {
-            document.getElementById("connStatus").innerText = "○ Disconnected";
-            document.getElementById("connStatus").style.color = "var(--danger)";
+        function setConnectionStatus(connected, message) {
+            isConnected = connected;
+            ledButton.disabled = !connected;
+            status.innerText = message;
+            status.style.color = connected ? "var(--accent)" : "var(--danger)";
+        }
+
+        connection.onreconnecting(() => setConnectionStatus(false, "● SignalR Reconnecting..."));
+        connection.onreconnected(() => setConnectionStatus(true, "● SignalR Online"));
+        connection.onclose(() => setConnectionStatus(false, "○ SignalR Disconnected"));
+
+        connection.start().then(() => {
+            setConnectionStatus(true, "● SignalR Online");
+        }).catch(err => {
+            console.error("SignalR connection failed:", err);
+            setConnectionStatus(false, "○ SignalR Disconnected");
         });
     </script>
 </body>
