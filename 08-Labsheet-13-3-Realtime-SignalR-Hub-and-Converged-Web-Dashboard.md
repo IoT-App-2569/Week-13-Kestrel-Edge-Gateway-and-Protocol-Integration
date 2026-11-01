@@ -292,6 +292,10 @@ app.MapHub<GatewayHub>("/hubs/gateway");
 * เมื่อคลิกปุ่มเปิดไฟบนหน้าเว็บ หลอดไฟ LED จริงบนบอร์ด ESP32 จะสว่างขึ้นทันที!
 
 
+https://youtube.com/shorts/30zTCh2hGSk?si=0VCX5-fVXbu6gme4
+
+<img width="3024" height="4032" alt="Image (12)" src="https://github.com/user-attachments/assets/68731f4d-c8f9-49cd-80d2-12eaf4f1e028" />
+ 
 
 <img width="1217" height="476" alt="image" src="https://github.com/user-attachments/assets/54205313-a6c6-4388-9b9a-b9eeab57ab74" />
 
