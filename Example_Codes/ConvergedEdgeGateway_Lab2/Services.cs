@@ -21,7 +21,7 @@ public record TelemetryData(double Voltage, int Raw, long Timestamp);
 public class SerialBridgeWorker : BackgroundService
 {
     private SerialPort? _serial;
-    private readonly string _portName = "COM24"; // ปรับให้ตรงกับพอร์ตของ ESP32 บนเครื่องคุณ (COM24)
+    private readonly string _portName = "COM3"; // พอร์ต ESP32 ที่ตรวจพบบนเครื่องนี้
     private readonly int _baudRate = 115200;
     private readonly GatewayStateStore _store;
     private readonly MqttServer _mqttServer;
@@ -36,6 +36,8 @@ public class SerialBridgeWorker : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        // Yield once so the hosted service does not block Kestrel startup when Serial data is continuous.
+        await Task.Yield();
         _logger.LogInformation("🔌 พยายามเปิด Serial Port {Port}...", _portName);
 
         while (!stoppingToken.IsCancellationRequested)
