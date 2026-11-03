@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 528" width="100%" id="diagram-root" style="max-width:800px; height:auto; background:#ffffff; border-radius:10px; font-family:'Sarabun', 'TH Sarabun New', 'Prompt', system-ui, -apple-system, sans-serif;">
+  <defs>
+    <filter id="shadowFilter" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000000" flood-opacity="0.1"/>
+    </filter>
+    <marker id="arrowhead" markerWidth="9" markerHeight="9" refX="5" refY="4.5" orient="auto">
+      <polygon points="0 1.5, 7 4.5, 0 7.5" fill="#0284c7" />
+    </marker>
+  </defs>
+  <!-- Banner -->
+  <g id="banner" filter="url(#shadowFilter)">
+    <rect x="40" y="32" width="780" height="58" rx="10" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+    <text x="430" y="68" fill="#0369a1" font-size="20" font-weight="700" text-anchor="middle" letter-spacing="0.5">สถาปัตยกรรมการประมวลผล 3 ระดับ (Cloud - Edge - Field)</text>
+  </g>
+  <!-- Card Group: 3. Cloud Layer -->
+  <g id="card-group-1">
+    <!-- Badge -->
+    <rect x="40" y="112" width="180" height="28" rx="6" fill="#0284c7"/>
+    <text x="54" y="131" fill="#ffffff" font-size="13" font-weight="700">3. Cloud Layer</text>
+    <text x="232" y="131" fill="#64748b" font-size="13" font-weight="500">การวิเคราะห์ภาพรวมระยะยาว / Big Data Analytics</text>
+    <!-- Card Container -->
+    <rect x="40" y="148" width="780" height="82" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadowFilter)"/>
+    <text x="62" y="174" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">AWS / Azure / Central IT Server:</tspan>
+      <tspan fill="#334155"> จัดเก็บข้อมูลระยะยาวและเทรนโมเดล AI</tspan>
+    </text>
+    <text x="62" y="204" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">Fleet Management:</tspan>
+      <tspan fill="#334155"> จัดการนโยบายความปลอดภัยและอัปเดตเฟิร์มแวร์อุปกรณ์</tspan>
+    </text>
+  </g>
+  <!-- Card Group: 2. Edge Layer -->
+  <g id="card-group-2">
+    <!-- Badge -->
+    <rect x="40" y="244" width="180" height="28" rx="6" fill="#0284c7"/>
+    <text x="54" y="263" fill="#ffffff" font-size="13" font-weight="700">2. Edge Layer</text>
+    <text x="232" y="263" fill="#64748b" font-size="13" font-weight="500">การประมวลผลระดับขอบหน้างาน / Converged Edge Gateway</text>
+    <!-- Card Container -->
+    <rect x="40" y="280" width="780" height="82" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadowFilter)"/>
+    <text x="62" y="306" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">.NET 8 Kestrel Edge Gateway:</tspan>
+      <tspan fill="#334155"> ประมวลผลตรรกะฉุกเฉินระดับ Sub-millisecond</tspan>
+    </text>
+    <text x="62" y="336" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">Protocol Translation &amp; Local Storage:</tspan>
+      <tspan fill="#334155"> บริดจ์ข้อมูลและสำรองไว้เมื่อเน็ตหลุด</tspan>
+    </text>
+  </g>
+  <!-- Card Group: 1. Field Layer -->
+  <g id="card-group-3">
+    <!-- Badge -->
+    <rect x="40" y="376" width="180" height="28" rx="6" fill="#0284c7"/>
+    <text x="54" y="395" fill="#ffffff" font-size="13" font-weight="700">1. Field Layer</text>
+    <text x="232" y="395" fill="#64748b" font-size="13" font-weight="500">เซนเซอร์และอุปกรณ์ตรวจจับหน้างานจริง</text>
+    <!-- Card Container -->
+    <rect x="40" y="412" width="780" height="82" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadowFilter)"/>
+    <text x="62" y="438" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">ESP32 (Serial UART / USB):</tspan>
+      <tspan fill="#334155"> สตรีมมิ่งค่า Potentiometer (GPIO 34)</tspan>
+    </text>
+    <text x="62" y="468" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">ESP32 (MQTT Wi-Fi) / Industrial Modbus:</tspan>
+      <tspan fill="#334155"> บอร์ดตรวจวัดและ PLC ควบคุมเครื่องจักร</tspan>
+    </text>
+  </g>
+</svg>

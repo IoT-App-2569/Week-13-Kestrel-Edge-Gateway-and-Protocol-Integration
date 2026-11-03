@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 660" width="100%" id="diagram-root" style="max-width:800px; height:auto; background:#ffffff; border-radius:10px; font-family:'Sarabun', 'TH Sarabun New', 'Prompt', system-ui, -apple-system, sans-serif;">
+  <defs>
+    <filter id="shadowFilter" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#000000" flood-opacity="0.1"/>
+    </filter>
+    <marker id="arrowhead" markerWidth="9" markerHeight="9" refX="5" refY="4.5" orient="auto">
+      <polygon points="0 1.5, 7 4.5, 0 7.5" fill="#0284c7" />
+    </marker>
+  </defs>
+  <!-- Banner -->
+  <g id="banner" filter="url(#shadowFilter)">
+    <rect x="40" y="32" width="780" height="58" rx="10" fill="#f0f9ff" stroke="#0284c7" stroke-width="2"/>
+    <text x="430" y="68" fill="#0369a1" font-size="20" font-weight="700" text-anchor="middle" letter-spacing="0.5">วิกฤต 4 ประการของระบบ Cloud-Centric</text>
+  </g>
+  <!-- Card Group: 1. Bandwidth Congestion -->
+  <g id="card-group-1">
+    <!-- Badge -->
+    <rect x="40" y="112" width="265.5" height="28" rx="6" fill="#0284c7"/>
+    <text x="54" y="131" fill="#ffffff" font-size="13" font-weight="700">1. Bandwidth Congestion</text>
+    <text x="317.5" y="131" fill="#64748b" font-size="13" font-weight="500">ปัญหาคอขวดแบนด์วิดท์</text>
+    <!-- Card Container -->
+    <rect x="40" y="148" width="780" height="82" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadowFilter)"/>
+    <text x="62" y="174" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">Data Traffic:</tspan>
+      <tspan fill="#334155"> ส่งข้อมูลความถี่สูงจากเซนเซอร์นับพันตัวทำให้เน็ตเต็ม</tspan>
+    </text>
+    <text x="62" y="204" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">Cloud Cost:</tspan>
+      <tspan fill="#334155"> ก่อให้เกิดค่าใช้จ่ายแบนด์วิดท์และเซิร์ฟเวอร์คลาวด์มหาศาล</tspan>
+    </text>
+  </g>
+  <!-- Card Group: 2. Latency Bottleneck -->
+  <g id="card-group-2">
+    <!-- Badge -->
+    <rect x="40" y="244" width="244.5" height="28" rx="6" fill="#0284c7"/>
+    <text x="54" y="263" fill="#ffffff" font-size="13" font-weight="700">2. Latency Bottleneck</text>
+    <text x="296.5" y="263" fill="#64748b" font-size="13" font-weight="500">ปัญหาความหน่วงเวลา</text>
+    <!-- Card Container -->
+    <rect x="40" y="280" width="780" height="82" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadowFilter)"/>
+    <text x="62" y="306" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">Round-Trip Time:</tspan>
+      <tspan fill="#334155"> เวลาไป-กลับข้ามเน็ต 50–300 ms ช้าเกินไป</tspan>
+    </text>
+    <text x="62" y="336" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">Emergency Trip:</tspan>
+      <tspan fill="#334155"> การตัดวงจรฉุกเฉินหน้างานต้องการความเร็ว &lt; 10 ms</tspan>
+    </text>
+  </g>
+  <!-- Card Group: 3. Lack of Survivability -->
+  <g id="card-group-3">
+    <!-- Badge -->
+    <rect x="40" y="376" width="276" height="28" rx="6" fill="#0284c7"/>
+    <text x="54" y="395" fill="#ffffff" font-size="13" font-weight="700">3. Lack of Survivability</text>
+    <text x="328" y="395" fill="#64748b" font-size="13" font-weight="500">การขาดความอยู่รอดในพื้นที่</text>
+    <!-- Card Container -->
+    <rect x="40" y="412" width="780" height="82" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadowFilter)"/>
+    <text x="62" y="438" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">Link Failure:</tspan>
+      <tspan fill="#334155"> หากสายเคเบิลขาดหรือเน็ตล่ม โรงงานจะหยุดทำงานทันที</tspan>
+    </text>
+    <text x="62" y="468" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">Isolated Nodes:</tspan>
+      <tspan fill="#334155"> อุปกรณ์ควบคุมหน้างานไม่สามารถสื่อสารกันเองได้</tspan>
+    </text>
+  </g>
+  <!-- Card Group: 4. Privacy &amp; Air-Gap -->
+  <g id="card-group-4">
+    <!-- Badge -->
+    <rect x="40" y="508" width="234" height="28" rx="6" fill="#0284c7"/>
+    <text x="54" y="527" fill="#ffffff" font-size="13" font-weight="700">4. Privacy &amp; Air-Gap</text>
+    <text x="286" y="527" fill="#64748b" font-size="13" font-weight="500">ความเป็นส่วนตัวและความปลอดภัย</text>
+    <!-- Card Container -->
+    <rect x="40" y="544" width="780" height="82" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" filter="url(#shadowFilter)"/>
+    <text x="62" y="570" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">Trade Secret:</tspan>
+      <tspan fill="#334155"> ข้อมูลกระบวนการผลิตเป็นความลับทางการค้า</tspan>
+    </text>
+    <text x="62" y="600" font-size="14">
+      <tspan fill="#0369a1" font-weight="600">Air-Gap Policy:</tspan>
+      <tspan fill="#334155"> ข้อกำหนดความปลอดภัยบังคับไม่ให้ส่งข้อมูลออกนอกพื้นที่</tspan>
+    </text>
+  </g>
+</svg>
