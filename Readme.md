@@ -31,8 +31,43 @@
 ## 3. ผังโครงสร้างสถาปัตยกรรม All-in-One Converged Gateway
 
 
-<p align="center"><img src="Images/Fig_Readme_2026-10-27T20-07-25_academic.svg" alt="Readme" ></p>
-<p align="center">  3. ผังโครงสร้างสถาปัตยกรรม All-in-One Converged Gateway</p>
+```text
+                                                     │
+         ┌───────────────────────────────────────────┼───────────────────────────────────────────┐
+         ▼                                           ▼                                           ▼
+  [ Web Browser Dashboard ]                 [ Flutter Mobile App ]                      [ Third-Party IT System ]
+  (SignalR WebSockets Push)                 (MQTT over TCP / REST)                      (HTTP RESTful JSON API)
+         │                                           │                                           │
+         │ WebSocket (Hub)                           │ Port 1883 / HTTP                          │ Port 5000 (HTTP)
+         ▼                                           ▼                                           ▼
++─────────────────────────────────────────────────────────────────────────────────────────────────────────+
+|                                      KESTREL WEB & PROTOCOL ENGINE                                      |
+|                                                                                                         |
+|   ┌───────────────────────┐   ┌───────────────────────┐   ┌─────────────────────────────────────────┐   |
+|   │   SignalR Realtime    │   │  Embedded MQTT Broker │   │          Minimal Web APIs               │   |
+|   │         Hub           │   │      (MQTTnet 4.x)    │   │        /api/telemetry, /api/led         │   |
+|   └───────────┬───────────┘   └───────────┬───────────┘   └────────────────────┬────────────────────┘   |
+|               │                           │                                    │                        |
+|               ▼                           ▼                                    ▼                        |
+|   ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐   |
+|   │                        Unified In-Memory Message Bus & State Store                              │   |
+|   │                     (System.Threading.Channels & ConcurrentDictionary)                          │   |
+|   └───────────────────────────────────────────▲─────────────────────────────────────────────────────┘   |
+|                                               │                                                         |
+|                               ┌───────────────┴───────────────┐                                         |
+|                               │   Hardware Serial Listener    │                                         |
+|                               │      (BackgroundService)      │                                         |
+|                               └───────────────▲───────────────┘                                         |
++───────────────────────────────────────────────┼─────────────────────────────────────────────────────────+
+                                                │
+                                                │ USB-UART Serial (COMx / /dev/ttyUSB0)
+                                                ▼
+                                    ┌────────────────────────────┐
+                                    │        บอร์ด ESP32         │
+                                    │ - Potentiometer (GPIO34)   │
+                                    │ - LED Status (GPIO2)       │
+                                    └────────────────────────────┘
+```
 
 ---
 
