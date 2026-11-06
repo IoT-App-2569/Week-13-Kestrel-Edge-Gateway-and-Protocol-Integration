@@ -481,3 +481,7 @@ $RECYCLE.BIN/
 # Vim temporary swap files
 *.swp
 **/build/**
+
+# Obsidian
+.obsidian/
+Pasted image *.png

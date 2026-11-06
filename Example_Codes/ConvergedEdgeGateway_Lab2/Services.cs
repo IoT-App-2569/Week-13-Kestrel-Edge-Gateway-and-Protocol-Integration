@@ -21,7 +21,7 @@ public record TelemetryData(double Voltage, int Raw, long Timestamp);
 public class SerialBridgeWorker : BackgroundService
 {
     private SerialPort? _serial;
-    private readonly string _portName = "COM24"; // ปรับให้ตรงกับพอร์ตของ ESP32 บนเครื่องคุณ (COM24)
+    private readonly string _portName = "COM10"; // ปรับให้ตรงกับพอร์ตของ ESP32 บนเครื่องคุณ
     private readonly int _baudRate = 115200;
     private readonly GatewayStateStore _store;
     private readonly MqttServer _mqttServer;
@@ -88,7 +88,7 @@ public class SerialBridgeWorker : BackgroundService
             int r = root.GetProperty("raw").GetInt32();
 
             var telemetry = new TelemetryData(v, r, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
-
+            
             // 1. อัปเดตลง State Store ในหน่วยความจำ
             _store.Set("latest_telemetry", telemetry);
 

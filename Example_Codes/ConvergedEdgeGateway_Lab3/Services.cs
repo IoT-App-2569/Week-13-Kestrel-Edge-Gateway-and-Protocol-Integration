@@ -22,7 +22,7 @@ public record TelemetryData(double Voltage, int Raw, long Timestamp);
 public class SerialBridgeWorker : BackgroundService
 {
     private SerialPort? _serial;
-    private readonly string _portName = "COM24"; // ปรับให้ตรงกับพอร์ตของ ESP32 บนเครื่องคุณ (COM24)
+    private readonly string _portName = "COM10"; // ปรับให้ตรงกับพอร์ตของ ESP32 บนเครื่องคุณ (COM10)
     private readonly int _baudRate = 115200;
     private readonly GatewayStateStore _store;
     private readonly MqttServer _mqttServer;
@@ -95,6 +95,7 @@ public class SerialBridgeWorker : BackgroundService
             var root = doc.RootElement;
             double v = root.GetProperty("voltage").GetDouble();
             int r = root.GetProperty("raw").GetInt32();
+            _logger.LogInformation("📊 ได้รับข้อมูล Serial: {Line}", line);
 
             _metrics.SerialPackets++;
 

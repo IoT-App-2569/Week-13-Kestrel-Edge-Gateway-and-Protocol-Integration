@@ -1,4 +1,3 @@
-using MQTTnet;
 using MQTTnet.AspNetCore;
 using MQTTnet.Server;
 
@@ -16,7 +15,7 @@ builder.Services.AddSingleton<GatewayStateStore>();
 builder.Services.AddMqttServer(options => options.WithDefaultEndpoint());
 builder.Services.AddHostedService<SerialBridgeWorker>();
 // เพื่อให้ API เรียกใช้งาน Worker ได้
-builder.Services.AddSingleton(sp =>
+builder.Services.AddSingleton(sp => 
     sp.GetServices<IHostedService>().OfType<SerialBridgeWorker>().First());
 
 var app = builder.Build();
