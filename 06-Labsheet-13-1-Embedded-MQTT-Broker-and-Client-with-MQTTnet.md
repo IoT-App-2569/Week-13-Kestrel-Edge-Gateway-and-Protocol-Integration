@@ -158,4 +158,11 @@ mosquitto_pub -h 127.0.0.1 -p 1883 -t "test/edge/topic" -m "Hello from CLI via K
 
 ## 4. คำถามท้ายการทดลอง (Review Questions)
 1. การรัน Embedded MQTT Broker ภายใน Kestrel มีข้อได้เปรียบกว่าการติดตั้งซอฟต์แวร์ Mosquitto แยกต่างหากอย่างไรในแง่ของการกระจายงาน (Deployment) และการประมวลผลข้อมูลในหน่วยความจำ?
+ - ด้านการกระจายงาน (Deployment):
+การใช้ Embedded Broker ทำให้แอปพลิเคชันทั้งหมด (ทั้ง REST API, Web Server และ MQTT Broker) รวมอยู่ในแอปพลิเคชันหรือไฟล์ Executable เดียว (.NET Process เดียว) ทำให้ไม่ต้องติดตั้งและตั้งค่าซอฟต์แวร์ภายนอกอย่าง Mosquitto เพิ่มเติม การนำไปติดตั้งใช้งาน (Deployment) จึงทำได้ง่ายขึ้นมาก โดยเฉพาะการทำ Containerization (เช่น Docker) ที่สามารถรันทุกอย่างจบใน Container เดียว ลดความซับซ้อนของการจัดการ Service และ Infrastructure ลง
+
+ - ด้านการประมวลผลข้อมูลในหน่วยความจำ (In-memory Processing):
+เนื่องจาก Broker และ Application Logic ทำงานอยู่ใน Memory Space เดียวกัน การนำข้อความ MQTT มาประมวลผลจึงทำได้ทันทีโดยไม่ต้องสื่อสารข้ามโปรเซส (Inter-Process Communication) หรือวิ่งผ่าน Network Stack ลดความหน่วง (Latency) ลงได้อย่างมาก นอกจากนี้ยังสามารถเชื่อมต่อกับ Service ภายในของ .NET ได้โดยตรง เช่น เมื่อรับข้อความจากเซนเซอร์แล้ว สามารถใช้ Entity Framework Core บันทึกลงฐานข้อมูล หรือใช้ SignalR บรอดแคสต์ข้อมูลขึ้นหน้าเว็บแดชบอร์ดแบบเรียลไทม์ได้ทันที
+
 2. ฟังก์ชัน `InterceptingPublishAsync` ใน MQTTnet สามารถนำไปประยุกต์ใช้ในการกรองข้อมูลที่ผิดปกติ (Edge Validation) ก่อนส่งต่อให้ Client อื่นได้อย่างไร?
+ - ฟังก์ชัน InterceptingPublishAsync ทำหน้าที่เสมือน Middleware หรือ "ด่านตรวจ" ที่ดักจับข้อความทุกฉบับก่อนที่ Broker จะกระจาย (Route) ไปยัง Subscriber อื่นๆ สามารถนำมาประยุกต์ใช้ทำ Edge Validation
