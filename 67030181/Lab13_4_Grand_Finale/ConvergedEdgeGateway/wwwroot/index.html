@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kestrel Converged Edge Command Center - 67030281</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <style>
+        :root {
+            --bg: #090d16;
+            --card-bg: rgba(18, 26, 44, 0.78);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #00E5FF;
+            --primary-glow: rgba(0, 229, 255, 0.35);
+            --accent: #00E676;
+            --accent-glow: rgba(0, 230, 118, 0.35);
+            --warning: #FFB300;
+            --danger: #FF5252;
+            --purple: #D500F9;
+            --text-main: #F8FAFC;
+            --text-sub: #94A3B8;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0; padding: 24px;
+            background: radial-gradient(circle at 10% 20%, #111a2e 0%, #080c14 90%);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--card-border);
+            flex-wrap: wrap; gap: 12px;
+        }
+        .title-group { display: flex; flex-direction: column; }
+        .title { font-size: 26px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
+        .subtitle { font-size: 14px; color: var(--text-sub); margin-top: 4px; }
+        .badge-student {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: white; padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 13px;
+            letter-spacing: 0.5px; box-shadow: 0 4px 14px rgba(37,99,235,0.4);
+        }
+
+        .status-pill {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 600;
+            background: rgba(0, 230, 118, 0.12); border: 1px solid rgba(0, 230, 118, 0.3);
+            color: var(--accent);
+        }
+        .status-dot {
+            width: 9px; height: 9px; border-radius: 50%; background: var(--accent);
+            box-shadow: 0 0 10px var(--accent); animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.85); } }
+
+        .survivability-banner {
+            background: linear-gradient(90deg, rgba(0, 229, 255, 0.1), rgba(0, 230, 118, 0.1));
+            border: 1px solid rgba(0, 229, 255, 0.25); border-radius: 12px;
+            padding: 12px 20px; margin-bottom: 24px; display: flex; align-items: center;
+            justify-content: space-between; font-size: 13.5px; flex-wrap: wrap; gap: 8px;
+        }
+
+        .grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            gap: 20px; margin-bottom: 24px;
+        }
+        .card {
+            background: var(--card-bg); backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border); border-radius: 20px; padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            display: flex; flex-direction: column; transition: transform 0.2s;
+        }
+        .card:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.14); }
+        .card-header {
+            font-size: 14px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.8px; color: var(--text-sub); margin-bottom: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* Potentiometer Dial Visual */
+        .gauge-container {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; padding: 10px 0;
+        }
+        .gauge-svg { width: 220px; height: 130px; }
+        .gauge-bg { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 14; stroke-linecap: round; }
+        .gauge-fill {
+            fill: none; stroke: url(#gaugeGradient); stroke-width: 14; stroke-linecap: round;
+            stroke-dasharray: 283; stroke-dashoffset: 283;
+            transition: stroke-dashoffset 0.25s ease-out;
+        }
+        .gauge-digital {
+            position: absolute; bottom: 0; text-align: center;
+        }
+        .gauge-val {
+            font-size: 42px; font-weight: 900; font-family: 'SF Mono', Consolas, monospace;
+            color: white; line-height: 1; text-shadow: 0 0 20px var(--primary-glow);
+        }
+        .gauge-unit { font-size: 20px; color: var(--primary); font-weight: 700; margin-left: 4px; }
+        .raw-adc-pill {
+            margin-top: 8px; font-size: 13px; color: var(--text-sub);
+            background: rgba(0,0,0,0.4); padding: 4px 12px; border-radius: 8px;
+            font-family: monospace; display: inline-block;
+        }
+
+        /* Sparkline Chart */
+        .sparkline-box {
+            margin-top: 18px; width: 100%; height: 50px;
+            background: rgba(0,0,0,0.25); border-radius: 10px; padding: 6px;
+        }
+        canvas { width: 100%; height: 100%; }
+
+        /* Actuator Card */
+        .actuator-box {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            flex: 1; padding: 10px 0;
+        }
+        .led-indicator {
+            width: 76px; height: 76px; border-radius: 50%;
+            background: #1e293b; border: 3px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; margin-bottom: 20px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+        }
+        .led-active {
+            background: radial-gradient(circle, #00E676 20%, #059669 80%);
+            border-color: #6ee7b7; box-shadow: 0 0 35px var(--accent-glow), inset 0 2px 4px rgba(255,255,255,0.6);
+            transform: scale(1.05);
+        }
+        .btn-toggle {
+            width: 100%; padding: 16px; font-size: 16px; font-weight: 700;
+            border: none; border-radius: 14px; cursor: pointer; transition: all 0.2s;
+            background: #25334d; color: white; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .btn-toggle:hover { background: #334466; transform: translateY(-1px); }
+        .btn-toggle.active {
+            background: linear-gradient(135deg, #00E676, #00B0FF);
+            color: #041019; box-shadow: 0 6px 25px var(--accent-glow);
+        }
+
+        /* Metrics */
+        .metrics-list { display: flex; flex-direction: column; gap: 10px; }
+        .metric-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 16px; background: rgba(0,0,0,0.3); border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .metric-label { font-size: 13.5px; color: #cbd5e1; display: flex; align-items: center; gap: 8px; }
+        .metric-counter { font-size: 18px; font-weight: 800; font-family: monospace; }
+
+        /* Activity Log */
+        .log-card { margin-top: 10px; }
+        .log-table {
+            width: 100%; border-collapse: collapse; font-size: 13px; font-family: monospace;
+        }
+        .log-table th {
+            text-align: left; padding: 10px 14px; background: rgba(0,0,0,0.35);
+            color: var(--text-sub); border-bottom: 1px solid var(--card-border);
+        }
+        .log-table td { padding: 9px 14px; border-bottom: 1px solid rgba(255,255,255,0.03); }
+        .log-proto-badge {
+            display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;
+        }
+        .proto-serial { background: rgba(0,229,255,0.2); color: var(--primary); }
+        .proto-mqtt { background: rgba(0,230,118,0.2); color: var(--accent); }
+        .proto-signalr { background: rgba(213,0,249,0.2); color: var(--purple); }
+        .proto-rest { background: rgba(255,179,0,0.2); color: var(--warning); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title-group">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="title">⚡ Kestrel Converged Edge Command Center</div>
+                <span class="badge-student">STUDENT: 67030281</span>
+            </div>
+            <div class="subtitle">All-in-One Multi-Protocol Bridge (.NET 8 Kestrel Engine)</div>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <div id="connStatus" class="status-pill">
+                <span id="connDot" class="status-dot"></span>
+                <span id="connLabel">SignalR Online</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Local Survivability Badge Banner -->
+    <div class="survivability-banner">
+        <div>
+            🛡️ <b>Local Survivability Engine:</b> <span style="color:var(--accent);">ACTIVE (100% On-Premise Autonomous)</span>
+            <span style="color:var(--text-sub); margin-left: 10px;">• ทำงานเต็มประสิทธิภาพโดยไม่ต้องพึ่งพาคลาวด์หรือเน็ตภายนอก</span>
+        </div>
+        <div style="color:var(--primary); font-family:monospace;" id="sysTime">--:--:--</div>
+    </div>
+
+    <div class="grid">
+        <!-- การ์ด 1: มาตรวัด Potentiometer (ADC Stream) -->
+        <div class="card">
+            <div class="card-header">
+                <span>⚡ Real-time Telemetry (Potentiometer)</span>
+                <span style="color:var(--primary);" id="sourceBadge">UART STREAM</span>
+            </div>
+            <div class="gauge-container">
+                <svg class="gauge-svg" viewBox="0 0 200 120">
+                    <defs>
+                        <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#00E5FF" />
+                            <stop offset="60%" stop-color="#00E676" />
+                            <stop offset="100%" stop-color="#FF5252" />
+                        </linearGradient>
+                    </defs>
+                    <path class="gauge-bg" d="M 20 110 A 80 80 0 0 1 180 110" />
+                    <path id="gaugePath" class="gauge-fill" d="M 20 110 A 80 80 0 0 1 180 110" />
+                </svg>
+                <div class="gauge-digital">
+                    <span class="gauge-val" id="voltageText">0.00</span><span class="gauge-unit">V</span>
+                    <div><span class="raw-adc-pill" id="rawText">Raw ADC: 0 / 4095</span></div>
+                </div>
+            </div>
+            <div class="sparkline-box">
+                <canvas id="sparklineCanvas"></canvas>
+            </div>
+        </div>
+
+        <!-- การ์ด 2: สวิตช์ควบคุมฮาร์ดแวร์ (Actuator Control) -->
+        <div class="card">
+            <div class="card-header">
+                <span>💡 Hardware Actuator Control</span>
+                <span style="color:var(--accent);">ESP32 GPIO 2</span>
+            </div>
+            <div class="actuator-box">
+                <div id="ledBulb" class="led-indicator">💡</div>
+                <div id="ledStateText" style="font-weight:700; font-size:16px; margin-bottom:14px; color:var(--text-sub);">
+                    สถานะหลอดไฟ: OFF (ดับ)
+                </div>
+                <button id="ledBtn" class="btn-toggle" onclick="toggleLed()">
+                    🔘 คลิกเพื่อสลับเปิด-ปิดไฟ
+                </button>
+            </div>
+            <div style="font-size:12px; color:var(--text-sub); text-align:center; margin-top:8px;">
+                * ซิงค์สถานะอัตโนมัติแบบสองทาง (Web, Mobile Flutter, Serial UART, REST API)
+            </div>
+        </div>
+
+        <!-- การ์ด 3: ตัวนับสถิติ 4 โปรโตคอล (Protocol Convergence Metrics) -->
+        <div class="card">
+            <div class="card-header">
+                <span>📊 Protocol Convergence Metrics</span>
+                <span style="color:var(--purple);">Real-time Ingestion</span>
+            </div>
+            <div class="metrics-list">
+                <div class="metric-item">
+                    <span class="metric-label">🔌 Hardware Serial (UART)</span>
+                    <span class="metric-counter" id="mSerial" style="color:var(--primary);">0</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">📬 Embedded MQTT (TCP 1883)</span>
+                    <span class="metric-counter" id="mMqtt" style="color:var(--accent);">0</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">🌐 WebSockets (SignalR Push)</span>
+                    <span class="metric-counter" id="mSignalR" style="color:var(--purple);">0</span>
+                </div>
+                <div class="metric-item">
+                    <span class="metric-label">⚡ HTTP RESTful (Port 5000)</span>
+                    <span class="metric-counter" id="mRest" style="color:var(--warning);">0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Event Log Table -->
+    <div class="card log-card">
+        <div class="card-header">
+            <span>📡 Live Gateway Message Bus Log (In-Memory Pipeline)</span>
+            <span style="font-size:12px; color:var(--text-sub);">Latest 5 Events</span>
+        </div>
+        <div style="overflow-x:auto;">
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Protocol</th>
+                        <th>Direction / Topic</th>
+                        <th>Payload / Action</th>
+                    </tr>
+                </thead>
+                <tbody id="logBody">
+                    <tr>
+                        <td colspan="4" style="text-align:center; color:var(--text-sub); padding:20px;">
+                            รอรับข้อความจากโครงข่าย...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let isLedOn = false;
+        const historyData = [];
+        const maxHistory = 40;
+        const totalArcLength = 251.3; // Half-circle circumference for radius ~80
+
+        // Clock updater
+        setInterval(() => {
+            document.getElementById('sysTime').innerText = new Date().toLocaleTimeString('th-TH');
+        }, 1000);
+
+        // Setup SignalR
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/hubs/gateway")
+            .withAutomaticReconnect()
+            .build();
+
+        // Canvas Sparkline Setup
+        const canvas = document.getElementById('sparklineCanvas');
+        const ctx = canvas.getContext('2d');
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function drawSparkline() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (historyData.length < 2) return;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#00E5FF';
+            ctx.lineWidth = 2;
+            ctx.lineJoin = 'round';
+
+            const step = canvas.width / (maxHistory - 1);
+            historyData.forEach((val, idx) => {
+                const norm = Math.min(Math.max(val / 3.3, 0), 1);
+                const x = idx * step;
+                const y = canvas.height - (norm * (canvas.height - 8)) - 4;
+                if (idx === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            // Gradient fill
+            ctx.lineTo((historyData.length - 1) * step, canvas.height);
+            ctx.lineTo(0, canvas.height);
+            ctx.closePath();
+            const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            grad.addColorStop(0, 'rgba(0, 229, 255, 0.25)');
+            grad.addColorStop(1, 'rgba(0, 229, 255, 0)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+        }
+
+        // Receive Telemetry Event
+        connection.on("ReceiveTelemetry", function (data) {
+            const v = data.voltage;
+            const r = data.raw;
+            document.getElementById("voltageText").innerText = v.toFixed(2);
+            document.getElementById("rawText").innerText = "Raw ADC: " + r + " / 4095";
+
+            // Update Radial Arc
+            const pct = Math.min(Math.max(v / 3.3, 0), 1);
+            const offset = totalArcLength * (1 - pct);
+            document.getElementById("gaugePath").style.strokeDashoffset = offset;
+
+            // Sparkline
+            historyData.push(v);
+            if (historyData.length > maxHistory) historyData.shift();
+            drawSparkline();
+
+            // Source badge
+            if (data.isSimulated) {
+                document.getElementById("sourceBadge").innerText = "SIMULATED (COM WAITING)";
+                document.getElementById("sourceBadge").style.color = "var(--warning)";
+            } else {
+                document.getElementById("sourceBadge").innerText = "UART HARDWARE STREAM";
+                document.getElementById("sourceBadge").style.color = "var(--primary)";
+            }
+
+            // Metrics
+            if (data.metrics) {
+                document.getElementById("mSerial").innerText = data.metrics.serialPackets;
+                document.getElementById("mMqtt").innerText = data.metrics.mqttMessages;
+                document.getElementById("mSignalR").innerText = data.metrics.signalRPushes;
+                document.getElementById("mRest").innerText = data.metrics.restRequests;
+            }
+
+            // Append Log sample periodically
+            if (Math.random() < 0.25) {
+                appendLog("UART / SignalR", "iot/esp32/telemetry", `${v.toFixed(2)} V (${r})`, "proto-serial");
+            }
+        });
+
+        // Receive LED State Updated Event
+        connection.on("LedStateUpdated", function (state) {
+            isLedOn = state;
+            updateLedVisuals();
+            appendLog("Universal Sync", "Actuator GPIO2", state ? "LED:ON" : "LED:OFF", "proto-mqtt");
+        });
+
+        function toggleLed() {
+            isLedOn = !isLedOn;
+            connection.invoke("ToggleLed", isLedOn);
+            updateLedVisuals();
+        }
+
+        function updateLedVisuals() {
+            const bulb = document.getElementById("ledBulb");
+            const btn = document.getElementById("ledBtn");
+            const txt = document.getElementById("ledStateText");
+
+            if (isLedOn) {
+                bulb.classList.add("led-active");
+                btn.classList.add("active");
+                btn.innerHTML = "💡 สั่งปิดไฟ LED (Active ON)";
+                txt.innerHTML = "สถานะหลอดไฟ: <span style='color:var(--accent); font-weight:800;'>ON (สว่าง)</span>";
+            } else {
+                bulb.classList.remove("led-active");
+                btn.classList.remove("active");
+                btn.innerHTML = "🌑 สั่งเปิดไฟ LED (OFF)";
+                txt.innerHTML = "สถานะหลอดไฟ: <span style='color:var(--text-sub);'>OFF (ดับ)</span>";
+            }
+        }
+
+        const logEntries = [];
+        function appendLog(protocol, topic, payload, badgeClass) {
+            const time = new Date().toLocaleTimeString('th-TH') + '.' + String(new Date().getMilliseconds()).padStart(3, '0');
+            logEntries.unshift({ time, protocol, topic, payload, badgeClass });
+            if (logEntries.length > 5) logEntries.pop();
+
+            const tbody = document.getElementById("logBody");
+            tbody.innerHTML = logEntries.map(e => `
+                <tr>
+                    <td style="color:var(--text-sub);">${e.time}</td>
+                    <td><span class="log-proto-badge ${e.badgeClass}">${e.protocol}</span></td>
+                    <td style="color:#e2e8f0;">${e.topic}</td>
+                    <td style="color:var(--primary); font-weight:bold;">${e.payload}</td>
+                </tr>
+            `).join('');
+        }
+
+        connection.onreconnecting(() => {
+            document.getElementById("connDot").style.background = "var(--warning)";
+            document.getElementById("connDot").style.boxShadow = "0 0 10px var(--warning)";
+            document.getElementById("connLabel").innerText = "Reconnecting...";
+        });
+
+        connection.onreconnected(() => {
+            document.getElementById("connDot").style.background = "var(--accent)";
+            document.getElementById("connDot").style.boxShadow = "0 0 10px var(--accent)";
+            document.getElementById("connLabel").innerText = "SignalR Online";
+        });
+
+        connection.start()
+            .then(() => {
+                document.getElementById("connLabel").innerText = "SignalR Online";
+                appendLog("SignalR", "Hub Connection", "Connected successfully", "proto-signalr");
+            })
+            .catch(err => {
+                document.getElementById("connDot").style.background = "var(--danger)";
+                document.getElementById("connDot").style.boxShadow = "0 0 10px var(--danger)";
+                document.getElementById("connLabel").innerText = "Disconnected";
+            });
+    </script>
+</body>
+</html>
